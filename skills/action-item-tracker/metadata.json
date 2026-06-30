@@ -1,0 +1,21 @@
+{
+  "id": "action-item-tracker",
+  "name": "Action Item Tracker",
+  "description": "Manage, update, and report on a list of action items. Tracks owners, due dates, and status. Drafts reminder messages for overdue items.",
+  "author": "accilium",
+  "version": "1.0.0",
+  "created": "2026-06-30",
+  "category": "Productivity",
+  "tags": ["action-items", "tracking", "reminders", "project-management"],
+  "harnesses": ["claude-code", "copilot-studio", "generic"],
+  "complexity": "beginner",
+  "trigger_phrases": [
+    "add action item",
+    "track action",
+    "what actions are overdue",
+    "show open actions",
+    "update action status",
+    "draft reminders for overdue"
+  ],
+  "emoji": "✅"
+}

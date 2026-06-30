@@ -1,0 +1,21 @@
+{
+  "id": "competitor-analysis",
+  "name": "Competitor Analysis",
+  "description": "Research and produce a structured competitive intelligence report covering offerings, positioning, strengths/weaknesses, and strategic implications for your business.",
+  "author": "accilium",
+  "version": "1.0.0",
+  "created": "2026-06-30",
+  "category": "Strategy",
+  "tags": ["strategy", "competitive-intelligence", "market-analysis", "research"],
+  "harnesses": ["claude-code", "copilot-studio", "generic"],
+  "complexity": "intermediate",
+  "trigger_phrases": [
+    "analyze competitor",
+    "competitor analysis",
+    "competitive landscape",
+    "who are our competitors",
+    "benchmark against",
+    "research this company"
+  ],
+  "emoji": "🔭"
+}

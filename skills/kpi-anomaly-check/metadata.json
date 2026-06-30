@@ -1,0 +1,21 @@
+{
+  "id": "kpi-anomaly-check",
+  "name": "KPI Anomaly Check",
+  "description": "Validate incoming KPI data against defined thresholds and produce a RAG (Red/Amber/Green) status report with anomaly explanations and recommended actions.",
+  "author": "accilium",
+  "version": "1.0.0",
+  "created": "2026-06-30",
+  "category": "Analytics",
+  "tags": ["kpi", "analytics", "anomaly-detection", "reporting", "rag"],
+  "harnesses": ["claude-code", "copilot-studio", "generic"],
+  "complexity": "intermediate",
+  "trigger_phrases": [
+    "check KPIs",
+    "validate KPI data",
+    "anomaly check",
+    "flag KPI issues",
+    "KPI health check",
+    "which KPIs are off"
+  ],
+  "emoji": "📊"
+}

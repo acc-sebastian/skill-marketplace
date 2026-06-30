@@ -1,0 +1,20 @@
+{
+  "id": "mom-generator",
+  "name": "MOM Generator",
+  "description": "Transform raw meeting notes, transcripts, or bullet points into a professional Minutes of Meeting document with attendees, decisions, and action items.",
+  "author": "accilium",
+  "version": "1.0.0",
+  "created": "2026-06-30",
+  "category": "Productivity",
+  "tags": ["meetings", "documentation", "minutes", "productivity"],
+  "harnesses": ["claude-code", "copilot-studio", "generic"],
+  "complexity": "beginner",
+  "trigger_phrases": [
+    "generate MOM",
+    "create meeting minutes",
+    "write minutes",
+    "summarize this meeting",
+    "turn these notes into minutes"
+  ],
+  "emoji": "📋"
+}

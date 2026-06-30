@@ -1,0 +1,21 @@
+{
+  "id": "vendor-proposal-comparison",
+  "name": "Vendor Proposal Comparison",
+  "description": "Systematically score and rank multiple vendor proposals against weighted criteria, apply KO checks, and produce a clear recommendation with rationale.",
+  "author": "accilium",
+  "version": "1.0.0",
+  "created": "2026-06-30",
+  "category": "Procurement",
+  "tags": ["vendor", "procurement", "rfp", "evaluation", "comparison"],
+  "harnesses": ["claude-code", "copilot-studio", "generic"],
+  "complexity": "intermediate",
+  "trigger_phrases": [
+    "compare vendors",
+    "evaluate proposals",
+    "vendor comparison",
+    "RFP evaluation",
+    "which vendor should we choose",
+    "score these proposals"
+  ],
+  "emoji": "⚖️"
+}
