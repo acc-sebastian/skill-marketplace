@@ -1,6 +1,6 @@
 # Skill Marketplace
 
-A curated library of AI skills (prompts + instructions) that plug into any LLM harness — Claude Code, Copilot Studio, or any chat-based AI. Browse and install from the **[live marketplace site](https://accilium.github.io/skill-marketplace/)**.
+A curated library of AI skills (prompts + instructions) that plug into any LLM harness — Claude Code, Copilot Studio, or any chat-based AI. Browse and install from the **[live marketplace site](https://acc-sebastian.github.io/skill-marketplace/)**.
 
 ## What is a "skill"?
 
