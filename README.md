@@ -2,6 +2,8 @@
 
 A curated library of AI skills (prompts + instructions) that plug into any LLM harness — Claude Code, Copilot Studio, or any chat-based AI. Browse and install from the **[live marketplace site](https://acc-sebastian.github.io/skill-marketplace/)**.
 
+> 📍 See the **[Roadmap](ROADMAP.md)** for the 5-phase plan from PoC to a fully governed, automated marketplace.
+
 ## What is a "skill"?
 
 A skill is a structured prompt file that turns your AI assistant into a specialist. Each skill includes:
