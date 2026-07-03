@@ -3,11 +3,23 @@
   "name": "Action Item Tracker",
   "description": "Manage, update, and report on a list of action items. Tracks owners, due dates, and status. Drafts reminder messages for overdue items.",
   "author": "accilium",
+  "owner": "acc-sebastian",
   "version": "1.0.0",
   "created": "2026-06-30",
+  "last_reviewed": "2026-07-03",
+  "status": "published",
   "category": "Productivity",
-  "tags": ["action-items", "tracking", "reminders", "project-management"],
-  "harnesses": ["claude-code", "copilot-studio", "generic"],
+  "tags": [
+    "action-items",
+    "tracking",
+    "reminders",
+    "project-management"
+  ],
+  "harnesses": [
+    "claude-code",
+    "copilot-studio",
+    "generic"
+  ],
   "complexity": "beginner",
   "trigger_phrases": [
     "add action item",
@@ -17,5 +29,13 @@
     "update action status",
     "draft reminders for overdue"
   ],
-  "emoji": "✅"
+  "emoji": "✅",
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-06-30",
+      "change": "Initial release"
+    }
+  ],
+  "example_input": "Add action: NM to deliver revised Q3 forecast, due 2026-07-10, priority high. Also show me all overdue items and draft reminders for them."
 }

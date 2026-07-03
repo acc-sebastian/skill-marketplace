@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://acc-sebastian.github.io/skill-marketplace/schema/skill.schema.json",
+  "title": "Skill Metadata",
+  "description": "Schema for metadata.json of every skill in the Skill Marketplace. Phase 1 of the roadmap.",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "description",
+    "author",
+    "owner",
+    "version",
+    "created",
+    "last_reviewed",
+    "status",
+    "category",
+    "tags",
+    "harnesses",
+    "complexity",
+    "changelog"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique skill ID. Must equal the folder name. kebab-case.",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable display name.",
+      "minLength": 3,
+      "maxLength": 60
+    },
+    "description": {
+      "type": "string",
+      "description": "What the skill does. Shown on the marketplace card and in the catalog.",
+      "minLength": 30,
+      "maxLength": 400
+    },
+    "author": {
+      "type": "string",
+      "description": "Original author (person or org).",
+      "minLength": 2
+    },
+    "owner": {
+      "type": "string",
+      "description": "GitHub handle of the person/team responsible for keeping this skill up to date (without @). Coupled to CODEOWNERS.",
+      "pattern": "^[A-Za-z0-9-]+$"
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version (MAJOR.MINOR.PATCH). Breaking prompt changes bump MAJOR.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "created": {
+      "type": "string",
+      "description": "Creation date, ISO format.",
+      "format": "date",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "last_reviewed": {
+      "type": "string",
+      "description": "Date of the last human review. Drives stale-detection (Phase 4).",
+      "format": "date",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "status": {
+      "type": "string",
+      "description": "Lifecycle status of the skill.",
+      "enum": ["draft", "in-review", "published", "deprecated", "archived"]
+    },
+    "deprecated_by": {
+      "type": "string",
+      "description": "ID of the successor skill. Only meaningful when status is 'deprecated'.",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "sunset_date": {
+      "type": "string",
+      "description": "Planned retirement date. Only meaningful when status is 'deprecated'. After this date the skill is auto-archived (Phase 4).",
+      "format": "date",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "category": {
+      "type": "string",
+      "description": "Primary category. Managed by the taxonomy owner (see MAINTAINERS.md).",
+      "enum": ["Productivity", "Analytics", "Strategy", "Procurement", "Finance", "Compliance", "Communication", "Other"]
+    },
+    "tags": {
+      "type": "array",
+      "description": "Free-form lowercase tags for search.",
+      "items": { "type": "string", "pattern": "^[a-z0-9]+([-_][a-z0-9]+)*$" },
+      "minItems": 1,
+      "maxItems": 8,
+      "uniqueItems": true
+    },
+    "harnesses": {
+      "type": "array",
+      "description": "Harnesses this skill has been tested with.",
+      "items": { "type": "string", "enum": ["claude-code", "copilot-studio", "generic"] },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "complexity": {
+      "type": "string",
+      "enum": ["beginner", "intermediate", "advanced"]
+    },
+    "trigger_phrases": {
+      "type": "array",
+      "description": "Example phrases that should activate the skill.",
+      "items": { "type": "string" },
+      "maxItems": 10
+    },
+    "emoji": {
+      "type": "string",
+      "description": "Single emoji used as the skill icon.",
+      "maxLength": 8
+    },
+    "changelog": {
+      "type": "array",
+      "description": "One entry per released version, newest first.",
+      "items": {
+        "type": "object",
+        "required": ["version", "date", "change"],
+        "additionalProperties": false,
+        "properties": {
+          "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+          "date": { "type": "string", "format": "date", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+          "change": { "type": "string", "minLength": 5 }
+        }
+      },
+      "minItems": 1
+    },
+    "example_input": {
+      "type": "string",
+      "description": "A short realistic example input. Used for automated smoke-tests against an LLM (Phase 4).",
+      "minLength": 10
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "status": { "const": "deprecated" } }
+      },
+      "then": {
+        "required": ["deprecated_by", "sunset_date"]
+      }
+    }
+  ]
+}

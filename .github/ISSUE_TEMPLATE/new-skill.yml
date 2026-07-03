@@ -1,0 +1,119 @@
+name: 💡 Neue Skill vorschlagen
+description: Schlage eine neue Skill für den Marketplace vor — ganz ohne Git-Kenntnisse. Einfach Formular ausfüllen und absenden.
+title: "[Skill-Vorschlag] "
+labels: ["new-skill", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Danke für deinen Beitrag! 🎉
+        Fülle die Felder unten aus — ein Maintainer (oder eine Automatisierung) macht daraus die fertige Skill.
+        **Du musst kein Git kennen.** Pflichtfelder sind markiert.
+
+  - type: input
+    id: skill-name
+    attributes:
+      label: Skill-Name
+      description: Kurzer, sprechender Name (3–60 Zeichen)
+      placeholder: z. B. "RFQ Generator"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Was soll die Skill tun?
+      description: Beschreibe in 2–4 Sätzen, was die Skill leistet und für wen sie gedacht ist (30–400 Zeichen).
+      placeholder: z. B. "Erzeugt aus einer Bedarfsbeschreibung eine strukturierte Ausschreibungsanfrage (RFQ) mit Bewertungskriterien..."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Kategorie
+      description: In welche Kategorie gehört die Skill?
+      options:
+        - Productivity
+        - Analytics
+        - Strategy
+        - Procurement
+        - Finance
+        - Compliance
+        - Communication
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Komplexität
+      options:
+        - beginner
+        - intermediate
+        - advanced
+      default: 0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: harnesses
+    attributes:
+      label: Für welche Harnesses ist die Skill gedacht?
+      multiple: true
+      options:
+        - claude-code
+        - copilot-studio
+        - generic
+    validations:
+      required: true
+
+  - type: textarea
+    id: instructions
+    attributes:
+      label: Anweisungen / Prompt-Inhalt
+      description: |
+        Der eigentliche Inhalt der Skill — was soll die KI Schritt für Schritt tun?
+        Stichpunkte reichen; ein Maintainer formt daraus die finale skill.md.
+      placeholder: |
+        1. Frage nach Bedarfsbeschreibung und Budget
+        2. Erzeuge RFQ-Dokument mit Abschnitten X, Y, Z
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: example-input
+    attributes:
+      label: Beispiel-Input
+      description: Ein realistisches Beispiel, mit dem man die Skill testen kann (wird später für automatische Smoke-Tests genutzt).
+      placeholder: z. B. "Wir brauchen 500 Ventile Typ XY, Lieferung bis Q4, Budget 50k..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: trigger-phrases
+    attributes:
+      label: Trigger-Phrasen (optional)
+      description: Eine pro Zeile — welche Formulierungen sollen die Skill aktivieren?
+      placeholder: |
+        generate RFQ
+        create request for quotation
+
+  - type: input
+    id: owner
+    attributes:
+      label: Wer soll Owner der Skill sein? (GitHub-Handle, optional)
+      description: Die Person, die die Skill langfristig aktuell hält. Leer lassen = Vorschlagender/Maintainer.
+      placeholder: z. B. acc-sebastian
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Bestätigung
+      options:
+        - label: Der Inhalt enthält keine vertraulichen oder personenbezogenen Daten.
+          required: true
+        - label: Ich habe geprüft, dass es noch keine vergleichbare Skill im Marketplace gibt.
+          required: true

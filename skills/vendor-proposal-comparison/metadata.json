@@ -3,11 +3,24 @@
   "name": "Vendor Proposal Comparison",
   "description": "Systematically score and rank multiple vendor proposals against weighted criteria, apply KO checks, and produce a clear recommendation with rationale.",
   "author": "accilium",
+  "owner": "acc-sebastian",
   "version": "1.0.0",
   "created": "2026-06-30",
+  "last_reviewed": "2026-07-03",
+  "status": "published",
   "category": "Procurement",
-  "tags": ["vendor", "procurement", "rfp", "evaluation", "comparison"],
-  "harnesses": ["claude-code", "copilot-studio", "generic"],
+  "tags": [
+    "vendor",
+    "procurement",
+    "rfp",
+    "evaluation",
+    "comparison"
+  ],
+  "harnesses": [
+    "claude-code",
+    "copilot-studio",
+    "generic"
+  ],
   "complexity": "intermediate",
   "trigger_phrases": [
     "compare vendors",
@@ -17,5 +30,13 @@
     "which vendor should we choose",
     "score these proposals"
   ],
-  "emoji": "⚖️"
+  "emoji": "⚖️",
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-06-30",
+      "change": "Initial release"
+    }
+  ],
+  "example_input": "Compare three CRM vendors: Vendor A (120k/yr, cloud, 4-week rollout, no on-prem option), Vendor B (95k/yr, hybrid, 12-week rollout), Vendor C (150k/yr, on-prem, 8-week rollout). KO criterion: must support hybrid or on-prem. Weights: cost 40%, rollout speed 30%, deployment flexibility 30%."
 }

@@ -1,0 +1,18 @@
+# CODEOWNERS — every skill folder has a responsible reviewer.
+# PRs touching these paths automatically request review from the owner.
+# Keep in sync with the "owner" field in each skill's metadata.json.
+
+# Fallback: repo maintainer owns everything not listed below
+*                                   @acc-sebastian
+
+# Infrastructure (build, schema, workflows)
+/scripts/                           @acc-sebastian
+/schema/                            @acc-sebastian
+/.github/                           @acc-sebastian
+
+# Skills — one line per skill, owner = metadata.json "owner"
+/skills/mom-generator/              @acc-sebastian
+/skills/action-item-tracker/        @acc-sebastian
+/skills/kpi-anomaly-check/          @acc-sebastian
+/skills/vendor-proposal-comparison/ @acc-sebastian
+/skills/competitor-analysis/        @acc-sebastian

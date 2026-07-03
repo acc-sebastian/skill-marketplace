@@ -2,14 +2,48 @@
 
 Thank you for contributing! Each merged skill becomes immediately available to everyone on the marketplace.
 
-## Quick Start
+## Two ways to contribute
+
+### 🅰 No Git required — propose via web form
+Fill out the **["Neue Skill vorschlagen" form](https://github.com/acc-sebastian/skill-marketplace/issues/new?template=new-skill.yml)**
+(also linked from the website). A maintainer turns your proposal into a skill.
+You never touch Git.
+
+### 🅱 Via pull request (for Git users)
 
 1. **Fork** this repo
 2. **Create** a folder: `skills/<your-skill-name>/` (use kebab-case, e.g. `budget-variance-report`)
 3. **Add two files**: `metadata.json` and `skill.md`
-4. **Submit a pull request**
+4. **Validate locally**: `python scripts/validate_skills.py`
+5. **Submit a pull request** — the PR template walks you through the checklist
 
-That's it. The GitHub Actions workflow auto-rebuilds the site on merge.
+The GitHub Actions workflow auto-rebuilds the site (and `docs/catalog.json`) on merge.
+
+---
+
+## Skill Lifecycle
+
+Every skill carries a `status` field and moves through defined phases:
+
+```
+Draft → In Review → Published → (Maintained) → Deprecated → Archived
+```
+
+| Status | Meaning | Who sets it |
+|--------|---------|-------------|
+| `draft` | Work in progress, not ready for use | Contributor |
+| `in-review` | PR open, under CODEOWNER review | Contributor/Maintainer |
+| `published` | Live on the marketplace | Maintainer (at merge) |
+| `deprecated` | Still visible, but superseded — `deprecated_by` + `sunset_date` required | Skill owner |
+| `archived` | Retired; hidden from site & catalog, kept in repo for provenance | Maintainer/automation |
+
+**Maintenance:** every skill has an `owner` who keeps it up to date. The
+`last_reviewed` date drives automatic stale-detection — if a skill hasn't been
+reviewed for too long, the owner gets a review-due issue (Roadmap Phase 4).
+
+**Versioning:** SemVer. A breaking change to the prompt's behavior or output
+format bumps MAJOR; additive improvements bump MINOR; typo fixes bump PATCH.
+Every version gets a `changelog` entry.
 
 ---
 
@@ -17,20 +51,30 @@ That's it. The GitHub Actions workflow auto-rebuilds the site on merge.
 
 ### `metadata.json`
 
+The authoritative definition is **[`schema/skill.schema.json`](schema/skill.schema.json)** —
+CI validates every PR against it (Roadmap Phase 2).
+
 ```json
 {
   "id": "your-skill-name",
   "name": "Human Readable Name",
-  "description": "One sentence: what does this skill do and when is it useful?",
+  "description": "What does this skill do and when is it useful? (30-400 chars)",
   "author": "Your Name",
+  "owner": "your-github-handle",
   "version": "1.0.0",
   "created": "YYYY-MM-DD",
+  "last_reviewed": "YYYY-MM-DD",
+  "status": "draft",
   "category": "Productivity",
   "tags": ["tag1", "tag2"],
   "harnesses": ["claude-code", "copilot-studio", "generic"],
   "complexity": "beginner",
   "trigger_phrases": ["trigger phrase 1", "trigger phrase 2"],
-  "emoji": "📋"
+  "emoji": "📋",
+  "changelog": [
+    { "version": "1.0.0", "date": "YYYY-MM-DD", "change": "Initial release" }
+  ],
+  "example_input": "A realistic example input for automated smoke-testing."
 }
 ```
 
@@ -39,17 +83,24 @@ That's it. The GitHub Actions workflow auto-rebuilds the site on merge.
 | Field | Required | Values |
 |-------|----------|--------|
 | `id` | ✅ | kebab-case, matches folder name |
-| `name` | ✅ | Display name (title case) |
-| `description` | ✅ | Max 200 chars |
-| `author` | ✅ | Your name or GitHub handle |
-| `version` | ✅ | semver, start at `1.0.0` |
+| `name` | ✅ | Display name, 3–60 chars |
+| `description` | ✅ | 30–400 chars |
+| `author` | ✅ | Original author (person or org) |
+| `owner` | ✅ | GitHub handle responsible for upkeep (synced with CODEOWNERS) |
+| `version` | ✅ | SemVer, start at `1.0.0` |
 | `created` | ✅ | ISO date `YYYY-MM-DD` |
-| `category` | ✅ | See categories below |
-| `tags` | ✅ | Array, 2-5 lowercase tags |
+| `last_reviewed` | ✅ | ISO date — update whenever you re-verify the skill |
+| `status` | ✅ | `draft`, `in-review`, `published`, `deprecated`, `archived` |
+| `category` | ✅ | See categories below (enum in schema; new ones need taxonomy-owner approval) |
+| `tags` | ✅ | Array, 1–8 lowercase tags |
 | `harnesses` | ✅ | `claude-code`, `copilot-studio`, `generic` |
 | `complexity` | ✅ | `beginner`, `intermediate`, `advanced` |
-| `trigger_phrases` | ✅ | 2-5 example phrases that activate the skill |
+| `changelog` | ✅ | One entry per version, newest first |
+| `trigger_phrases` | optional | Up to 10 example phrases that activate the skill |
 | `emoji` | optional | Single emoji for the skill card |
+| `example_input` | recommended | Realistic input for automated smoke-tests (Phase 4) |
+| `deprecated_by` | if deprecated | ID of the successor skill |
+| `sunset_date` | if deprecated | Planned retirement date |
 
 **Available categories:**
 - `Productivity` — Meeting tools, reminders, scheduling
@@ -104,14 +155,13 @@ A good skill:
 
 Before submitting a PR, confirm:
 
-- [ ] `metadata.json` validates as valid JSON
-- [ ] All required fields in `metadata.json` are present
+- [ ] `python scripts/validate_skills.py` passes (schema + structural checks)
 - [ ] Folder name matches `metadata.json` `id` field
+- [ ] `owner` is set and added to `.github/CODEOWNERS`
 - [ ] `skill.md` has valid YAML frontmatter
 - [ ] `skill.md` body includes Role, Trigger, Input, Process, Output, and Rules sections
 - [ ] Skill was manually tested in at least one harness
 - [ ] No sensitive data or PII in files
-- [ ] Description is under 200 characters
 
 ---
 

@@ -53,7 +53,7 @@ Ausgangspunkt, auf dem alles aufbaut:
 verbindliches Datenmodell inkl. Lifecycle-Feldern und legen Ownership fest.
 
 ### Deliverables
-- [ ] **Erweitertes Metadaten-Schema** — neue Pflicht-/Optionalfelder in jeder `metadata.json`:
+- [x] **Erweitertes Metadaten-Schema** — neue Pflicht-/Optionalfelder in jeder `metadata.json`:
   - `status` — `draft | in-review | published | deprecated | archived`
   - `version` — SemVer (Breaking Change → Major) *(Feld existiert, Konvention wird verbindlich)*
   - `owner` — verantwortliche Person/Team (koppelt an CODEOWNERS)
@@ -62,14 +62,16 @@ verbindliches Datenmodell inkl. Lifecycle-Feldern und legen Ownership fest.
   - `sunset_date` — geplantes Ausserkraftsetzungs-Datum (nur bei `deprecated`)
   - `changelog` — Liste `{version, date, change}` pro Version
   - `example_input` — Beispiel-Input (später für Smoke-Tests in Phase 4)
-- [ ] **Formales JSON-Schema** unter `schema/skill.schema.json` (definiert Pflichtfelder, Typen, erlaubte Enum-Werte). Grundlage für die Validierung in Phase 2.
-- [ ] **Lifecycle-Modell dokumentiert**: `Draft → In Review → Published → Maintained → Deprecated → Archived` (in `CONTRIBUTING.md` + `ROADMAP.md`).
-- [ ] **`CODEOWNERS`** (`.github/CODEOWNERS`) — pro Skill-Ordner und pro Kategorie ein verantwortlicher Reviewer.
-- [ ] **`MAINTAINERS.md`** — benennt Repo-Maintainer und **Taxonomie-Owner** (verantwortlich für die Kategorie-/Tag-Struktur).
-- [ ] **Contribution-Flow für Business-User (niedrigschwellig):**
-  - [ ] **Issue-Formular** `.github/ISSUE_TEMPLATE/new-skill.yml` („Neue Skill vorschlagen") mit strukturierten Feldern — Nicht-Techniker müssen kein Git kennen.
-  - [ ] **PR-Template** `.github/pull_request_template.md` mit Checkliste (Schema erfüllt? Owner gesetzt? Changelog aktualisiert?).
-- [ ] **Migration der 5 bestehenden Skills** auf das neue Schema (Backfill der neuen Felder).
+- [x] **Formales JSON-Schema** unter `schema/skill.schema.json` (definiert Pflichtfelder, Typen, erlaubte Enum-Werte). Grundlage für die Validierung in Phase 2.
+- [x] **Lifecycle-Modell dokumentiert**: `Draft → In Review → Published → Maintained → Deprecated → Archived` (in `CONTRIBUTING.md` + `MAINTAINERS.md`).
+- [x] **`CODEOWNERS`** (`.github/CODEOWNERS`) — pro Skill-Ordner und pro Kategorie ein verantwortlicher Reviewer.
+- [x] **`MAINTAINERS.md`** — benennt Repo-Maintainer und **Taxonomie-Owner** (verantwortlich für die Kategorie-/Tag-Struktur).
+- [x] **Contribution-Flow für Business-User (niedrigschwellig):**
+  - [x] **Issue-Formular** `.github/ISSUE_TEMPLATE/new-skill.yml` („Neue Skill vorschlagen") mit strukturierten Feldern — Nicht-Techniker müssen kein Git kennen. **„Skill vorschlagen"-Button auf der Website verlinkt direkt darauf.**
+  - [x] **PR-Template** `.github/pull_request_template.md` mit Checkliste (Schema erfüllt? Owner gesetzt? Changelog aktualisiert?).
+- [x] **Migration der 5 bestehenden Skills** auf das neue Schema (Backfill der neuen Felder).
+- [x] *(aus Phase 2 vorgezogen)* **`scripts/validate_skills.py`** — lokales Validierungsskript (Schema + Struktur-Checks).
+- [x] *(aus Phase 3 vorgezogen)* **Katalog-Manifest `docs/catalog.json`** — maschinenlesbarer Index, wird bei jedem Build erzeugt; `archived`-Skills werden aus Site & Katalog ausgeblendet; Schema wird unter `/schema/skill.schema.json` mitpubliziert.
 
 ### GitHub-Umsetzung
 Reine Repo-Artefakte (JSON-Schema, `.github/`-Vorlagen, Markdown). Kein Code-Deploy nötig.
@@ -91,7 +93,7 @@ Alle bestehenden Skills validieren gegen `schema/skill.schema.json`; ein Busines
   - [ ] **Naming-Konvention**: Ordnername = `id`, kebab-case, keine Sonderzeichen.
   - [ ] **Eindeutigkeits-Check**: keine doppelten `id`s im gesamten Repo.
   - [ ] **Broken-Link-Check** in `skill.md` und Metadaten (`deprecated_by` zeigt auf existierende Skill-ID).
-- [ ] **`scripts/validate_skills.py`** — wiederverwendbares Validierungsskript (lokal + in CI ausführbar).
+- [x] **`scripts/validate_skills.py`** — wiederverwendbares Validierungsskript (lokal + in CI ausführbar). *(in Phase 1 vorgezogen)*
 - [ ] **Branch Protection** auf `main`: Merge nur bei (a) grüner Validierung und (b) mind. 1 Review durch CODEOWNER.
 - [ ] **Status-Checks** als „Required" markiert.
 
@@ -109,11 +111,11 @@ Ein PR mit fehlerhafter `metadata.json` wird automatisch rot und ist nicht merge
 Stufen „BUILD" und „DEPLOY" plus Distribution.
 
 ### Deliverables
-- [ ] **Katalog-Manifest** `docs/catalog.json` — beim Build generiert; maschinenlesbarer Index aller Skills (Name, Version, Kategorie, Status, Download-URL). Grundlage für programmatischen Zugriff.
+- [x] **Katalog-Manifest** `docs/catalog.json` — beim Build generiert; maschinenlesbarer Index aller Skills (Name, Version, Kategorie, Status, Download-URL). Grundlage für programmatischen Zugriff. *(in Phase 1 vorgezogen)*
 - [ ] **Status-Badges auf der Website** — jeder Skill zeigt `draft`/`published`/`deprecated`-Badge (aus `status`).
 - [ ] **Deprecation-Handling auf der Website:**
   - [ ] Banner bei `deprecated` inkl. `sunset_date` und Hinweis „ersetzt durch → `deprecated_by`".
-  - [ ] `archived`-Skills werden aus dem Katalog **ausgeblendet** (bleiben im Repo für Provenienz).
+  - [x] `archived`-Skills werden aus dem Katalog **ausgeblendet** (bleiben im Repo für Provenienz). *(in Phase 1 vorgezogen)*
 - [ ] **Automatisierte Versionierung**: bei Merge/Release Git-Tag setzen (SemVer) + **GitHub Release** anlegen; alte Versionen bleiben über Releases abrufbar.
 - [ ] **Distribution als Paket**: `skill.md`+`metadata.json` je Skill als Release-Asset (bzw. GitHub Packages) — versionierter, referenzierbarer Download.
 - [ ] **CLI `skill install <name>`** (`scripts/skill_cli.py`) — liest `catalog.json` über die Raw-GitHub-URL, lädt den Skill herunter und legt ihn am richtigen Ort ab (`.claude/skills/`, etc.).

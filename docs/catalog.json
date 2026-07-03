@@ -1,0 +1,152 @@
+{
+  "$schema_note": "Catalog manifest of the Skill Marketplace. One entry per non-archived skill.",
+  "catalog_version": 1,
+  "site": "https://acc-sebastian.github.io/skill-marketplace",
+  "repository": "https://github.com/acc-sebastian/skill-marketplace",
+  "skill_schema": "https://acc-sebastian.github.io/skill-marketplace/schema/skill.schema.json",
+  "count": 5,
+  "skills": [
+    {
+      "id": "action-item-tracker",
+      "name": "Action Item Tracker",
+      "description": "Manage, update, and report on a list of action items. Tracks owners, due dates, and status. Drafts reminder messages for overdue items.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Productivity",
+      "tags": [
+        "action-items",
+        "tracking",
+        "reminders",
+        "project-management"
+      ],
+      "harnesses": [
+        "claude-code",
+        "copilot-studio",
+        "generic"
+      ],
+      "complexity": "beginner",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-03",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "emoji": "✅",
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/action-item-tracker/skill.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/action-item-tracker/metadata.json"
+    },
+    {
+      "id": "competitor-analysis",
+      "name": "Competitor Analysis",
+      "description": "Research and produce a structured competitive intelligence report covering offerings, positioning, strengths/weaknesses, and strategic implications for your business.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Strategy",
+      "tags": [
+        "strategy",
+        "competitive-intelligence",
+        "market-analysis",
+        "research"
+      ],
+      "harnesses": [
+        "claude-code",
+        "copilot-studio",
+        "generic"
+      ],
+      "complexity": "intermediate",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-03",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "emoji": "🔭",
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/competitor-analysis/skill.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/competitor-analysis/metadata.json"
+    },
+    {
+      "id": "kpi-anomaly-check",
+      "name": "KPI Anomaly Check",
+      "description": "Validate incoming KPI data against defined thresholds and produce a RAG (Red/Amber/Green) status report with anomaly explanations and recommended actions.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Analytics",
+      "tags": [
+        "kpi",
+        "analytics",
+        "anomaly-detection",
+        "reporting",
+        "rag"
+      ],
+      "harnesses": [
+        "claude-code",
+        "copilot-studio",
+        "generic"
+      ],
+      "complexity": "intermediate",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-03",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "emoji": "📊",
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/kpi-anomaly-check/skill.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/kpi-anomaly-check/metadata.json"
+    },
+    {
+      "id": "mom-generator",
+      "name": "MOM Generator",
+      "description": "Transform raw meeting notes, transcripts, or bullet points into a professional Minutes of Meeting document with attendees, decisions, and action items.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Productivity",
+      "tags": [
+        "meetings",
+        "documentation",
+        "minutes",
+        "productivity"
+      ],
+      "harnesses": [
+        "claude-code",
+        "copilot-studio",
+        "generic"
+      ],
+      "complexity": "beginner",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-03",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "emoji": "📋",
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/mom-generator/skill.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/mom-generator/metadata.json"
+    },
+    {
+      "id": "vendor-proposal-comparison",
+      "name": "Vendor Proposal Comparison",
+      "description": "Systematically score and rank multiple vendor proposals against weighted criteria, apply KO checks, and produce a clear recommendation with rationale.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Procurement",
+      "tags": [
+        "vendor",
+        "procurement",
+        "rfp",
+        "evaluation",
+        "comparison"
+      ],
+      "harnesses": [
+        "claude-code",
+        "copilot-studio",
+        "generic"
+      ],
+      "complexity": "intermediate",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-03",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "emoji": "⚖️",
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/vendor-proposal-comparison/skill.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/vendor-proposal-comparison/metadata.json"
+    }
+  ]
+}

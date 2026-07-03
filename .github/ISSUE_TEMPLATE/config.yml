@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 🌐 Skill Marketplace Website
+    url: https://acc-sebastian.github.io/skill-marketplace/
+    about: Alle Skills durchsuchen und installieren.
+  - name: 📖 Contributor Guide
+    url: https://github.com/acc-sebastian/skill-marketplace/blob/main/CONTRIBUTING.md
+    about: So trägst du direkt per Pull Request bei (für Git-Nutzer).

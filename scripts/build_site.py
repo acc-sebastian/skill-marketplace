@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-Build the Skill Marketplace static site.
+Build the Skill Marketplace static site + machine-readable catalog.
 
 Reads:  skills/*/metadata.json + skills/*/skill.md
-Writes: docs/index.html
+Writes: docs/index.html   (website)
+        docs/catalog.json (machine-readable manifest for other harnesses/CLIs)
 
 Run locally:
     python scripts/build_site.py
@@ -17,6 +18,11 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 SKILLS_DIR = ROOT / "skills"
 DOCS_DIR = ROOT / "docs"
+
+REPO = "acc-sebastian/skill-marketplace"
+RAW_BASE = f"https://raw.githubusercontent.com/{REPO}/main/skills"
+SITE_URL = "https://acc-sebastian.github.io/skill-marketplace"
+PROPOSE_URL = f"https://github.com/{REPO}/issues/new?template=new-skill.yml"
 
 
 def load_skills():
@@ -44,6 +50,41 @@ def load_skills():
 
 def escape_js(s):
     return s.replace("\\", "\\\\").replace("`", "\\`").replace("$", "\\$")
+
+
+def build_catalog(skills):
+    """Machine-readable manifest so other harnesses can always query the
+    latest state of all skills (no HTML parsing needed)."""
+    entries = []
+    for s in skills:
+        entries.append({
+            "id": s.get("id"),
+            "name": s.get("name"),
+            "description": s.get("description"),
+            "version": s.get("version"),
+            "status": s.get("status", "published"),
+            "category": s.get("category"),
+            "tags": s.get("tags", []),
+            "harnesses": s.get("harnesses", []),
+            "complexity": s.get("complexity"),
+            "owner": s.get("owner"),
+            "author": s.get("author"),
+            "last_reviewed": s.get("last_reviewed"),
+            "deprecated_by": s.get("deprecated_by"),
+            "sunset_date": s.get("sunset_date"),
+            "emoji": s.get("emoji"),
+            "download_url": f"{RAW_BASE}/{s['folder']}/skill.md",
+            "metadata_url": f"{RAW_BASE}/{s['folder']}/metadata.json",
+        })
+    return {
+        "$schema_note": "Catalog manifest of the Skill Marketplace. One entry per non-archived skill.",
+        "catalog_version": 1,
+        "site": SITE_URL,
+        "repository": f"https://github.com/{REPO}",
+        "skill_schema": f"{SITE_URL}/schema/skill.schema.json",
+        "count": len(entries),
+        "skills": entries,
+    }
 
 
 def build_html(skills):
@@ -406,6 +447,12 @@ def build_html(skills):
     transition: opacity .2s;
   }}
   .cta-btn:hover {{ opacity: 0.9; }}
+  .cta-btn-ghost {{
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.4);
+    color: #fff;
+  }}
+  .cta-btn-ghost:hover {{ border-color: #fff; opacity: 1; }}
 
   /* ── FOOTER ───────────────────────────────────────── */
   footer {{
@@ -440,6 +487,7 @@ def build_html(skills):
     <nav>
       <a href="#skills">Browse</a>
       <a href="#contribute">Contribute</a>
+      <a href="{PROPOSE_URL}" target="_blank">💡 Skill vorschlagen</a>
       <a href="https://github.com/acc-sebastian/skill-marketplace" target="_blank">GitHub ↗</a>
     </nav>
   </div>
@@ -490,9 +538,15 @@ def build_html(skills):
       <div class="c-step"><div class="c-step-num">3</div><p>Open a pull request</p></div>
       <div class="c-step"><div class="c-step-num">4</div><p>It's live! 🚀</p></div>
     </div>
-    <a class="cta-btn" href="https://github.com/acc-sebastian/skill-marketplace/blob/main/CONTRIBUTING.md" target="_blank">
-      📖 Read the Contributor Guide
-    </a>
+    <p style="font-size:0.9rem;opacity:0.7;margin-bottom:1rem">Kein Git? Kein Problem — über das Formular geht's ganz ohne.</p>
+    <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap">
+      <a class="cta-btn" href="{PROPOSE_URL}" target="_blank">
+        💡 Neue Skill vorschlagen
+      </a>
+      <a class="cta-btn cta-btn-ghost" href="https://github.com/acc-sebastian/skill-marketplace/blob/main/CONTRIBUTING.md" target="_blank">
+        📖 Contributor Guide (per PR)
+      </a>
+    </div>
   </div>
 </section>
 
@@ -758,14 +812,38 @@ def main():
     DOCS_DIR.mkdir(exist_ok=True)
     print("Loading skills...")
     skills = load_skills()
-    print(f"\nBuilding site with {len(skills)} skills...")
-    html = build_html(skills)
+
+    # Archived skills stay in the repo for provenance but leave site + catalog
+    visible = [s for s in skills if s.get("status") != "archived"]
+    hidden = len(skills) - len(visible)
+    if hidden:
+        print(f"  ({hidden} archived skill(s) excluded)")
+
+    print(f"\nBuilding site with {len(visible)} skills...")
+    html = build_html(visible)
     out = DOCS_DIR / "index.html"
     with open(out, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"Done! -> {out}")
     size_kb = out.stat().st_size / 1024
     print(f"Site size: {size_kb:.1f} KB")
+
+    catalog = build_catalog(visible)
+    cat_out = DOCS_DIR / "catalog.json"
+    with open(cat_out, "w", encoding="utf-8") as f:
+        json.dump(catalog, f, ensure_ascii=False, indent=2)
+        f.write("\n")
+    print(f"Catalog -> {cat_out} ({catalog['count']} skills)")
+
+    # Publish the skill schema alongside the site so catalog consumers can validate
+    schema_src = ROOT / "schema" / "skill.schema.json"
+    if schema_src.exists():
+        schema_dir = DOCS_DIR / "schema"
+        schema_dir.mkdir(exist_ok=True)
+        (schema_dir / "skill.schema.json").write_text(
+            schema_src.read_text(encoding="utf-8"), encoding="utf-8"
+        )
+        print(f"Schema  -> {schema_dir / 'skill.schema.json'}")
 
 
 if __name__ == "__main__":

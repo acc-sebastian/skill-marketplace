@@ -3,11 +3,24 @@
   "name": "KPI Anomaly Check",
   "description": "Validate incoming KPI data against defined thresholds and produce a RAG (Red/Amber/Green) status report with anomaly explanations and recommended actions.",
   "author": "accilium",
+  "owner": "acc-sebastian",
   "version": "1.0.0",
   "created": "2026-06-30",
+  "last_reviewed": "2026-07-03",
+  "status": "published",
   "category": "Analytics",
-  "tags": ["kpi", "analytics", "anomaly-detection", "reporting", "rag"],
-  "harnesses": ["claude-code", "copilot-studio", "generic"],
+  "tags": [
+    "kpi",
+    "analytics",
+    "anomaly-detection",
+    "reporting",
+    "rag"
+  ],
+  "harnesses": [
+    "claude-code",
+    "copilot-studio",
+    "generic"
+  ],
   "complexity": "intermediate",
   "trigger_phrases": [
     "check KPIs",
@@ -17,5 +30,13 @@
     "KPI health check",
     "which KPIs are off"
   ],
-  "emoji": "📊"
+  "emoji": "📊",
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-06-30",
+      "change": "Initial release"
+    }
+  ],
+  "example_input": "Revenue EUR 4.2M (target 5.0M, threshold -10%), churn 3.1% (threshold 2.5%), NPS 42 (threshold 40), on-time delivery 87% (threshold 95%). Check these KPIs."
 }

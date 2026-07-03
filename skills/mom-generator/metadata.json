@@ -3,11 +3,23 @@
   "name": "MOM Generator",
   "description": "Transform raw meeting notes, transcripts, or bullet points into a professional Minutes of Meeting document with attendees, decisions, and action items.",
   "author": "accilium",
+  "owner": "acc-sebastian",
   "version": "1.0.0",
   "created": "2026-06-30",
+  "last_reviewed": "2026-07-03",
+  "status": "published",
   "category": "Productivity",
-  "tags": ["meetings", "documentation", "minutes", "productivity"],
-  "harnesses": ["claude-code", "copilot-studio", "generic"],
+  "tags": [
+    "meetings",
+    "documentation",
+    "minutes",
+    "productivity"
+  ],
+  "harnesses": [
+    "claude-code",
+    "copilot-studio",
+    "generic"
+  ],
   "complexity": "beginner",
   "trigger_phrases": [
     "generate MOM",
@@ -16,5 +28,13 @@
     "summarize this meeting",
     "turn these notes into minutes"
   ],
-  "emoji": "📋"
+  "emoji": "📋",
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-06-30",
+      "change": "Initial release"
+    }
+  ],
+  "example_input": "Meeting 2026-07-01, attendees: SK, NM, TW. Discussed Q3 budget overrun of 40k, agreed to freeze travel spend. NM to present revised forecast by July 10. TW raised hiring pause concern - parked for next meeting."
 }
