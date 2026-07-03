@@ -1,0 +1,29 @@
+name: Validate Skills
+
+# Quality gate (Roadmap Phase 2): every PR must pass schema + structural
+# validation before it can be merged. Also runs on main so the badge and
+# required-check context stay fresh.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install jsonschema
+
+      - name: Validate all skills (schema, naming, uniqueness, links, skill.md lint)
+        run: python scripts/validate_skills.py
+
+      - name: Build smoke test (site + catalog must build cleanly)
+        run: python scripts/build_site.py

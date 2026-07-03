@@ -89,6 +89,19 @@ def main():
             if len(content.strip()) < 200:
                 errors.append(f"{label}: skill.md suspiciously short (<200 chars)")
 
+            # Broken-link check: relative markdown links must resolve on disk;
+            # URLs must be well-formed http(s). (No network calls — CI-stable.)
+            for text, target in re.findall(r"\[([^\]]*)\]\(([^)\s]+)\)", content):
+                if target.startswith(("#", "mailto:")):
+                    continue
+                if target.startswith(("http://", "https://")):
+                    if not re.match(r"^https?://[\w.-]+(:\d+)?(/\S*)?$", target):
+                        errors.append(f"{label}: malformed URL in skill.md: {target}")
+                else:
+                    rel = (d / target).resolve()
+                    if not rel.exists():
+                        errors.append(f"{label}: broken relative link in skill.md: {target}")
+
     n = len(skill_dirs)
     if errors:
         print(f"FAIL — {len(errors)} problem(s) across {n} skill(s):\n")
