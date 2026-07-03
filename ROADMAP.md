@@ -87,15 +87,17 @@ Alle bestehenden Skills validieren gegen `schema/skill.schema.json`; ein Busines
 **vor** dem Merge — Stufe „VALIDATE" und „REVIEW" aus dem Pipeline-Konzept.
 
 ### Deliverables
-- [ ] **CI-Validierungs-Workflow** `.github/workflows/validate.yml` (Trigger: Pull Request), der ausführt:
-  - [ ] **Schema-Validierung** jeder `metadata.json` gegen `schema/skill.schema.json` (Python `jsonschema`).
-  - [ ] **`skill.md`-Lint**: Frontmatter vorhanden? Beschreibung im erlaubten Längenbereich? Pflichtabschnitte da?
-  - [ ] **Naming-Konvention**: Ordnername = `id`, kebab-case, keine Sonderzeichen.
-  - [ ] **Eindeutigkeits-Check**: keine doppelten `id`s im gesamten Repo.
-  - [ ] **Broken-Link-Check** in `skill.md` und Metadaten (`deprecated_by` zeigt auf existierende Skill-ID).
+- [x] **CI-Validierungs-Workflow** `.github/workflows/validate.yml` (Trigger: Pull Request + Push auf `main`), der ausführt:
+  - [x] **Schema-Validierung** jeder `metadata.json` gegen `schema/skill.schema.json` (Python `jsonschema`).
+  - [x] **`skill.md`-Lint**: Frontmatter vorhanden? Mindestlänge? (Beschreibungslänge via Schema erzwungen.)
+  - [x] **Naming-Konvention**: Ordnername = `id`, kebab-case, keine Sonderzeichen.
+  - [x] **Eindeutigkeits-Check**: keine doppelten `id`s im gesamten Repo.
+  - [x] **Broken-Link-Check** in `skill.md` und Metadaten (`deprecated_by` zeigt auf existierende Skill-ID; relative Links müssen auflösen).
+  - [x] **Build-Smoke-Test**: Website + `catalog.json` müssen fehlerfrei bauen.
 - [x] **`scripts/validate_skills.py`** — wiederverwendbares Validierungsskript (lokal + in CI ausführbar). *(in Phase 1 vorgezogen)*
-- [ ] **Branch Protection** auf `main`: Merge nur bei (a) grüner Validierung und (b) mind. 1 Review durch CODEOWNER.
-- [ ] **Status-Checks** als „Required" markiert.
+- [x] **Branch Protection** auf `main`: Merge nur bei (a) grüner Validierung und (b) mind. 1 Review durch CODEOWNER. (`enforce_admins=false`: der Repo-Admin kann als Solo-Maintainer weiterhin direkt pushen; alle anderen müssen durch den Gate.)
+- [x] **Status-Checks** als „Required" markiert (`validate`, strict mode).
+- [x] **E2E-verifiziert**: PR #1 mit absichtlich kaputter `metadata.json` → Check rot nach 15 s, `mergeable_state: blocked`.
 
 ### GitHub-Umsetzung
 GitHub Actions (`validate.yml`) + Branch-Protection-Rules in den Repo-Settings. `validate_skills.py` nutzt `jsonschema`.
