@@ -6,12 +6,20 @@ name: Scaffold Skill from Issue
 # Business users never touch Git.
 on:
   issues:
-    types: [opened, labeled]
+    # Issue forms apply their labels atomically at creation, so the label is
+    # already present on "opened" — firing only here avoids a duplicate run
+    # from the accompanying "labeled" event.
+    types: [opened]
 
 permissions:
   contents: write
   issues: write
   pull-requests: write
+
+# One run per issue; never race two scaffolds on the same branch.
+concurrency:
+  group: scaffold-issue-${{ github.event.issue.number }}
+  cancel-in-progress: false
 
 jobs:
   scaffold:
