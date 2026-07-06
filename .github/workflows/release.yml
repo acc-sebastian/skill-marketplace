@@ -1,0 +1,24 @@
+name: Release Skills
+
+# Distribution (Roadmap Phase 3): publish a versioned GitHub Release per skill
+# (tag = <id>@<version>) with skill.md + metadata.json as downloadable assets.
+# Idempotent — only new versions get a release.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "skills/**"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish new skill versions as GitHub Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/release_skills.py

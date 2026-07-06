@@ -188,6 +188,19 @@
   .badge-complexity-beginner { background: #eef1f0; color: var(--petrol); }
   .badge-complexity-intermediate { background: #f5efdd; color: #8a6d1f; }
   .badge-complexity-advanced { background: #fbeae8; color: var(--brand-accent); }
+  .badge-status-draft { background: #f5efdd; color: #8a6d1f; border: 1px solid #e6d9b5; }
+  .badge-status-in-review { background: #eaf0f6; color: var(--mid-blue); border: 1px solid #d3dfea; }
+  .badge-status-deprecated { background: #fbeae8; color: var(--brand-accent); border: 1px solid #f2cdc8; }
+  .badge-status-published { background: #ecf3ec; color: #2e7d32; border: 1px solid #cfe4d0; }
+  .skill-card.is-deprecated { opacity: 0.72; }
+  .skill-card.is-deprecated:hover { opacity: 1; }
+  .deprecation-banner {
+    background: #fbeae8; border: 1px solid #f2cdc8; color: #7a1f16;
+    border-radius: var(--radius); padding: 0.85rem 1rem; margin-bottom: 1.25rem;
+    font-size: 0.88rem; line-height: 1.5;
+  }
+  .deprecation-banner strong { color: var(--brand-accent); }
+  .deprecation-banner a { color: var(--brand-accent); font-weight: 600; }
   .card-install-hint {
     font-size: 0.8rem; color: var(--brand-accent); font-weight: 600;
     margin-top: 0.25rem;
@@ -467,6 +480,7 @@
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">
+      <div id="modal-deprecation"></div>
       <div class="modal-tags" id="modal-tags"></div>
       <p class="modal-desc" id="modal-desc"></p>
 
@@ -794,7 +808,8 @@ function renderCards() {
 
   filtered.forEach(skill => {
     const card = document.createElement('div');
-    card.className = 'skill-card';
+    const status = skill.status || 'published';
+    card.className = 'skill-card' + (status === 'deprecated' ? ' is-deprecated' : '');
     card.onclick = () => openModal(skill);
 
     const harnessBadges = (skill.harnesses || []).slice(0,2).map(h => {
@@ -804,6 +819,8 @@ function renderCards() {
 
     const complexityClass = `badge-complexity-${skill.complexity || 'beginner'}`;
     const complexityLabel = (skill.complexity || 'beginner').charAt(0).toUpperCase() + (skill.complexity||'beginner').slice(1);
+
+    const statusBadge = statusBadgeHtml(status);
 
     card.innerHTML = `
       <div class="card-header">
@@ -817,12 +834,19 @@ function renderCards() {
       <div class="card-footer">
         <span class="badge badge-cat">${skill.category || 'Other'}</span>
         <span class="badge ${complexityClass}">${complexityLabel}</span>
-        ${harnessBadges}
+        ${statusBadge}${harnessBadges}
       </div>
       <div class="card-install-hint">Click to install →</div>
     `;
     grid.appendChild(card);
   });
+}
+
+// Status badge is shown for every status except plain "published"
+function statusBadgeHtml(status) {
+  if (!status || status === 'published') return '';
+  const labels = {'draft':'Draft','in-review':'In Review','deprecated':'Deprecated'};
+  return `<span class="badge badge-status-${status}">${labels[status] || status}</span>`;
 }
 
 function openModal(skill) {
@@ -832,6 +856,19 @@ function openModal(skill) {
   document.getElementById('modal-subtitle').textContent = `${skill.category} · v${skill.version} · by ${skill.author}`;
   document.getElementById('modal-desc').textContent = skill.description || '';
   document.getElementById('modal-skill-content').textContent = skill.skill_content || '(No skill.md content found)';
+
+  // Deprecation banner
+  const depEl = document.getElementById('modal-deprecation');
+  if ((skill.status || 'published') === 'deprecated') {
+    const successor = SKILLS.find(s => s.id === skill.deprecated_by);
+    const successorLink = successor
+      ? `<a href="#" onclick="event.preventDefault(); openModal(SKILLS.find(s => s.id==='${successor.id}'))">${successor.name}</a>`
+      : (skill.deprecated_by || 'a newer skill');
+    const sunset = skill.sunset_date ? ` It will be removed on <strong>${skill.sunset_date}</strong>.` : '';
+    depEl.innerHTML = `<div class="deprecation-banner">⚠️ <strong>Deprecated.</strong> This skill is superseded by ${successorLink}.${sunset} Please migrate.</div>`;
+  } else {
+    depEl.innerHTML = '';
+  }
 
   const tags = document.getElementById('modal-tags');
   tags.innerHTML = '';

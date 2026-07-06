@@ -114,14 +114,14 @@ Stufen „BUILD" und „DEPLOY" plus Distribution.
 
 ### Deliverables
 - [x] **Katalog-Manifest** `docs/catalog.json` — beim Build generiert; maschinenlesbarer Index aller Skills (Name, Version, Kategorie, Status, Download-URL). Grundlage für programmatischen Zugriff. *(in Phase 1 vorgezogen)*
-- [ ] **Status-Badges auf der Website** — jeder Skill zeigt `draft`/`published`/`deprecated`-Badge (aus `status`).
-- [ ] **Deprecation-Handling auf der Website:**
-  - [ ] Banner bei `deprecated` inkl. `sunset_date` und Hinweis „ersetzt durch → `deprecated_by`".
+- [x] **Status-Badges auf der Website** — jeder Skill zeigt `draft`/`in-review`/`deprecated`-Badge (aus `status`; `published` bleibt badge-frei).
+- [x] **Deprecation-Handling auf der Website:**
+  - [x] Banner bei `deprecated` inkl. `sunset_date` und klickbarem „ersetzt durch → `deprecated_by`"-Link (deprecatete Karten sind zusätzlich abgedimmt).
   - [x] `archived`-Skills werden aus dem Katalog **ausgeblendet** (bleiben im Repo für Provenienz). *(in Phase 1 vorgezogen)*
-- [ ] **Automatisierte Versionierung**: bei Merge/Release Git-Tag setzen (SemVer) + **GitHub Release** anlegen; alte Versionen bleiben über Releases abrufbar.
-- [ ] **Distribution als Paket**: `skill.md`+`metadata.json` je Skill als Release-Asset (bzw. GitHub Packages) — versionierter, referenzierbarer Download.
-- [ ] **CLI `skill install <name>`** (`scripts/skill_cli.py`) — liest `catalog.json` über die Raw-GitHub-URL, lädt den Skill herunter und legt ihn am richtigen Ort ab (`.claude/skills/`, etc.).
-- [ ] **Issue-→-PR-Automatisierung** — Action, die aus einem ausgefüllten „Neue Skill"-Issue automatisch die Ordnerstruktur scaffold’t und einen PR öffnet (Business-User sehen nie Git).
+- [x] **Automatisierte Versionierung**: `release.yml` legt bei Push auf `main` (Skill-Änderung) je Skill Tag `id@version` + **GitHub Release** an; alte Versionen bleiben über Releases abrufbar. Idempotent.
+- [x] **Distribution als Paket**: `skill.md`+`metadata.json` je Skill als Release-Asset — versionierter, referenzierbarer Download.
+- [x] **CLI `skill install <name>`** (`scripts/skill_cli.py`) — liest `catalog.json`, lädt den Skill herunter, legt ihn harness-korrekt ab (`.claude/skills/` etc.). Unterbefehle: `list`, `search`, `info`, `install`. Nur Standardbibliothek.
+- [x] **Issue-→-PR-Automatisierung** — `scaffold-skill.yml` erzeugt aus einem ausgefüllten „Neue Skill"-Issue die Ordnerstruktur, pusht einen Branch und öffnet einen PR (schließt das Issue). Business-User sehen nie Git.
 
 ### GitHub-Umsetzung
 Erweiterung von `build_site.py` (catalog.json, Badges, Deprecation-Banner, Archiv-Filter); neue Actions für Tagging/Release und Issue→PR; `skill_cli.py` als eigenständiges Skript.

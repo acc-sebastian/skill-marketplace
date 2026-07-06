@@ -23,13 +23,26 @@ A skill is a structured prompt file that turns your AI assistant into a speciali
 
 ## How to Install a Skill
 
-### Claude Code
+### CLI (recommended)
+The `skill` CLI reads the live [catalog](https://acc-sebastian.github.io/skill-marketplace/catalog.json),
+so it always sees the latest published skills. No dependencies beyond the Python standard library.
+```bash
+python scripts/skill_cli.py list
+python scripts/skill_cli.py search kpi
+python scripts/skill_cli.py install mom-generator                 # -> .claude/skills/
+python scripts/skill_cli.py install mom-generator --harness generic --dest ./skills
+```
+
+### Claude Code (manual)
 Copy the `skill.md` file into your `.claude/skills/` directory:
 ```bash
 cp skills/mom-generator/skill.md ~/.claude/skills/
 # or into your project
 cp skills/mom-generator/skill.md .claude/skills/
 ```
+
+You can also download a versioned package (`skill.md` + `metadata.json`) from the
+[Releases](https://github.com/acc-sebastian/skill-marketplace/releases) page (tag `id@version`).
 
 ### Copilot Studio
 1. Open the `skill.md` file for the skill you want

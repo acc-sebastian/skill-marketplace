@@ -1,0 +1,67 @@
+name: Scaffold Skill from Issue
+
+# Low-barrier contribution (Roadmap Phase 3 / Phase 1 web-form flow):
+# when someone submits the "Neue Skill vorschlagen" issue form, turn it into a
+# scaffolded skill folder and open a pull request that closes the issue.
+# Business users never touch Git.
+on:
+  issues:
+    types: [opened, labeled]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  scaffold:
+    # Only for new-skill submissions
+    if: contains(join(github.event.issue.labels.*.name, ','), 'new-skill')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Scaffold skill files from the issue form
+        id: scaffold
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+        run: python scripts/scaffold_from_issue.py
+
+      - name: Commit on a new branch and open a PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          SLUG: ${{ steps.scaffold.outputs.slug }}
+          SKILL_NAME: ${{ steps.scaffold.outputs.name }}
+          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+        run: |
+          set -e
+          BRANCH="skill/${SLUG}-issue-${ISSUE_NUMBER}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add "skills/${SLUG}"
+          git commit -m "feat(skill): scaffold ${SLUG} from issue #${ISSUE_NUMBER}"
+          git push -u origin "$BRANCH"
+          PR_BODY="Auto-scaffolded from #${ISSUE_NUMBER} (proposed by @${ISSUE_AUTHOR}).
+
+          This skill is in **draft** status. A maintainer should refine the TODO
+          sections in \`skill.md\`, then flip \`status\` to \`published\`.
+
+          Closes #${ISSUE_NUMBER}"
+          if ! gh pr create --base main --head "$BRANCH" \
+              --title "New skill: ${SKILL_NAME} (from #${ISSUE_NUMBER})" \
+              --body "$PR_BODY"; then
+            echo "PR creation failed — commenting on the issue with the branch link."
+            gh issue comment "${ISSUE_NUMBER}" --body "A branch \`${BRANCH}\` was created but automatic PR creation is disabled. A maintainer can open the PR manually: https://github.com/${GITHUB_REPOSITORY}/pull/new/${BRANCH}"
+          else
+            gh issue comment "${ISSUE_NUMBER}" --body "✅ Thanks! Your proposal was scaffolded into a pull request for review."
+          fi
