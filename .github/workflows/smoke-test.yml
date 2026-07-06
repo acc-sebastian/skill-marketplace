@@ -1,0 +1,29 @@
+name: Skill Smoke Test
+
+# LLM smoke-test / model-drift check (Roadmap Phase 4). Runs each published
+# skill against the current Claude model with its example_input and checks the
+# output is usable. Scheduled = drift detection; on-demand via dispatch.
+# Requires the ANTHROPIC_API_KEY repo secret — skips cleanly if it's absent.
+on:
+  schedule:
+    - cron: "30 6 1 * *"   # 1st of each month, 06:30 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install anthropic
+      - name: Run skill smoke-test
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SMOKE_MODEL: claude-opus-4-8
+        run: python scripts/smoke_test.py

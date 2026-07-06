@@ -25,5 +25,8 @@ jobs:
       - name: Validate all skills (schema, naming, uniqueness, links, SKILL.md lint)
         run: python scripts/validate_skills.py
 
+      - name: Scan for secrets & sensitive data (secrets fail; PII/injection warn)
+        run: python scripts/scan_skills.py
+
       - name: Build smoke test (site + catalog must build cleanly)
         run: python scripts/build_site.py

@@ -1,0 +1,44 @@
+name: Auto-Archive Deprecated Skills
+
+# Retirement automation (Roadmap Phase 4): weekly, move deprecated skills past
+# their sunset_date into archived/ and open a PR. Archived skills are already
+# excluded from the site and catalog by build_site.py.
+on:
+  schedule:
+    - cron: "0 7 * * 1"   # Mondays 07:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Archive skills past sunset date
+        id: arch
+        run: python scripts/auto_archive.py
+
+      - name: Open PR if anything was archived
+        if: steps.arch.outputs.archived != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARCHIVED: ${{ steps.arch.outputs.archived }}
+        run: |
+          set -e
+          BRANCH="auto-archive-$(git rev-parse --short HEAD)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add -A
+          git commit -m "chore: auto-archive skills past sunset date ($ARCHIVED)"
+          git push -u origin "$BRANCH"
+          gh pr create --base main --head "$BRANCH" \
+            --title "Auto-archive: $ARCHIVED" \
+            --body "Deprecated skills past their sunset_date, moved to \`archived/\` and marked \`status: archived\`. They are already excluded from the site and catalog."

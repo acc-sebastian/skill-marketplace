@@ -465,7 +465,16 @@
   .modal-close:hover { background: rgba(255,255,255,0.3); }
   .modal-body { flex: 1; overflow-y: auto; padding: 1.5rem; }
   .modal-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
-  .modal-desc { color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem; }
+  .modal-desc { color: var(--text-muted); margin-bottom: 1.25rem; font-size: 0.95rem; }
+  .modal-feedback {
+    display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap;
+    font-size: 0.85rem; color: var(--text-muted);
+    margin-bottom: 1.25rem; padding-bottom: 1.1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-feedback a { color: var(--brand-accent); text-decoration: none; font-weight: 600; }
+  .modal-feedback a:hover { text-decoration: underline; }
+  .modal-feedback .fb-spacer { flex: 1; }
 
   /* Install tabs */
   .tabs { border-bottom: 2px solid var(--border); display: flex; gap: 0; margin-bottom: 1.25rem; }
@@ -733,6 +742,13 @@
       <div id="modal-deprecation"></div>
       <div class="modal-tags" id="modal-tags"></div>
       <p class="modal-desc" id="modal-desc"></p>
+      <div class="modal-feedback">
+        <span>Was this skill helpful?</span>
+        <a id="fb-yes" target="_blank" rel="noopener">👍 Yes</a>
+        <a id="fb-no" target="_blank" rel="noopener">👎 No</a>
+        <span class="fb-spacer"></span>
+        <a id="fb-bug" target="_blank" rel="noopener">🐞 Report a problem</a>
+      </div>
 
       <div class="tabs">
         <button class="tab-btn active" onclick="switchTab(event,'claude-code')">Claude Code</button>
@@ -1138,6 +1154,25 @@ function openModal(skill) {
   document.getElementById('modal-subtitle').textContent = `${skill.category} · v${skill.version} · by ${skill.author}`;
   document.getElementById('modal-desc').textContent = skill.description || '';
   document.getElementById('modal-skill-content').textContent = skill.skill_content || '(No SKILL.md content found)';
+
+  // Feedback links -> pre-filled GitHub issues (no backend needed)
+  const _newIssue = 'https://github.com/acc-sebastian/skill-marketplace/issues/new';
+  const _iurl = (title, body, label) =>
+    `${_newIssue}?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}&labels=${encodeURIComponent(label)}`;
+  const _sid = skill.id;
+  document.getElementById('fb-yes').href = _iurl(`[Feedback] ${_sid}: helpful`, `Skill: ${_sid}
+Helpful: yes
+
+What worked well?`, 'feedback');
+  document.getElementById('fb-no').href = _iurl(`[Feedback] ${_sid}: not helpful`, `Skill: ${_sid}
+Helpful: no
+
+What was missing or wrong?`, 'feedback');
+  document.getElementById('fb-bug').href = _iurl(`[Bug] ${_sid}`, `Skill: ${_sid}
+Version: ${skill.version}
+
+Describe the problem:
+`, 'bug');
 
   // Deprecation banner
   const depEl = document.getElementById('modal-deprecation');

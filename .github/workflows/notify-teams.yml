@@ -1,0 +1,35 @@
+name: Notify Teams
+
+# NOTIFY stage (Roadmap Phase 4): post a Teams message when skills change on
+# main. Skips cleanly if the TEAMS_WEBHOOK_URL secret is not configured.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "skills/**"
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Determine changed skills and notify
+        env:
+          TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+        run: |
+          set -e
+          CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'skills/**' \
+            | sed -n 's#^skills/\([^/]*\)/.*#\1#p' | sort -u)
+          if [ -z "$CHANGED" ]; then
+            echo "No skill directories changed."; exit 0
+          fi
+          echo "Changed skills:"; echo "$CHANGED"
+          python scripts/notify_teams.py $CHANGED

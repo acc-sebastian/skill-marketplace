@@ -1,0 +1,30 @@
+name: Stale Skill Check
+
+# Lifecycle health (Roadmap Phase 4): weekly scan for skills whose last_reviewed
+# is older than the review window; opens a "Review fällig" issue for the owner.
+on:
+  schedule:
+    - cron: "0 6 * * 1"   # Mondays 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      stale_months:
+        description: "Review window in months"
+        default: "6"
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Flag stale skills
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STALE_MONTHS: ${{ github.event.inputs.stale_months || '6' }}
+        run: python scripts/check_stale.py

@@ -143,18 +143,18 @@ Erweiterung von `build_site.py` (catalog.json, Badges, Deprecation-Banner, Archi
 Feedback-Schleife — Stufen „QUALITY" und „NOTIFY" plus Health-Management.
 
 ### Deliverables
-- [ ] **Stale-Detection** — geplanter Workflow (`schedule`/Cron), der Skills mit `last_reviewed` älter als *X* Monate erkennt und automatisch ein **„Review fällig"-Issue** an den `owner` erstellt.
-- [ ] **Model-Drift-Revalidierung** — geplanter Workflow, der Skills periodisch gegen die **aktuelle Modell-Version** testet (Prompts veralten nicht nur inhaltlich, sondern durch Modellwechsel).
-- [ ] **Smoke-Test in CI** — nutzt `example_input`: schickt den Skill an ein LLM (Anthropic API via Secret) und prüft die **Output-Form**.
-- [ ] **Prompt-Injection- & PII-Scan** — CI-Check auf verdächtige Muster/sensible Daten in `SKILL.md`.
-- [ ] **Feedback-Schleife auf der Website:**
-  - [ ] **„War das hilfreich?"**-Bewertung pro Skill (GitHub-nativ: öffnet ein vorausgefülltes Issue bzw. nutzt GitHub-Discussions-Reaktionen als Zähler).
-  - [ ] **„Problem melden"-Link** pro Skill (vorausgefülltes Bug-Issue mit Skill-ID).
-- [ ] **Benachrichtigungen (NOTIFY)** — Action postet bei neuem/aktualisiertem Skill in einen **Teams-Webhook** (und/oder E-Mail).
-- [ ] **Auto-Archivierung** — geplanter Workflow, der `deprecated`-Skills nach Erreichen des `sunset_date` automatisch nach `archived/` verschiebt (per PR).
+- [x] **Stale-Detection** — `stale-check.yml` (wöchentlicher Cron + dispatch) via `scripts/check_stale.py`: Skills mit `last_reviewed` älter als `STALE_MONTHS` (default 6) → idempotentes **„Review fällig"-Issue** an den `owner`.
+- [x] **Model-Drift-Revalidierung** — `smoke-test.yml` läuft monatlich und testet jeden Skill gegen die aktuelle Modell-Version (dasselbe Skript wie der Smoke-Test).
+- [x] **Smoke-Test** — `scripts/smoke_test.py` nutzt `example_input`, schickt den Skill an Claude (`claude-opus-4-8`) und prüft Output/Refusal. Braucht `ANTHROPIC_API_KEY`-Secret; **ohne Secret sauberer Skip** (blockiert keine Contributors).
+- [x] **Prompt-Injection- & PII-Scan** — `scripts/scan_skills.py`, als Step in `validate.yml`: harte Secrets (Private Keys, Cloud-Keys, Tokens) → **Fail**; PII/Injection-Muster → **Warnung**.
+- [x] **Feedback-Schleife auf der Website:**
+  - [x] **„War das hilfreich?"** (👍/👎) pro Skill — öffnet ein vorausgefülltes GitHub-Issue (`feedback`-Label), kein Backend nötig.
+  - [x] **„Problem melden"**-Link pro Skill — vorausgefülltes `bug`-Issue mit Skill-ID + Version.
+- [x] **Benachrichtigungen (NOTIFY)** — `notify-teams.yml` + `scripts/notify_teams.py` posten bei Skill-Änderung auf `main` einen Teams-MessageCard; **ohne `TEAMS_WEBHOOK_URL`-Secret sauberer Skip**.
+- [x] **Auto-Archivierung** — `auto-archive.yml` + `scripts/auto_archive.py` verschieben `deprecated`-Skills nach `sunset_date` nach `archived/` (Status → `archived`) und öffnen einen PR.
 
 ### GitHub-Umsetzung
-Mehrere `schedule`-Workflows (Cron); LLM-Aufrufe über in Repo-Secrets hinterlegten API-Key; Teams über Incoming Webhook; Feedback über GitHub Issues/Discussions (kein externer Server nötig).
+Mehrere `schedule`-Workflows (Cron); LLM-Aufruf über `ANTHROPIC_API_KEY`-Secret (Smoke-Test skippt ohne); Teams über Incoming Webhook (`TEAMS_WEBHOOK_URL`, skippt ohne); Feedback über vorausgefüllte GitHub-Issues (kein externer Server). Alle Skripte haben `--dry-run`-Modus und wurden lokal getestet.
 
 ### Exit-Kriterium
 Ein überfälliger Skill erzeugt automatisch ein Review-Issue; ein neuer Skill löst eine Teams-Benachrichtigung aus; Nutzer können pro Skill Feedback geben; abgelaufene Deprecations werden automatisch archiviert.
