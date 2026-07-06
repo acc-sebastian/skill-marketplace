@@ -13,7 +13,7 @@ You never touch Git.
 
 1. **Fork** this repo
 2. **Create** a folder: `skills/<your-skill-name>/` (use kebab-case, e.g. `budget-variance-report`)
-3. **Add two files**: `metadata.json` and `skill.md`
+3. **Add two files**: `metadata.json` and `SKILL.md`
 4. **Validate locally**: `python scripts/validate_skills.py`
 5. **Submit a pull request** — the PR template walks you through the checklist
 
@@ -111,7 +111,7 @@ CI validates every PR against it (Roadmap Phase 2).
 - `Compliance` — Audit, policy checks, risk assessment
 - `Communication` — Emails, reports, stakeholder updates
 
-### `skill.md`
+### `SKILL.md`
 
 ```markdown
 ---
@@ -158,8 +158,8 @@ Before submitting a PR, confirm:
 - [ ] `python scripts/validate_skills.py` passes (schema + structural checks)
 - [ ] Folder name matches `metadata.json` `id` field
 - [ ] `owner` is set and added to `.github/CODEOWNERS`
-- [ ] `skill.md` has valid YAML frontmatter
-- [ ] `skill.md` body includes Role, Trigger, Input, Process, Output, and Rules sections
+- [ ] `SKILL.md` has valid YAML frontmatter
+- [ ] `SKILL.md` body includes Role, Trigger, Input, Process, Output, and Rules sections
 - [ ] Skill was manually tested in at least one harness
 - [ ] No sensitive data or PII in files
 

@@ -75,7 +75,7 @@ body:
       label: Anweisungen / Prompt-Inhalt
       description: |
         Der eigentliche Inhalt der Skill — was soll die KI Schritt für Schritt tun?
-        Stichpunkte reichen; ein Maintainer formt daraus die finale skill.md.
+        Stichpunkte reichen; ein Maintainer formt daraus die finale SKILL.md.
       placeholder: |
         1. Frage nach Bedarfsbeschreibung und Budget
         2. Erzeuge RFQ-Dokument mit Abschnitten X, Y, Z

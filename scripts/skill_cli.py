@@ -118,7 +118,7 @@ def cmd_install(catalog, args):
 
     skill_md = fetch_text(s["download_url"])
     metadata = fetch_text(s["metadata_url"])
-    (target_dir / "skill.md").write_text(skill_md, encoding="utf-8")
+    (target_dir / "SKILL.md").write_text(skill_md, encoding="utf-8")
     (target_dir / "metadata.json").write_text(metadata, encoding="utf-8")
 
     print(f"OK: installed '{s['id']}' v{s.get('version')} -> {target_dir}")

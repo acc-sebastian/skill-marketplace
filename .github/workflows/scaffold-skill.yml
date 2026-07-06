@@ -62,7 +62,7 @@ jobs:
           PR_BODY="Auto-scaffolded from #${ISSUE_NUMBER} (proposed by @${ISSUE_AUTHOR}).
 
           This skill is in **draft** status. A maintainer should refine the TODO
-          sections in \`skill.md\`, then flip \`status\` to \`published\`.
+          sections in \`SKILL.md\`, then flip \`status\` to \`published\`.
 
           Closes #${ISSUE_NUMBER}"
           if ! gh pr create --base main --head "$BRANCH" \

@@ -12,7 +12,7 @@
 - [ ] `owner` ist gesetzt und in `.github/CODEOWNERS` eingetragen
 - [ ] `status` ist korrekt (`draft` oder `in-review` für neue Skills)
 - [ ] `example_input` ist ein realistisches, testbares Beispiel
-- [ ] `skill.md` hat YAML-Frontmatter und folgt der Struktur aus CONTRIBUTING.md
+- [ ] `SKILL.md` hat YAML-Frontmatter und folgt der Struktur aus CONTRIBUTING.md
 - [ ] Keine vertraulichen oder personenbezogenen Daten im Inhalt
 
 ### Für Skill-Updates

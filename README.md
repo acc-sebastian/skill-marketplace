@@ -23,7 +23,17 @@ A skill is a structured prompt file that turns your AI assistant into a speciali
 
 ## How to Install a Skill
 
-### CLI (recommended)
+### Claude Code plugin (recommended — get *all* skills, auto-updated)
+Add the marketplace once and install the bundled `sbo-skills` plugin:
+```
+/plugin marketplace add acc-sebastian/skill-marketplace
+/plugin install sbo-skills@sbo-skill-marketplace
+```
+You now have every published skill, and new ones arrive automatically on update.
+**Organizations** can push this to all users automatically (zero user action) via
+managed settings — see the **[Distribution Setup Guide](docs/enterprise-setup.md)**.
+
+### CLI (single skills, any harness)
 The `skill` CLI reads the live [catalog](https://acc-sebastian.github.io/skill-marketplace/catalog.json),
 so it always sees the latest published skills. No dependencies beyond the Python standard library.
 ```bash
@@ -34,23 +44,23 @@ python scripts/skill_cli.py install mom-generator --harness generic --dest ./ski
 ```
 
 ### Claude Code (manual)
-Copy the `skill.md` file into your `.claude/skills/` directory:
+Copy the `SKILL.md` file into your `.claude/skills/` directory:
 ```bash
-cp skills/mom-generator/skill.md ~/.claude/skills/
+cp skills/mom-generator/SKILL.md ~/.claude/skills/
 # or into your project
-cp skills/mom-generator/skill.md .claude/skills/
+cp skills/mom-generator/SKILL.md .claude/skills/
 ```
 
-You can also download a versioned package (`skill.md` + `metadata.json`) from the
+You can also download a versioned package (`SKILL.md` + `metadata.json`) from the
 [Releases](https://github.com/acc-sebastian/skill-marketplace/releases) page (tag `id@version`).
 
 ### Copilot Studio
-1. Open the `skill.md` file for the skill you want
+1. Open the `SKILL.md` file for the skill you want
 2. Copy the content after the frontmatter (below the `---` separator)
 3. Paste it as a **System Prompt** in your Copilot Studio Topic, or as a **Generative AI plugin description**
 
 ### Any LLM / Chat Interface
-1. Open the `skill.md` file
+1. Open the `SKILL.md` file
 2. Copy the body (after the frontmatter) and paste it as a system prompt or first message
 3. The AI will follow the structured instructions
 
@@ -58,7 +68,7 @@ You can also download a versioned package (`skill.md` + `metadata.json`) from th
 
 1. Fork this repository
 2. Create a new directory under `skills/` with your skill's kebab-case name
-3. Add `metadata.json` and `skill.md` (copy an existing skill as template)
+3. Add `metadata.json` and `SKILL.md` (copy an existing skill as template)
 4. Submit a pull request
 5. Once merged, the skill automatically appears on the marketplace website within minutes
 
@@ -71,7 +81,7 @@ skill_marketplace/
 ├── skills/                  # Skill source files
 │   └── <skill-name>/
 │       ├── metadata.json    # Name, description, tags, category
-│       └── skill.md         # The actual skill instructions
+│       └── SKILL.md         # The actual skill instructions
 ├── scripts/
 │   └── build_site.py        # Generates docs/ from skills/
 ├── docs/                    # GitHub Pages output (auto-generated)

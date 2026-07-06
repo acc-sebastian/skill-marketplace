@@ -1,7 +1,7 @@
 name: Release Skills
 
 # Distribution (Roadmap Phase 3): publish a versioned GitHub Release per skill
-# (tag = <id>@<version>) with skill.md + metadata.json as downloadable assets.
+# (tag = <id>@<version>) with SKILL.md + metadata.json as downloadable assets.
 # Idempotent — only new versions get a release.
 on:
   push:

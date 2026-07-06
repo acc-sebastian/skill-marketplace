@@ -2,7 +2,7 @@
 """
 Build the Skill Marketplace static site + machine-readable catalog.
 
-Reads:  skills/*/metadata.json + skills/*/skill.md
+Reads:  skills/*/metadata.json + skills/*/SKILL.md
 Writes: docs/index.html   (website)
         docs/catalog.json (machine-readable manifest for other harnesses/CLIs)
 
@@ -31,7 +31,7 @@ def load_skills():
         if not skill_dir.is_dir():
             continue
         meta_file = skill_dir / "metadata.json"
-        skill_file = skill_dir / "skill.md"
+        skill_file = skill_dir / "SKILL.md"
         if not meta_file.exists():
             print(f"  SKIP {skill_dir.name} — no metadata.json")
             continue
@@ -73,7 +73,7 @@ def build_catalog(skills):
             "deprecated_by": s.get("deprecated_by"),
             "sunset_date": s.get("sunset_date"),
             "emoji": s.get("emoji"),
-            "download_url": f"{RAW_BASE}/{s['folder']}/skill.md",
+            "download_url": f"{RAW_BASE}/{s['folder']}/SKILL.md",
             "metadata_url": f"{RAW_BASE}/{s['folder']}/metadata.json",
         })
     return {
@@ -547,7 +547,7 @@ def build_html(skills):
     <p>Create a skill once — share it with the entire team. Once merged, it's live on this page within minutes.</p>
     <div class="contribute-steps">
       <div class="c-step"><div class="c-step-num">1</div><p>Fork the GitHub repo</p></div>
-      <div class="c-step"><div class="c-step-num">2</div><p>Add <code>metadata.json</code> + <code>skill.md</code></p></div>
+      <div class="c-step"><div class="c-step-num">2</div><p>Add <code>metadata.json</code> + <code>SKILL.md</code></p></div>
       <div class="c-step"><div class="c-step-num">3</div><p>Open a pull request</p></div>
       <div class="c-step"><div class="c-step-num">4</div><p>It's live! 🚀</p></div>
     </div>
@@ -587,29 +587,39 @@ def build_html(skills):
       </div>
 
       <div class="tab-panel active" id="tab-claude-code">
+        <div class="deprecation-banner" style="background:#eef3fb;border-color:#d3dfea;color:var(--mid-blue)">
+          ⭐ <strong>Recommended:</strong> install the whole marketplace as a plugin — you get <em>every</em> skill and stay auto-updated:
+          <div class="code-block" style="position:relative;margin-top:0.5rem">
+            <span>/plugin marketplace add acc-sebastian/skill-marketplace</span><br>
+            <span>/plugin install sbo-skills@sbo-skill-marketplace</span>
+            <button class="copy-btn" onclick="copyCode(this, '/plugin marketplace add acc-sebastian/skill-marketplace')">Copy</button>
+          </div>
+          Enterprises can push this to all users automatically — see the <a href="https://github.com/acc-sebastian/skill-marketplace/blob/main/docs/enterprise-setup.md" target="_blank">setup guide</a>.
+        </div>
+        <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.5rem">Or install just this one skill manually:</p>
         <ol class="install-steps">
-          <li>Download <code>skill.md</code> from the button below.</li>
-          <li>Copy the file into your Claude Code skills directory:<br>
+          <li>Download <code>SKILL.md</code> from the button below.</li>
+          <li>Place it in a skill folder in your Claude Code skills directory:<br>
             <div class="code-block" style="position:relative">
               <span># Project-level (recommended)</span><br>
-              <span>cp skill.md .claude/skills/</span><br><br>
+              <span>mkdir -p .claude/skills/SKILL_ID &amp;&amp; mv SKILL.md .claude/skills/SKILL_ID/</span><br><br>
               <span># Or global (applies to all projects)</span><br>
-              <span>cp skill.md ~/.claude/skills/</span>
-              <button class="copy-btn" onclick="copyCode(this, 'cp skill.md .claude/skills/')">Copy</button>
+              <span>mkdir -p ~/.claude/skills/SKILL_ID &amp;&amp; mv SKILL.md ~/.claude/skills/SKILL_ID/</span>
+              <button class="copy-btn" onclick="copyCode(this, 'mkdir -p .claude/skills/SKILL_ID &amp;&amp; mv SKILL.md .claude/skills/SKILL_ID/')">Copy</button>
             </div>
           </li>
           <li>Restart Claude Code (or run <code>/reload</code>). The skill is now active.</li>
           <li>Trigger it by saying one of the trigger phrases listed in the skill description.</li>
         </ol>
         <div class="btn-row">
-          <button class="download-btn" id="btn-download-claude" onclick="downloadSkill()">⬇ Download skill.md</button>
+          <button class="download-btn" id="btn-download-claude" onclick="downloadSkill()">⬇ Download SKILL.md</button>
           <button class="download-btn download-btn-ghost" onclick="copySkillContent()">📋 Copy to clipboard</button>
         </div>
       </div>
 
       <div class="tab-panel" id="tab-copilot">
         <ol class="install-steps">
-          <li>Download <code>skill.md</code> and open it in a text editor.</li>
+          <li>Download <code>SKILL.md</code> and open it in a text editor.</li>
           <li>Skip the frontmatter (the section between <code>---</code> markers at the top).</li>
           <li>Copy everything after the second <code>---</code> line.</li>
           <li>In Copilot Studio, open your Copilot and navigate to <strong>Topics → System</strong>.</li>
@@ -617,29 +627,29 @@ def build_html(skills):
           <li>Save and publish your Copilot.</li>
         </ol>
         <div class="btn-row">
-          <button class="download-btn" onclick="downloadSkill()">⬇ Download skill.md</button>
+          <button class="download-btn" onclick="downloadSkill()">⬇ Download SKILL.md</button>
         </div>
       </div>
 
       <div class="tab-panel" id="tab-generic">
         <ol class="install-steps">
-          <li>Download <code>skill.md</code> or copy the content below.</li>
+          <li>Download <code>SKILL.md</code> or copy the content below.</li>
           <li>Remove the frontmatter block at the top (the section between <code>---</code> markers).</li>
           <li>Paste the remaining content as a <strong>system prompt</strong> in your AI tool of choice (ChatGPT, Gemini, Azure OpenAI, etc.).</li>
           <li>Alternatively, paste it as the first message in a new conversation.</li>
           <li>The AI will follow the structured role, process, and output format defined in the skill.</li>
         </ol>
         <div class="btn-row">
-          <button class="download-btn" onclick="downloadSkill()">⬇ Download skill.md</button>
+          <button class="download-btn" onclick="downloadSkill()">⬇ Download SKILL.md</button>
           <button class="download-btn download-btn-ghost" onclick="copySkillContent()">📋 Copy to clipboard</button>
         </div>
       </div>
 
       <div class="tab-panel" id="tab-preview">
-        <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.75rem">Full content of <code>skill.md</code> — this is what gets installed in your AI harness.</p>
+        <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.75rem">Full content of <code>SKILL.md</code> — this is what gets installed in your AI harness.</p>
         <div class="skill-content-area" id="modal-skill-content"></div>
         <div class="btn-row">
-          <button class="download-btn" onclick="downloadSkill()">⬇ Download skill.md</button>
+          <button class="download-btn" onclick="downloadSkill()">⬇ Download SKILL.md</button>
           <button class="download-btn download-btn-ghost" onclick="copySkillContent()">📋 Copy to clipboard</button>
         </div>
       </div>
@@ -733,7 +743,7 @@ function openModal(skill) {{
   document.getElementById('modal-title').textContent = skill.name || skill.id;
   document.getElementById('modal-subtitle').textContent = `${{skill.category}} · v${{skill.version}} · by ${{skill.author}}`;
   document.getElementById('modal-desc').textContent = skill.description || '';
-  document.getElementById('modal-skill-content').textContent = skill.skill_content || '(No skill.md content found)';
+  document.getElementById('modal-skill-content').textContent = skill.skill_content || '(No SKILL.md content found)';
 
   // Deprecation banner
   const depEl = document.getElementById('modal-deprecation');
@@ -798,7 +808,7 @@ function downloadSkill() {{
   const blob = new Blob([currentSkill.skill_content || ''], {{type: 'text/markdown'}});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'skill.md';
+  a.download = 'SKILL.md';
   a.click();
   URL.revokeObjectURL(a.href);
 }}

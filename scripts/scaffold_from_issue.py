@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
 Turn a "Neue Skill vorschlagen" issue-form submission into a scaffolded skill
-folder (metadata.json + skill.md). Business users never touch Git — this runs
+folder (metadata.json + SKILL.md). Business users never touch Git — this runs
 in CI (scaffold-skill.yml) and the result becomes a pull request.
 
 Reads from environment:
     ISSUE_BODY, ISSUE_NUMBER, ISSUE_AUTHOR
 Writes:
-    skills/<slug>/metadata.json, skills/<slug>/skill.md
+    skills/<slug>/metadata.json, skills/<slug>/SKILL.md
 Emits (to stdout and $GITHUB_OUTPUT): slug, name
 """
 
@@ -155,7 +155,7 @@ Activate when the user asks for this. Example phrases:
 <!-- Scaffolded from issue #{issue_no}. A maintainer should refine the TODO
      sections and flip status from "draft" to "published" before release. -->
 """
-    (target / "skill.md").write_text(skill_md, encoding="utf-8")
+    (target / "SKILL.md").write_text(skill_md, encoding="utf-8")
 
     print(f"scaffolded skills/{slug}/ (name={name!r}, owner={owner}, status=draft)")
     out = os.environ.get("GITHUB_OUTPUT")

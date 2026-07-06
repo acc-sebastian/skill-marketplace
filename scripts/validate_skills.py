@@ -46,7 +46,7 @@ def main():
     for d in skill_dirs:
         label = d.name
         mf = d / "metadata.json"
-        sf = d / "skill.md"
+        sf = d / "SKILL.md"
 
         if not mf.exists():
             errors.append(f"{label}: missing metadata.json")
@@ -79,15 +79,15 @@ def main():
         if dep and dep not in all_ids:
             errors.append(f"{label}: deprecated_by '{dep}' does not reference an existing skill id")
 
-        # skill.md checks
+        # SKILL.md checks
         if not sf.exists():
-            errors.append(f"{label}: missing skill.md")
+            errors.append(f"{label}: missing SKILL.md")
         else:
             content = sf.read_text(encoding="utf-8")
             if not re.match(r"^---\s*\n.*?\n---\s*\n", content, re.DOTALL):
-                errors.append(f"{label}: skill.md missing YAML frontmatter (--- block at top)")
+                errors.append(f"{label}: SKILL.md missing YAML frontmatter (--- block at top)")
             if len(content.strip()) < 200:
-                errors.append(f"{label}: skill.md suspiciously short (<200 chars)")
+                errors.append(f"{label}: SKILL.md suspiciously short (<200 chars)")
 
             # Broken-link check: relative markdown links must resolve on disk;
             # URLs must be well-formed http(s). (No network calls — CI-stable.)
@@ -96,11 +96,11 @@ def main():
                     continue
                 if target.startswith(("http://", "https://")):
                     if not re.match(r"^https?://[\w.-]+(:\d+)?(/\S*)?$", target):
-                        errors.append(f"{label}: malformed URL in skill.md: {target}")
+                        errors.append(f"{label}: malformed URL in SKILL.md: {target}")
                 else:
                     rel = (d / target).resolve()
                     if not rel.exists():
-                        errors.append(f"{label}: broken relative link in skill.md: {target}")
+                        errors.append(f"{label}: broken relative link in SKILL.md: {target}")
 
     n = len(skill_dirs)
     if errors:

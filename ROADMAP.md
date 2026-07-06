@@ -39,7 +39,7 @@ flowchart LR
 
 Ausgangspunkt, auf dem alles aufbaut:
 
-- [x] Git als Single Source of Truth (`skills/<name>/metadata.json` + `skill.md`)
+- [x] Git als Single Source of Truth (`skills/<name>/metadata.json` + `SKILL.md`)
 - [x] `scripts/build_site.py` generiert die statische Website aus `skills/`
 - [x] GitHub Actions Workflow deployt automatisch auf GitHub Pages bei Push
 - [x] `CONTRIBUTING.md` dokumentiert das Beitragsformat
@@ -89,10 +89,10 @@ Alle bestehenden Skills validieren gegen `schema/skill.schema.json`; ein Busines
 ### Deliverables
 - [x] **CI-Validierungs-Workflow** `.github/workflows/validate.yml` (Trigger: Pull Request + Push auf `main`), der ausführt:
   - [x] **Schema-Validierung** jeder `metadata.json` gegen `schema/skill.schema.json` (Python `jsonschema`).
-  - [x] **`skill.md`-Lint**: Frontmatter vorhanden? Mindestlänge? (Beschreibungslänge via Schema erzwungen.)
+  - [x] **`SKILL.md`-Lint**: Frontmatter vorhanden? Mindestlänge? (Beschreibungslänge via Schema erzwungen.)
   - [x] **Naming-Konvention**: Ordnername = `id`, kebab-case, keine Sonderzeichen.
   - [x] **Eindeutigkeits-Check**: keine doppelten `id`s im gesamten Repo.
-  - [x] **Broken-Link-Check** in `skill.md` und Metadaten (`deprecated_by` zeigt auf existierende Skill-ID; relative Links müssen auflösen).
+  - [x] **Broken-Link-Check** in `SKILL.md` und Metadaten (`deprecated_by` zeigt auf existierende Skill-ID; relative Links müssen auflösen).
   - [x] **Build-Smoke-Test**: Website + `catalog.json` müssen fehlerfrei bauen.
 - [x] **`scripts/validate_skills.py`** — wiederverwendbares Validierungsskript (lokal + in CI ausführbar). *(in Phase 1 vorgezogen)*
 - [x] **Branch Protection** auf `main`: Merge nur bei (a) grüner Validierung und (b) mind. 1 Review durch CODEOWNER. (`enforce_admins=false`: der Repo-Admin kann als Solo-Maintainer weiterhin direkt pushen; alle anderen müssen durch den Gate.)
@@ -119,9 +119,15 @@ Stufen „BUILD" und „DEPLOY" plus Distribution.
   - [x] Banner bei `deprecated` inkl. `sunset_date` und klickbarem „ersetzt durch → `deprecated_by`"-Link (deprecatete Karten sind zusätzlich abgedimmt).
   - [x] `archived`-Skills werden aus dem Katalog **ausgeblendet** (bleiben im Repo für Provenienz). *(in Phase 1 vorgezogen)*
 - [x] **Automatisierte Versionierung**: `release.yml` legt bei Push auf `main` (Skill-Änderung) je Skill Tag `id@version` + **GitHub Release** an; alte Versionen bleiben über Releases abrufbar. Idempotent.
-- [x] **Distribution als Paket**: `skill.md`+`metadata.json` je Skill als Release-Asset — versionierter, referenzierbarer Download.
+- [x] **Distribution als Paket**: `SKILL.md`+`metadata.json` je Skill als Release-Asset — versionierter, referenzierbarer Download.
 - [x] **CLI `skill install <name>`** (`scripts/skill_cli.py`) — liest `catalog.json`, lädt den Skill herunter, legt ihn harness-korrekt ab (`.claude/skills/` etc.). Unterbefehle: `list`, `search`, `info`, `install`. Nur Standardbibliothek.
 - [x] **Issue-→-PR-Automatisierung** — `scaffold-skill.yml` erzeugt aus einem ausgefüllten „Neue Skill"-Issue die Ordnerstruktur, pusht einen Branch und öffnet einen PR (schließt das Issue). Business-User sehen nie Git.
+
+**Harness-Distribution (Claude Code)** — damit alle Anwender automatisch immer alle aktuellen Skills haben:
+- [x] **Repo als Claude-Code-Plugin-Marketplace**: `.claude-plugin/marketplace.json` + `.claude-plugin/plugin.json`. Ein einziges Plugin `sbo-skills` bündelt **alle** veröffentlichten Skills (`skills/<id>/SKILL.md`) → neue Skills fließen automatisch mit.
+- [x] **SHA-Pinning**: kein festes `version` im Manifest → Plugin folgt dem `main`-HEAD; jeder Merge = neuer Stand.
+- [x] **Org-weite Auto-Bereitstellung** dokumentiert (`docs/enterprise-setup.md`): Managed-Settings-JSON (`extraKnownMarketplaces` + `enabledPlugins` + `autoUpdate`) für Teams/Enterprise (kein Nutzer-Zutun) sowie Ein-Befehl-Variante für Einzel-Accounts.
+- [x] Kanonische Skill-Datei auf `SKILL.md` umgestellt (Claude-Code-Konvention); Build, Validator, CLI, Scaffold angepasst.
 
 ### GitHub-Umsetzung
 Erweiterung von `build_site.py` (catalog.json, Badges, Deprecation-Banner, Archiv-Filter); neue Actions für Tagging/Release und Issue→PR; `skill_cli.py` als eigenständiges Skript.
@@ -140,7 +146,7 @@ Feedback-Schleife — Stufen „QUALITY" und „NOTIFY" plus Health-Management.
 - [ ] **Stale-Detection** — geplanter Workflow (`schedule`/Cron), der Skills mit `last_reviewed` älter als *X* Monate erkennt und automatisch ein **„Review fällig"-Issue** an den `owner` erstellt.
 - [ ] **Model-Drift-Revalidierung** — geplanter Workflow, der Skills periodisch gegen die **aktuelle Modell-Version** testet (Prompts veralten nicht nur inhaltlich, sondern durch Modellwechsel).
 - [ ] **Smoke-Test in CI** — nutzt `example_input`: schickt den Skill an ein LLM (Anthropic API via Secret) und prüft die **Output-Form**.
-- [ ] **Prompt-Injection- & PII-Scan** — CI-Check auf verdächtige Muster/sensible Daten in `skill.md`.
+- [ ] **Prompt-Injection- & PII-Scan** — CI-Check auf verdächtige Muster/sensible Daten in `SKILL.md`.
 - [ ] **Feedback-Schleife auf der Website:**
   - [ ] **„War das hilfreich?"**-Bewertung pro Skill (GitHub-nativ: öffnet ein vorausgefülltes Issue bzw. nutzt GitHub-Discussions-Reaktionen als Zähler).
   - [ ] **„Problem melden"-Link** pro Skill (vorausgefülltes Bug-Issue mit Skill-ID).
@@ -194,7 +200,7 @@ Nach Phase 5 sind **alle** Einträge erledigt.
 | # | Feature | Phase |
 |---|---------|-------|
 | 6 | JSON-Schema-Validierung der `metadata.json` (Pflichtfelder, Typen) | 2 |
-| 7 | `skill.md`-Lint (Frontmatter, Beschreibungslänge, Pflichtabschnitte) | 2 |
+| 7 | `SKILL.md`-Lint (Frontmatter, Beschreibungslänge, Pflichtabschnitte) | 2 |
 | 8 | Naming-Konventions-Check | 2 |
 | 9 | Eindeutigkeits-Check der IDs | 2 |
 | 10 | Broken-Link-Check | 2 |
@@ -231,6 +237,13 @@ Nach Phase 5 sind **alle** Einträge erledigt.
 | 37 | Deprecation-Banner + `sunset_date` + Migrationshinweis | 1 (Feld) · 3 (Website) |
 | 38 | Retirement = nach `archived/`, aus Katalog ausgeblendet, Provenienz erhalten | 3 (Ausblenden) · 4 (Auto-Archiv) |
 | 39 | Status-Badges auf der Website | 3 |
+
+### Harness-Distribution (Claude Code)
+| # | Feature | Phase |
+|---|---------|-------|
+| 40 | Repo als Claude-Code-Plugin-Marketplace (`.claude-plugin/marketplace.json` + `plugin.json`) | 3 |
+| 41 | Ein Plugin `sbo-skills` bündelt alle Skills; SHA-Pinning → immer aktuell | 3 |
+| 42 | Org-weite Auto-Bereitstellung via Managed Settings (dokumentiert) + Ein-Befehl-Variante | 3 |
 
 ---
 

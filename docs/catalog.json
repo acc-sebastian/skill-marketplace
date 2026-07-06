@@ -31,7 +31,7 @@
       "deprecated_by": null,
       "sunset_date": null,
       "emoji": "✅",
-      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/action-item-tracker/skill.md",
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/action-item-tracker/SKILL.md",
       "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/action-item-tracker/metadata.json"
     },
     {
@@ -59,7 +59,7 @@
       "deprecated_by": null,
       "sunset_date": null,
       "emoji": "🔭",
-      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/competitor-analysis/skill.md",
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/competitor-analysis/SKILL.md",
       "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/competitor-analysis/metadata.json"
     },
     {
@@ -88,7 +88,7 @@
       "deprecated_by": null,
       "sunset_date": null,
       "emoji": "📊",
-      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/kpi-anomaly-check/skill.md",
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/kpi-anomaly-check/SKILL.md",
       "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/kpi-anomaly-check/metadata.json"
     },
     {
@@ -116,7 +116,7 @@
       "deprecated_by": null,
       "sunset_date": null,
       "emoji": "📋",
-      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/mom-generator/skill.md",
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/mom-generator/SKILL.md",
       "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/mom-generator/metadata.json"
     },
     {
@@ -145,7 +145,7 @@
       "deprecated_by": null,
       "sunset_date": null,
       "emoji": "⚖️",
-      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/vendor-proposal-comparison/skill.md",
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/vendor-proposal-comparison/SKILL.md",
       "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/skills/vendor-proposal-comparison/metadata.json"
     }
   ]

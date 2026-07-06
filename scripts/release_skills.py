@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Create a versioned GitHub Release per skill (tag = <id>@<version>) with
-skill.md + metadata.json attached as assets. Idempotent: skips a skill whose
+SKILL.md + metadata.json attached as assets. Idempotent: skips a skill whose
 tag already exists, so it only ever publishes *new* versions.
 
 Runs in CI (release.yml) with the `gh` CLI authenticated via GH_TOKEN.
@@ -29,7 +29,7 @@ def main():
     created, skipped = [], []
     for d in sorted(SKILLS_DIR.iterdir()):
         mf = d / "metadata.json"
-        sf = d / "skill.md"
+        sf = d / "SKILL.md"
         if not mf.exists():
             continue
         meta = json.loads(mf.read_text(encoding="utf-8"))

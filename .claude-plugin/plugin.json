@@ -1,0 +1,10 @@
+{
+  "name": "sbo-skills",
+  "description": "All published skills from the SBO Skill Marketplace.",
+  "author": {
+    "name": "acc-sebastian",
+    "email": "sebastian.kindl@accilium.com"
+  },
+  "homepage": "https://acc-sebastian.github.io/skill-marketplace/",
+  "skills": "./skills"
+}

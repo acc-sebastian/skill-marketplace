@@ -1,0 +1,15 @@
+{
+  "name": "sbo-skill-marketplace",
+  "owner": {
+    "name": "acc-sebastian",
+    "email": "sebastian.kindl@accilium.com"
+  },
+  "description": "SBO Skill Marketplace — curated, governed AI skills for Claude Code. Install the single 'sbo-skills' plugin to get every published skill and stay auto-updated.",
+  "plugins": [
+    {
+      "name": "sbo-skills",
+      "source": ".",
+      "description": "All published skills from the SBO Skill Marketplace, bundled as one plugin. New skills appear automatically on update."
+    }
+  ]
+}

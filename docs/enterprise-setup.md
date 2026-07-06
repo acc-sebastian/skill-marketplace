@@ -1,0 +1,88 @@
+# Claude Code Distribution — Setup Guide
+
+How to get the SBO Skill Marketplace into Claude Code so that **every user always
+has all current skills, automatically**.
+
+The repo is a **Claude Code plugin marketplace**: `.claude-plugin/marketplace.json`
+declares one plugin, `sbo-skills`, that bundles **all published skills**. Because it's
+one plugin, any newly merged skill flows to users on the next update — nobody has to
+enable skills one by one.
+
+> **Why always up to date?** The plugin pins to the repository's commit SHA (no fixed
+> `version` in the manifest). Every merge to `main` is a new SHA, so with auto-update
+> on, Claude Code pulls the latest skills at startup and on its hourly check.
+
+---
+
+## Option A — Org-wide, fully automatic (Claude for Teams / Enterprise)
+
+**Best for rolling out to everyone.** No end-user action required.
+
+1. Open **claude.ai → Admin settings → Claude Code → Managed settings**.
+2. Paste this configuration (merge with any existing managed settings):
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "sbo-skill-marketplace": {
+      "source": { "source": "github", "repo": "acc-sebastian/skill-marketplace" },
+      "autoUpdate": true
+    }
+  },
+  "enabledPlugins": {
+    "sbo-skills@sbo-skill-marketplace": true
+  }
+}
+```
+
+3. Save. On each user's next Claude Code start (settings are fetched on auth and
+   refreshed hourly), the marketplace is registered and the `sbo-skills` plugin is
+   enabled automatically. All skills become available to the model with no further
+   steps.
+
+**Optional hardening:**
+- `"pluginSuggestionMarketplaces": ["sbo-skill-marketplace"]` — let Claude Code suggest these skills.
+- `"strictKnownMarketplaces": true` — restrict users to approved marketplaces only.
+
+**Requirements:** Claude for Teams (client v2.1.38+) or Enterprise (v2.1.30+).
+Managed settings are **not** available when using Amazon Bedrock, Google Vertex,
+Azure Foundry, or a custom `ANTHROPIC_BASE_URL`.
+
+---
+
+## Option B — Individual setup (Pro / single accounts)
+
+For users without managed settings — a one-time, two-command setup. Auto-update
+still applies afterward.
+
+```
+/plugin marketplace add acc-sebastian/skill-marketplace
+/plugin install sbo-skills@sbo-skill-marketplace
+```
+
+That's it. New skills arrive automatically on later updates. To force a refresh:
+
+```
+/plugin marketplace update sbo-skill-marketplace
+```
+
+---
+
+## What gets distributed
+
+- Only skills that live in `skills/` on `main` are shipped.
+- **Operating rule:** keep only `published` skills on `main`. Drafts live on PR
+  branches until published; `archived` skills are moved out of `skills/` (Roadmap
+  Phase 4 auto-archive), so they leave the plugin as well.
+- Every skill is a folder `skills/<id>/` containing `SKILL.md` (the instructions Claude
+  Code loads) and `metadata.json`.
+
+## How a new skill reaches everyone
+
+```
+Author/propose skill  →  PR  →  validate gate (green)  →  merge to main
+   →  new commit SHA on main
+   →  Claude Code auto-update (startup + hourly)  →  every user has the new skill
+```
+
+No manual distribution step. The marketplace repo is the single source of truth.

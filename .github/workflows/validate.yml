@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: pip install jsonschema
 
-      - name: Validate all skills (schema, naming, uniqueness, links, skill.md lint)
+      - name: Validate all skills (schema, naming, uniqueness, links, SKILL.md lint)
         run: python scripts/validate_skills.py
 
       - name: Build smoke test (site + catalog must build cleanly)
