@@ -1,0 +1,34 @@
+{
+  "id": "test-auto-skill",
+  "name": "Test Auto Skill",
+  "description": "A throwaway skill used only to verify the issue-to-PR automation works end to end.",
+  "author": "acc-sebastian",
+  "owner": "acc-sebastian",
+  "version": "1.0.0",
+  "created": "2026-07-06",
+  "last_reviewed": "2026-07-06",
+  "status": "draft",
+  "category": "Productivity",
+  "tags": [
+    "productivity",
+    "test",
+    "auto",
+    "skill"
+  ],
+  "harnesses": [
+    "generic"
+  ],
+  "complexity": "beginner",
+  "trigger_phrases": [
+    "run the test skill"
+  ],
+  "emoji": "🧩",
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-07-06",
+      "change": "Scaffolded from issue #4"
+    }
+  ],
+  "example_input": "Test input for the automation check."
+}
