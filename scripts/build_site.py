@@ -105,28 +105,108 @@ def build_html(skills):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap">
+<script>
+  // Set theme before paint to avoid a flash of the wrong theme
+  (function() {{
+    try {{
+      var t = localStorage.getItem('theme');
+      if (t !== 'light' && t !== 'dark') {{
+        t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }}
+      document.documentElement.setAttribute('data-theme', t);
+    }} catch (e) {{}}
+  }})();
+</script>
 <style>
-  /* Palette adapted from sbo.at — Schoeller-Bleckmann Oilfield Equipment AG */
+  /* Palette adapted from sbo.at — Schoeller-Bleckmann Oilfield Equipment AG.
+     Two themes: LIGHT (mostly white, default) and DARK (mostly SBO navy).
+     The SBO red (--brand-accent) is constant in both. */
   :root {{
+    color-scheme: light;
+    /* fixed brand colors — identical in both themes */
     --brand-dark: #111145;     /* SBO deep navy/indigo */
-    --brand-blue: #da3025;     /* SBO signature red — primary action color */
-    --brand-accent: #da3025;   /* SBO red accent */
+    --brand-blue: #da3025;     /* alias kept for existing rules → red action color */
+    --brand-accent: #da3025;   /* SBO signature red */
     --brand-accent-2: #b3241b; /* darker red for gradients */
     --brand-light: #f8f3e5;    /* warm cream */
-    --petrol: #36494d;         /* SBO azure-petrol */
-    --mid-blue: #253e5c;       /* SBO middle-blue */
-    --sand: #d6ceb9;           /* SBO warm sand */
-    --bg: #f6f2ea;             /* warm paper background */
+    --petrol: #36494d;
+    --mid-blue: #253e5c;
+    --sand: #d6ceb9;
+    --radius: 6px;
+    --radius-lg: 14px;
+    --ring: 0 0 0 4px rgba(218,48,37,0.16);
+
+    /* ─ LIGHT theme (mostly white) ─ */
+    --bg: #f4f5f8;
     --surface: #ffffff;
-    --border: #e6ddcb;         /* warm border */
-    --text: #1b1b1b;           /* SBO near-black */
-    --text-muted: #6a6c6e;     /* SBO soft grey */
-    --radius: 6px;             /* crisp corners for chips/inputs */
-    --radius-lg: 14px;         /* modern cards/panels */
-    --shadow: 0 1px 2px rgba(17,17,69,0.04), 0 4px 16px rgba(17,17,69,0.06);
-    --shadow-hover: 0 18px 44px rgba(17,17,69,0.16);
-    --ring: 0 0 0 4px rgba(218,48,37,0.14);
+    --surface-2: #f2f3f7;
+    --border: #e5e7ec;
+    --text: #17181d;
+    --text-muted: #5b6270;
+    --heading: #111145;
+    --scrollbar: #cfd3dc;
+    --shadow: 0 1px 2px rgba(16,16,40,0.04), 0 4px 16px rgba(16,16,40,0.06);
+    --shadow-hover: 0 18px 44px rgba(16,16,40,0.14);
+
+    --header-bg: rgba(255,255,255,0.82);
+    --header-bg-scrolled: rgba(255,255,255,0.95);
+    --header-text: #17181d;
+    --header-muted: #565d6b;
+    --header-border: rgba(16,16,40,0.10);
+
+    --feature-bg-a: #ffffff;
+    --feature-bg-b: #e9edf4;
+    --feature-text: #111145;
+    --feature-muted: #4a5160;
+    --feature-dot: rgba(17,17,69,0.06);
+    --hero-glow: rgba(218,48,37,0.18);
+    --glass-bg: rgba(17,17,69,0.04);
+    --glass-border: rgba(17,17,69,0.12);
+    --chip-active-bg: #111145;
+
+    --footer-bg: #eceef3;
+    --footer-text: #4a5160;
+    --footer-heading: #111145;
+    --footer-border: rgba(16,16,40,0.10);
   }}
+
+  /* ─ DARK theme (mostly SBO navy) ─ */
+  [data-theme="dark"] {{
+    color-scheme: dark;
+    --bg: #0c0c30;
+    --surface: #17174c;
+    --surface-2: #1f1f5c;
+    --border: rgba(255,255,255,0.11);
+    --text: #ececf5;
+    --text-muted: #a6a9c6;
+    --heading: #ffffff;
+    --scrollbar: #2b2b6b;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 6px 20px rgba(0,0,0,0.34);
+    --shadow-hover: 0 22px 50px rgba(0,0,0,0.5);
+
+    --header-bg: rgba(17,17,69,0.80);
+    --header-bg-scrolled: rgba(11,11,44,0.94);
+    --header-text: #ffffff;
+    --header-muted: rgba(255,255,255,0.82);
+    --header-border: rgba(255,255,255,0.10);
+
+    --feature-bg-a: #0d0d38;
+    --feature-bg-b: #253e5c;
+    --feature-text: #ffffff;
+    --feature-muted: rgba(248,243,229,0.86);
+    --feature-dot: rgba(255,255,255,0.09);
+    --hero-glow: rgba(218,48,37,0.42);
+    --glass-bg: rgba(255,255,255,0.06);
+    --glass-border: rgba(255,255,255,0.14);
+    --chip-active-bg: #da3025;
+
+    --footer-bg: #0a0a26;
+    --footer-text: rgba(255,255,255,0.6);
+    --footer-heading: #ffffff;
+    --footer-border: rgba(255,255,255,0.08);
+  }}
+
+  html {{ background: var(--bg); }}
 
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
   html {{ scroll-behavior: smooth; }}
@@ -138,14 +218,15 @@ def build_html(skills):
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    transition: background .3s ease, color .3s ease;
   }}
   img {{ max-width: 100%; }}
   ::selection {{ background: rgba(218,48,37,0.18); }}
 
   /* Custom scrollbar */
   ::-webkit-scrollbar {{ width: 11px; height: 11px; }}
-  ::-webkit-scrollbar-thumb {{ background: #d9cfbb; border-radius: 8px; border: 3px solid var(--bg); }}
-  ::-webkit-scrollbar-thumb:hover {{ background: #c7bca4; }}
+  ::-webkit-scrollbar-thumb {{ background: var(--scrollbar); border-radius: 8px; border: 3px solid var(--bg); }}
+  ::-webkit-scrollbar-thumb:hover {{ filter: brightness(0.92); }}
 
   /* Wide, uppercase display treatment — echoes SBO's extended grotesk headings */
   .display {{ text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }}
@@ -156,18 +237,17 @@ def build_html(skills):
   /* ── HEADER ───────────────────────────────────────── */
   header {{
     position: sticky; top: 0; z-index: 500;
-    background: rgba(17,17,69,0.80);
+    background: var(--header-bg);
     -webkit-backdrop-filter: saturate(160%) blur(12px);
     backdrop-filter: saturate(160%) blur(12px);
-    color: #fff;
+    color: var(--header-text);
     padding: 0 2rem;
-    border-bottom: 1px solid rgba(255,255,255,0.10);
+    border-bottom: 1px solid var(--header-border);
     transition: background .25s, box-shadow .25s, border-color .25s;
   }}
   header.scrolled {{
-    background: rgba(17,17,69,0.94);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.28);
-    border-bottom-color: rgba(255,255,255,0.06);
+    background: var(--header-bg-scrolled);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.16);
   }}
   .header-inner {{
     max-width: 1200px;
@@ -177,7 +257,7 @@ def build_html(skills):
     justify-content: space-between;
     padding: 0.9rem 0;
   }}
-  .logo {{ display: flex; align-items: center; gap: 0.7rem; text-decoration: none; color: #fff; }}
+  .logo {{ display: flex; align-items: center; gap: 0.7rem; text-decoration: none; color: var(--header-text); }}
   .logo-mark {{
     width: 38px; height: 38px;
     background: linear-gradient(150deg, var(--brand-accent), var(--brand-accent-2));
@@ -190,7 +270,7 @@ def build_html(skills):
   .logo-sub {{ font-size: 0.66rem; opacity: 0.65; display: block; text-transform: uppercase; letter-spacing: 0.16em; }}
   header nav {{ display: flex; align-items: center; gap: 0.4rem; }}
   header nav a {{
-    color: rgba(255,255,255,0.82);
+    color: var(--header-muted);
     text-decoration: none;
     font-size: 0.9rem; font-weight: 500;
     padding: 0.45rem 0.7rem; border-radius: 8px;
@@ -202,7 +282,7 @@ def build_html(skills):
     height: 2px; background: var(--brand-accent); border-radius: 2px;
     transform: scaleX(0); transform-origin: left; transition: transform .22s ease;
   }}
-  header nav a.navlink:hover {{ color: #fff; }}
+  header nav a.navlink:hover {{ color: var(--header-text); }}
   header nav a.navlink:hover::after {{ transform: scaleX(1); }}
   header nav a.nav-cta {{
     background: linear-gradient(150deg, var(--brand-accent), var(--brand-accent-2));
@@ -210,6 +290,18 @@ def build_html(skills):
     box-shadow: 0 4px 14px rgba(218,48,37,0.35);
   }}
   header nav a.nav-cta:hover {{ transform: translateY(-1px); box-shadow: 0 6px 18px rgba(218,48,37,0.45); }}
+  .theme-toggle {{
+    width: 38px; height: 38px; flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--glass-bg); border: 1px solid var(--header-border);
+    color: var(--header-text); border-radius: 9px; cursor: pointer;
+    transition: background .2s, transform .2s, border-color .2s;
+  }}
+  .theme-toggle:hover {{ transform: translateY(-1px); border-color: var(--brand-accent); }}
+  .theme-toggle svg {{ width: 18px; height: 18px; }}
+  .theme-toggle .icon-sun {{ display: none; }}
+  [data-theme="dark"] .theme-toggle .icon-sun {{ display: block; }}
+  [data-theme="dark"] .theme-toggle .icon-moon {{ display: none; }}
   @media (max-width: 640px) {{
     header nav a.navlink:not(.nav-cta) {{ display: none; }}
   }}
@@ -217,15 +309,16 @@ def build_html(skills):
   /* ── HERO ─────────────────────────────────────────── */
   .hero {{
     position: relative; overflow: hidden;
-    background: linear-gradient(160deg, #0d0d38 0%, var(--brand-dark) 45%, var(--mid-blue) 100%);
-    color: #fff;
+    background: linear-gradient(160deg, var(--feature-bg-a) 0%, var(--feature-bg-b) 100%);
+    color: var(--feature-text);
     text-align: center;
     padding: 5rem 2rem 6.5rem;
+    transition: background .3s ease, color .3s ease;
   }}
   /* dot-grid texture, faded toward edges */
   .hero::before {{
     content: ''; position: absolute; inset: 0;
-    background-image: radial-gradient(rgba(255,255,255,0.09) 1px, transparent 1px);
+    background-image: radial-gradient(var(--feature-dot) 1px, transparent 1px);
     background-size: 24px 24px;
     -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 40%, transparent 100%);
     mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 40%, transparent 100%);
@@ -235,22 +328,22 @@ def build_html(skills):
   .hero::after {{
     content: ''; position: absolute; width: 620px; height: 620px;
     top: -220px; left: 50%; margin-left: -310px;
-    background: radial-gradient(circle, rgba(218,48,37,0.42) 0%, transparent 62%);
+    background: radial-gradient(circle, var(--hero-glow) 0%, transparent 62%);
     filter: blur(20px); pointer-events: none;
     animation: floatGlow 14s ease-in-out infinite;
   }}
   .hero-inner {{ position: relative; z-index: 1; max-width: 780px; margin: 0 auto; }}
   .hero-badge {{
     display: inline-flex; align-items: center; gap: 0.5rem;
-    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16);
-    color: #fff; border-radius: 999px; padding: 0.4rem 0.9rem;
+    background: var(--glass-bg); border: 1px solid var(--glass-border);
+    color: var(--feature-text); border-radius: 999px; padding: 0.4rem 0.9rem;
     font-size: 0.8rem; font-weight: 500; margin-bottom: 1.5rem;
     -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
     animation: fadeUp .6s ease both;
   }}
   .hero-badge .dot {{
-    width: 8px; height: 8px; border-radius: 50%; background: #35d07f;
-    box-shadow: 0 0 0 4px rgba(53,208,127,0.22);
+    width: 8px; height: 8px; border-radius: 50%; background: #1f9d57;
+    box-shadow: 0 0 0 4px rgba(31,157,87,0.22);
   }}
   .hero h1 {{
     font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 800;
@@ -262,8 +355,8 @@ def build_html(skills):
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }}
   .hero p {{
-    font-size: 1.12rem; opacity: 0.85; max-width: 600px; margin: 0 auto 2rem;
-    color: var(--brand-light); animation: fadeUp .6s ease .1s both;
+    font-size: 1.12rem; max-width: 600px; margin: 0 auto 2rem;
+    color: var(--feature-muted); animation: fadeUp .6s ease .1s both;
   }}
   .hero-cta {{
     display: flex; gap: 0.85rem; justify-content: center; flex-wrap: wrap;
@@ -281,21 +374,21 @@ def build_html(skills):
   }}
   .btn-hero-primary:hover {{ transform: translateY(-2px); box-shadow: 0 12px 28px rgba(218,48,37,0.5); }}
   .btn-hero-ghost {{
-    background: rgba(255,255,255,0.06); color: #fff; border-color: rgba(255,255,255,0.28);
+    background: var(--glass-bg); color: var(--feature-text); border-color: var(--glass-border);
     -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
   }}
-  .btn-hero-ghost:hover {{ background: rgba(255,255,255,0.14); transform: translateY(-2px); }}
+  .btn-hero-ghost:hover {{ border-color: var(--brand-accent); transform: translateY(-2px); }}
   .hero-stats {{
     display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
     margin-top: 3rem; animation: fadeUp .6s ease .2s both;
   }}
   .stat {{
-    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+    background: var(--glass-bg); border: 1px solid var(--glass-border);
     border-radius: 14px; padding: 1rem 1.6rem; min-width: 130px;
     -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
   }}
-  .stat-num {{ font-size: 2rem; font-weight: 800; color: #fff; line-height: 1; }}
-  .stat-label {{ font-size: 0.8rem; opacity: 0.72; margin-top: 0.35rem; }}
+  .stat-num {{ font-size: 2rem; font-weight: 800; color: var(--feature-text); line-height: 1; }}
+  .stat-label {{ font-size: 0.8rem; color: var(--feature-muted); margin-top: 0.35rem; }}
 
   /* ── TRUST BAND ───────────────────────────────────── */
   .trust-band {{
@@ -337,10 +430,11 @@ def build_html(skills):
     border-radius: 10px;
     padding: 0.7rem 0.85rem 0.7rem 2.4rem;
     font-size: 0.95rem; font-family: inherit;
-    outline: none; background: #fdfcf9;
+    outline: none; background: var(--surface-2); color: var(--text);
     transition: border-color .2s, box-shadow .2s, background .2s;
   }}
-  #search:focus {{ border-color: var(--brand-accent); box-shadow: var(--ring); background: #fff; }}
+  #search::placeholder {{ color: var(--text-muted); }}
+  #search:focus {{ border-color: var(--brand-accent); box-shadow: var(--ring); background: var(--surface); }}
   .filter-wrap {{ display: flex; gap: 0.45rem; flex-wrap: wrap; align-items: center; }}
   .filter-label {{ font-size: 0.85rem; color: var(--text-muted); white-space: nowrap; }}
   .filter-btn {{
@@ -355,8 +449,8 @@ def build_html(skills):
   }}
   .filter-btn:hover {{ border-color: var(--brand-accent); color: var(--brand-accent); }}
   .filter-btn.active {{
-    background: var(--brand-dark);
-    border-color: var(--brand-dark);
+    background: var(--chip-active-bg);
+    border-color: var(--chip-active-bg);
     color: #fff;
   }}
 
@@ -394,13 +488,13 @@ def build_html(skills):
     width: 46px; height: 46px; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
     font-size: 1.55rem; line-height: 1;
-    background: linear-gradient(150deg, var(--brand-light), #fffdf7);
+    background: var(--surface-2);
     border: 1px solid var(--border); border-radius: 12px;
     transition: transform .25s;
   }}
   .skill-card:hover .card-emoji {{ transform: scale(1.06) rotate(-3deg); }}
   .card-meta {{ flex: 1; min-width: 0; }}
-  .card-name {{ font-size: 1.08rem; font-weight: 700; color: var(--brand-dark); letter-spacing: -0.01em; }}
+  .card-name {{ font-size: 1.08rem; font-weight: 700; color: var(--heading); letter-spacing: -0.01em; }}
   .card-author {{ font-size: 0.8rem; color: var(--text-muted); }}
   .card-desc {{ font-size: 0.9rem; color: var(--text-muted); line-height: 1.55; }}
   .card-footer {{ display: flex; gap: 0.45rem; flex-wrap: wrap; align-items: center; margin-top: auto; }}
@@ -422,6 +516,17 @@ def build_html(skills):
   .badge-status-in-review {{ background: #eaf0f6; color: var(--mid-blue); border: 1px solid #d3dfea; }}
   .badge-status-deprecated {{ background: #fbeae8; color: var(--brand-accent); border: 1px solid #f2cdc8; }}
   .badge-status-published {{ background: #ecf3ec; color: #2e7d32; border: 1px solid #cfe4d0; }}
+  /* dark-theme badge variants */
+  [data-theme="dark"] .badge-cat {{ background: rgba(255,255,255,0.09); color: #dfe0f2; }}
+  [data-theme="dark"] .badge-harness {{ background: rgba(255,255,255,0.06); color: #a7bcbc; border-color: rgba(255,255,255,0.12); }}
+  [data-theme="dark"] .badge-complexity-beginner {{ background: rgba(255,255,255,0.06); color: #a7bcbc; }}
+  [data-theme="dark"] .badge-complexity-intermediate {{ background: rgba(221,184,0,0.16); color: #e8c85a; }}
+  [data-theme="dark"] .badge-complexity-advanced {{ background: rgba(218,48,37,0.20); color: #ff8f85; }}
+  [data-theme="dark"] .badge-status-draft {{ background: rgba(221,184,0,0.16); color: #e8c85a; border-color: rgba(221,184,0,0.3); }}
+  [data-theme="dark"] .badge-status-in-review {{ background: rgba(120,160,210,0.16); color: #9fbde6; border-color: rgba(120,160,210,0.3); }}
+  [data-theme="dark"] .badge-status-deprecated {{ background: rgba(218,48,37,0.20); color: #ff8f85; border-color: rgba(218,48,37,0.35); }}
+  [data-theme="dark"] .badge-status-published {{ background: rgba(53,208,127,0.16); color: #6fd39e; border-color: rgba(53,208,127,0.3); }}
+  [data-theme="dark"] .deprecation-banner {{ background: rgba(218,48,37,0.14); border-color: rgba(218,48,37,0.35); color: #ffb3ab; }}
   .skill-card.is-deprecated {{ opacity: 0.72; }}
   .skill-card.is-deprecated:hover {{ opacity: 1; }}
   .deprecation-banner {{
@@ -530,7 +635,7 @@ def build_html(skills):
   .copy-btn.copied {{ background: var(--brand-accent); color: #fff; border-color: var(--brand-accent); }}
 
   .skill-content-area {{
-    background: #faf7f0;
+    background: var(--surface-2);
     border: 1.5px solid var(--border);
     border-radius: 8px;
     padding: 1rem 1.25rem;
@@ -559,28 +664,29 @@ def build_html(skills):
 
   /* ── HOW TO CONTRIBUTE ────────────────────────────── */
   .contribute-section {{
-    background: var(--brand-dark);
-    color: #fff;
+    background: linear-gradient(160deg, var(--feature-bg-a), var(--feature-bg-b));
+    color: var(--feature-text);
     padding: 4rem 2rem;
     text-align: center;
+    transition: background .3s ease, color .3s ease;
   }}
   .contribute-inner {{ max-width: 700px; margin: 0 auto; }}
   .contribute-inner h2 {{ font-size: 2rem; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 0.75rem; }}
-  .contribute-inner p {{ opacity: 0.8; margin-bottom: 1.5rem; color: var(--brand-light); }}
+  .contribute-inner p {{ margin-bottom: 1.5rem; color: var(--feature-muted); }}
   .contribute-steps {{
     display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
     margin: 2rem 0;
   }}
   .c-step {{
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
     border-radius: 16px;
     padding: 1.5rem 1.25rem;
     flex: 1; min-width: 160px; max-width: 220px;
     text-align: center;
     transition: transform .2s, background .2s, border-color .2s;
   }}
-  .c-step:hover {{ transform: translateY(-4px); background: rgba(255,255,255,0.10); border-color: rgba(218,48,37,0.5); }}
+  .c-step:hover {{ transform: translateY(-4px); border-color: rgba(218,48,37,0.5); }}
   .c-step-num {{
     width: 40px; height: 40px; margin: 0 auto 0.85rem;
     display: flex; align-items: center; justify-content: center;
@@ -589,7 +695,8 @@ def build_html(skills):
     border-radius: 50%;
     box-shadow: 0 6px 16px rgba(218,48,37,0.4);
   }}
-  .c-step p {{ font-size: 0.85rem; opacity: 0.82; }}
+  .c-step p {{ font-size: 0.85rem; color: var(--feature-muted); }}
+  .c-step p code {{ color: var(--feature-text); }}
   .contribute-eyebrow {{
     display: inline-block; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em;
     text-transform: uppercase; color: var(--brand-accent); margin-bottom: 0.75rem;
@@ -603,17 +710,18 @@ def build_html(skills):
   }}
   .cta-btn:hover {{ opacity: 0.9; }}
   .cta-btn-ghost {{
-    background: transparent;
-    border: 1.5px solid rgba(255,255,255,0.4);
-    color: #fff;
+    background: var(--glass-bg);
+    border: 1.5px solid var(--glass-border);
+    color: var(--feature-text);
   }}
-  .cta-btn-ghost:hover {{ border-color: #fff; opacity: 1; }}
+  .cta-btn-ghost:hover {{ border-color: var(--brand-accent); opacity: 1; }}
 
   /* ── FOOTER ───────────────────────────────────────── */
   footer {{
-    background: #0c0c2e;
-    color: rgba(255,255,255,0.6);
-    border-top: 1px solid rgba(255,255,255,0.08);
+    background: var(--footer-bg);
+    color: var(--footer-text);
+    border-top: 1px solid var(--footer-border);
+    transition: background .3s ease, color .3s ease;
   }}
   .footer-top {{
     max-width: 1200px; margin: 0 auto; padding: 3rem 2rem 2rem;
@@ -622,20 +730,20 @@ def build_html(skills):
   .footer-brand .logo-mark {{ margin-bottom: 0.85rem; }}
   .footer-brand p {{ font-size: 0.86rem; max-width: 340px; line-height: 1.6; }}
   .footer-col h4 {{
-    color: #fff; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--footer-heading); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em;
     margin-bottom: 0.9rem; font-weight: 700;
   }}
   .footer-col a {{
-    display: block; color: rgba(255,255,255,0.6); text-decoration: none;
+    display: block; color: var(--footer-text); text-decoration: none;
     font-size: 0.88rem; padding: 0.28rem 0; transition: color .2s;
   }}
   .footer-col a:hover {{ color: var(--brand-accent); }}
   .footer-bottom {{
-    border-top: 1px solid rgba(255,255,255,0.08);
+    border-top: 1px solid var(--footer-border);
     padding: 1.1rem 2rem; text-align: center; font-size: 0.8rem;
-    color: rgba(255,255,255,0.45);
+    color: var(--footer-text);
   }}
-  .footer-bottom code {{ color: rgba(255,255,255,0.6); }}
+  .footer-bottom code {{ color: var(--footer-heading); }}
   @media (max-width: 640px) {{ .footer-top {{ grid-template-columns: 1fr; gap: 1.5rem; }} }}
 
   /* ── RESPONSIVE ───────────────────────────────────── */
@@ -663,6 +771,10 @@ def build_html(skills):
       <a class="navlink" href="#contribute">Contribute</a>
       <a class="navlink" href="https://github.com/acc-sebastian/skill-marketplace" target="_blank">GitHub ↗</a>
       <a class="navlink nav-cta" href="{PROPOSE_URL}" target="_blank">💡 Skill vorschlagen</a>
+      <button class="theme-toggle" id="theme-toggle" title="Toggle light / dark mode" aria-label="Toggle light / dark mode">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </button>
     </nav>
   </div>
 </header>
@@ -1053,6 +1165,14 @@ const _hdr = document.getElementById('site-header');
 const _onScroll = () => {{ _hdr.classList.toggle('scrolled', window.scrollY > 8); }};
 window.addEventListener('scroll', _onScroll, {{ passive: true }});
 _onScroll();
+
+// Light / dark theme toggle
+document.getElementById('theme-toggle').addEventListener('click', () => {{
+  const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try {{ localStorage.setItem('theme', next); }} catch (e) {{}}
+}});
 
 // Init
 renderCards();
