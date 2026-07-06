@@ -29,3 +29,26 @@ Draft → In Review → Published → (Maintained) → Deprecated → Archived
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full lifecycle definition and
 [ROADMAP.md](ROADMAP.md) for when each automation lands.
+
+## Governance at scale (Roadmap Phase 5)
+
+As the catalog grows, the Taxonomy Owner runs a lightweight recurring review so
+structure and quality don't drift:
+
+- **Category owners.** Each category has a reviewer who vets new skills in it
+  for quality and correct categorization. Until a category has enough volume to
+  warrant a dedicated owner, the Taxonomy Owner covers it.
+
+  | Category | Owner |
+  |----------|-------|
+  | Productivity · Analytics · Strategy · Procurement · Finance · Compliance · Communication · Other | @acc-sebastian *(interim — split out as volume grows)* |
+
+- **Quarterly taxonomy review.** The Taxonomy Owner: consolidates near-duplicate
+  tags, checks each category still earns its place (merge/retire thin ones), and
+  confirms every published skill is in the right category. New categories are
+  added only here, as a deliberate `schema/skill.schema.json` enum change.
+- **Data-driven prioritization.** The monthly [insights report](.github/workflows/insights.yml)
+  (and the live **Insights** panel on the site) rank skills by popularity ×
+  open bugs × review age. Maintainers work the top of that list first.
+- **Quality signals.** A skill with repeated bug reports, or high downloads but a
+  stale `last_reviewed`, is a priority for review or ownership reassignment.

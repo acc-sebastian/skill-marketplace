@@ -7,6 +7,11 @@ der Konzeptdiskussion (Git vs. File Share · Deployment-Pipeline · Lifecycle
 Management) genannt wurde — siehe [Traceability-Matrix](#-traceability-matrix)
 am Ende.
 
+> ✅ **Alle 5 Phasen abgeschlossen** (Stand 2026-07-06). Der Marketplace ist
+> live, governt, automatisiert und selbsttragend. Optional zu aktivieren: die
+> Repo-Secrets `ANTHROPIC_API_KEY` (LLM-Smoke-Tests) und `TEAMS_WEBHOOK_URL`
+> (Benachrichtigungen) — ohne sie überspringen die betroffenen Workflows sauber.
+
 > **Plattform-Entscheidung:** Alles wird **vorerst GitHub-nativ** realisiert
 > (GitHub Repo · Actions · Pages · Issues · Releases). Der Migrationspfad in ein
 > Enterprise-Setup (Azure DevOps / Entra ID SSO) ist in Phase 5 **dokumentiert,
@@ -167,18 +172,18 @@ Ein überfälliger Skill erzeugt automatisch ein Review-Issue; ein neuer Skill l
 der Weg über GitHub hinaus ist vorbereitet.
 
 ### Deliverables
-- [ ] **Usage-/Nutzungs-Tracking** — Auswertung der Skill-Nutzung (Download-Zähler der GitHub Releases; optional privacy-freundliches Web-Analytics) → sichtbar auf einem **Insights-Dashboard** der Website.
-- [ ] **Datengetriebene Pflege-Priorisierung** — Kombination aus Nutzung + Feedback + Alter priorisiert automatisch, welche Skills gepflegt/überarbeitet werden sollen (z. B. „Top genutzt & lange nicht reviewed" zuerst).
-- [ ] **Governance im Maßstab** — Taxonomie-Owner-Prozess (aus Phase 1) wird bei wachsender Skill-Zahl durchgesetzt: Kategorie-Reviews, Konsolidierung von Tags, Qualitätskennzahlen je Kategorie.
-- [ ] **End-to-End-Pipeline verdrahtet** — alle Stufen (VALIDATE → QUALITY → REVIEW → BUILD → DEPLOY → NOTIFY) laufen als durchgängiger, dokumentierter Fluss.
-- [ ] **Retirement-Prozess vollständig** — sauberer, automatisierter Weg von `published` bis `archived` inkl. Provenienz-Erhalt.
-- [ ] **Enterprise-Readiness (dokumentiert, nicht ausgeführt)** — Migrationsleitfaden GitHub → **Azure DevOps Repos / Azure Pipelines / Azure Static Web Apps** mit **Entra ID (SSO)** und internen Berechtigungen, damit der Marketplace bei Bedarf in den SBO-Tenant überführt werden kann. Die Architektur ist 1:1 übertragbar.
+- [x] **Usage-/Nutzungs-Tracking** — **Insights-Panel** auf der Website holt Release-Download-Zähler + Feedback/Bug-Issues **live aus der öffentlichen GitHub-API** (client-seitig, kein Backend, kein Commit-Loop) und rendert sie pro Skill.
+- [x] **Datengetriebene Pflege-Priorisierung** — Score aus Downloads × offenen Bugs × Review-Alter (+ Feedback) rankt Skills; sichtbar im Insights-Panel **und** als monatlicher Report (`insights.yml` + `scripts/build_insights.py`) im Actions-Log.
+- [x] **Governance im Maßstab** — Kategorie-Owner-Tabelle, quartalsweiser Taxonomie-Review und datengetriebene Priorisierung in `MAINTAINERS.md` dokumentiert.
+- [x] **End-to-End-Pipeline verdrahtet** — alle Stufen (VALIDATE → QUALITY → REVIEW → BUILD → DEPLOY → DISTRIBUTE → NOTIFY → MAINTAIN) laufen als durchgängiger Fluss, dokumentiert in `docs/pipeline.md`.
+- [x] **Retirement-Prozess vollständig** — `published → deprecated → archived` automatisiert (Deprecation-Banner + `sunset_date` + Auto-Archiv-PR; archivierte Skills bleiben im Repo, verschwinden aus Site/Katalog/Releases).
+- [x] **Enterprise-Readiness (dokumentiert, nicht ausgeführt)** — Migrationsleitfaden `docs/enterprise-migration.md`: GitHub → **Azure DevOps Repos / Azure Pipelines / Azure Static Web Apps** mit **Entra ID (SSO)**; Komponenten-Mapping + Sequenzierung, Architektur 1:1 übertragbar.
 
 ### GitHub-Umsetzung
-Insights aus Release-Download-Statistiken (GitHub API) + optionalem Analytics; Priorisierungs-Report als geplanter Workflow; Migrationsleitfaden als `docs/enterprise-migration.md`.
+Insights live client-seitig aus der GitHub-API (unauth, CORS-fähig) + `build_insights.py`/`insights.yml` für den geplanten Report; Governance in `MAINTAINERS.md`; Pipeline in `docs/pipeline.md`; Migrationsleitfaden in `docs/enterprise-migration.md`.
 
 ### Exit-Kriterium
-Ein Insights-Dashboard zeigt Nutzung; ein automatischer Report priorisiert Pflegeaufwand; der komplette Lifecycle läuft automatisiert; der Enterprise-Migrationspfad ist dokumentiert.
+Das Insights-Panel zeigt Live-Nutzung; ein automatischer Report priorisiert Pflegeaufwand; der komplette Lifecycle läuft automatisiert; der Enterprise-Migrationspfad ist dokumentiert. **✅ Erreicht.**
 
 ---
 

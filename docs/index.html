@@ -548,6 +548,25 @@
   .download-btn-ghost:hover { background: var(--brand-light); }
   .btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
 
+  /* ── INSIGHTS ─────────────────────────────────────── */
+  .insights-note { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem; }
+  .insights-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+  .insights-table th, .insights-table td {
+    text-align: left; padding: 0.55rem 0.6rem; border-bottom: 1px solid var(--border);
+  }
+  .insights-table th { color: var(--text-muted); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  .insights-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .insights-table tr.pri-high td:first-child { box-shadow: inset 3px 0 0 var(--brand-accent); }
+  .insights-skill { font-weight: 600; color: var(--heading); }
+  .pri-badge { font-size: 0.72rem; font-weight: 700; padding: 0.1rem 0.5rem; border-radius: 999px; }
+  .pri-high { }
+  .pri-badge.high { background: #fbeae8; color: var(--brand-accent); }
+  .pri-badge.med { background: #f5efdd; color: #8a6d1f; }
+  .pri-badge.low { background: #eef1f0; color: var(--petrol); }
+  [data-theme="dark"] .pri-badge.high { background: rgba(218,48,37,0.2); color: #ff8f85; }
+  [data-theme="dark"] .pri-badge.med { background: rgba(221,184,0,0.16); color: #e8c85a; }
+  [data-theme="dark"] .pri-badge.low { background: rgba(255,255,255,0.06); color: #a7bcbc; }
+
   /* ── HOW TO CONTRIBUTE ────────────────────────────── */
   .contribute-section {
     background: linear-gradient(160deg, var(--feature-bg-a), var(--feature-bg-b));
@@ -650,6 +669,7 @@
     </a>
     <nav>
       <a class="navlink" href="#skills">Browse</a>
+      <a class="navlink" href="#" onclick="event.preventDefault(); openInsights()">Insights</a>
       <a class="navlink" href="#contribute">Contribute</a>
       <a class="navlink" href="https://github.com/acc-sebastian/skill-marketplace" target="_blank">GitHub ↗</a>
       <a class="navlink nav-cta" href="https://github.com/acc-sebastian/skill-marketplace/issues/new?template=new-skill.yml" target="_blank">💡 Skill vorschlagen</a>
@@ -825,6 +845,21 @@
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- INSIGHTS OVERLAY -->
+<div class="modal-overlay" id="insights-overlay" onclick="if(event.target===this) closeInsights()">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-emoji">📊</span>
+      <div class="modal-title-wrap">
+        <div class="modal-title">Insights</div>
+        <div class="modal-subtitle">Live usage &amp; maintenance priority — fetched from GitHub</div>
+      </div>
+      <button class="modal-close" onclick="closeInsights()">✕</button>
+    </div>
+    <div class="modal-body" id="insights-body"></div>
   </div>
 </div>
 
@@ -1217,7 +1252,7 @@ function closeModal() {
 function closeModalOnOverlay(e) {
   if (e.target === document.getElementById('modal-overlay')) closeModal();
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeInsights(); } });
 
 function switchTab(e, tabId) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1253,6 +1288,76 @@ function copyCode(btn, text) {
     btn.classList.add('copied');
     setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
   });
+}
+
+// ── INSIGHTS (live, from the public GitHub API) ──
+const REPO_API = 'https://api.github.com/repos/acc-sebastian/skill-marketplace';
+
+function openInsights() {
+  document.getElementById('insights-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  loadInsights();
+}
+function closeInsights() {
+  document.getElementById('insights-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function monthsSince(iso) {
+  if (!iso) return 0;
+  const d = new Date(iso), n = new Date();
+  return Math.max(0, (n.getFullYear()-d.getFullYear())*12 + (n.getMonth()-d.getMonth()));
+}
+
+async function loadInsights() {
+  const body = document.getElementById('insights-body');
+  body.innerHTML = '<p class="insights-note">Loading live data from GitHub…</p>';
+  const downloads = {}, feedback = {}, bugs = {};
+  try {
+    const rels = await fetch(REPO_API + '/releases?per_page=100').then(r => r.json());
+    (Array.isArray(rels) ? rels : []).forEach(rel => {
+      const id = (rel.tag_name || '').split('@')[0];
+      const dl = (rel.assets || []).reduce((s,a) => s + (a.download_count||0), 0);
+      downloads[id] = (downloads[id]||0) + dl;
+    });
+  } catch (e) {}
+  try {
+    const iss = await fetch(REPO_API + '/issues?state=all&per_page=100').then(r => r.json());
+    (Array.isArray(iss) ? iss : []).forEach(i => {
+      if (i.pull_request) return;
+      const labels = (i.labels||[]).map(l => l.name);
+      const m = (i.title||'').match(/\[(?:Feedback|Bug)\]\s+([a-z0-9-]+)/i);
+      if (!m) return;
+      const id = m[1];
+      if (labels.includes('bug')) bugs[id] = (bugs[id]||0)+1;
+      else if (labels.includes('feedback')) feedback[id] = (feedback[id]||0)+1;
+    });
+  } catch (e) {}
+
+  const rows = SKILLS.map(s => {
+    const dl = downloads[s.id]||0, fb = feedback[s.id]||0, bg = bugs[s.id]||0;
+    const age = monthsSince(s.last_reviewed);
+    const score = dl*1 + bg*40 + age*8 + fb*3;
+    return {s, dl, fb, bg, age, score};
+  }).sort((a,b) => b.score - a.score);
+
+  const maxScore = Math.max(1, ...rows.map(r => r.score));
+  const totalDl = rows.reduce((s,r) => s + r.dl, 0);
+  const priOf = r => { const rel = r.score / maxScore; return rel >= 0.66 ? 'high' : (rel >= 0.33 ? 'med' : 'low'); };
+
+  let html = `<p class="insights-note">Live from the GitHub API — release download counts and feedback/bug issues (unauthenticated, may be rate-limited). Total downloads: <strong>${totalDl}</strong>. <em>Maintenance priority</em> ranks popularity × open bugs × months since last review.</p>`;
+  html += '<div style="overflow-x:auto"><table class="insights-table"><thead><tr><th>Skill</th><th class="num">Downloads</th><th class="num">Feedback</th><th class="num">Bugs</th><th class="num">Reviewed</th><th>Priority</th></tr></thead><tbody>';
+  rows.forEach(r => {
+    const p = priOf(r);
+    html += `<tr class="${p==='high'?'pri-high':''}">`
+      + `<td><span class="insights-skill">${r.s.emoji||'🔧'} ${r.s.name}</span></td>`
+      + `<td class="num">${r.dl}</td>`
+      + `<td class="num">${r.fb}</td>`
+      + `<td class="num">${r.bg}</td>`
+      + `<td class="num">${r.age} mo</td>`
+      + `<td><span class="pri-badge ${p}">${p.toUpperCase()}</span></td></tr>`;
+  });
+  html += '</tbody></table></div>';
+  body.innerHTML = html;
 }
 
 // Filters

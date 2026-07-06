@@ -1,0 +1,26 @@
+name: Maintenance Insights
+
+# Insights & prioritization (Roadmap Phase 5): monthly report ranking skills by
+# popularity × open bugs × review age. Prints to the Actions log — no commit,
+# so it doesn't need to bypass branch protection. The website also renders this
+# live client-side (Insights panel).
+on:
+  schedule:
+    - cron: "0 8 1 * *"   # 1st of each month, 08:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  insights:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build maintenance-priority report
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/build_insights.py
