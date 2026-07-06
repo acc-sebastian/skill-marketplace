@@ -333,18 +333,6 @@ def build_html(skills):
     animation: floatGlow 14s ease-in-out infinite;
   }}
   .hero-inner {{ position: relative; z-index: 1; max-width: 780px; margin: 0 auto; }}
-  .hero-badge {{
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    background: var(--glass-bg); border: 1px solid var(--glass-border);
-    color: var(--feature-text); border-radius: 999px; padding: 0.4rem 0.9rem;
-    font-size: 0.8rem; font-weight: 500; margin-bottom: 1.5rem;
-    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
-    animation: fadeUp .6s ease both;
-  }}
-  .hero-badge .dot {{
-    width: 8px; height: 8px; border-radius: 50%; background: #1f9d57;
-    box-shadow: 0 0 0 4px rgba(31,157,87,0.22);
-  }}
   .hero h1 {{
     font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 800;
     margin-bottom: 1.1rem; letter-spacing: -0.02em; line-height: 1.08;
@@ -389,19 +377,6 @@ def build_html(skills):
   }}
   .stat-num {{ font-size: 2rem; font-weight: 800; color: var(--feature-text); line-height: 1; }}
   .stat-label {{ font-size: 0.8rem; color: var(--feature-muted); margin-top: 0.35rem; }}
-
-  /* ── TRUST BAND ───────────────────────────────────── */
-  .trust-band {{
-    max-width: 1200px; margin: 1.75rem auto 2.25rem; padding: 0 2rem;
-    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
-  }}
-  .trust-item {{
-    display: flex; align-items: center; gap: 0.55rem;
-    font-size: 0.86rem; color: var(--text-muted); font-weight: 500;
-  }}
-  .trust-item svg {{ color: var(--brand-accent); flex-shrink: 0; }}
-  .trust-sep {{ color: var(--border); align-self: center; }}
-  @media (max-width: 640px) {{ .trust-sep {{ display: none; }} }}
 
   /* ── SEARCH + FILTERS ─────────────────────────────── */
   .controls {{
@@ -697,10 +672,6 @@ def build_html(skills):
   }}
   .c-step p {{ font-size: 0.85rem; color: var(--feature-muted); }}
   .c-step p code {{ color: var(--feature-text); }}
-  .contribute-eyebrow {{
-    display: inline-block; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em;
-    text-transform: uppercase; color: var(--brand-accent); margin-bottom: 0.75rem;
-  }}
   .cta-btn {{
     display: inline-flex; align-items: center; gap: 0.5rem;
     background: var(--brand-accent); color: #fff;
@@ -781,9 +752,8 @@ def build_html(skills):
 
 <div class="hero">
   <div class="hero-inner">
-    <span class="hero-badge"><span class="dot"></span> Live &amp; auto-updated for Claude Code</span>
     <h1>AI Skills, Ready to <span class="accent">Deploy</span></h1>
-    <p>Plug-and-play skills that turn any AI assistant into a specialist. Governed, versioned, and installable in under a minute.</p>
+    <p>Browse, install, and share reusable AI skills for Claude Code and other assistants.</p>
     <div class="hero-cta">
       <a class="btn-hero btn-hero-primary" href="#skills">Browse skills</a>
       <a class="btn-hero btn-hero-ghost" href="https://github.com/acc-sebastian/skill-marketplace/blob/main/docs/enterprise-setup.md" target="_blank">⚡ Install as plugin</a>
@@ -810,16 +780,6 @@ def build_html(skills):
   </div>
 </div>
 
-<div class="trust-band">
-  <span class="trust-item"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg> Reviewed via pull requests</span>
-  <span class="trust-sep">•</span>
-  <span class="trust-item"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg> Semantic versioning &amp; releases</span>
-  <span class="trust-sep">•</span>
-  <span class="trust-item"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg> Auto-updated for everyone</span>
-  <span class="trust-sep">•</span>
-  <span class="trust-item"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> Works across harnesses</span>
-</div>
-
 <div class="grid-wrap">
   <p class="result-count" id="result-count"></p>
   <div class="skills-grid" id="skills-grid"></div>
@@ -833,7 +793,6 @@ def build_html(skills):
 <!-- CONTRIBUTE SECTION -->
 <section class="contribute-section" id="contribute">
   <div class="contribute-inner">
-    <span class="contribute-eyebrow">Open contribution model</span>
     <h2>Add Your Own Skill</h2>
     <p>Create a skill once — share it with the entire team. Once merged, it's live on this page within minutes.</p>
     <div class="contribute-steps">
