@@ -72,7 +72,6 @@ def build_catalog(skills):
             "last_reviewed": s.get("last_reviewed"),
             "deprecated_by": s.get("deprecated_by"),
             "sunset_date": s.get("sunset_date"),
-            "emoji": s.get("emoji"),
             "download_url": f"{RAW_BASE}/{s['folder']}/SKILL.md",
             "metadata_url": f"{RAW_BASE}/{s['folder']}/metadata.json",
         })
@@ -88,7 +87,11 @@ def build_catalog(skills):
 
 
 def build_html(skills):
-    skills_json = json.dumps(skills, ensure_ascii=False, indent=2)
+    # strip the (now-unused) emoji field so the page carries no emoji at all
+    skills_json = json.dumps(
+        [{k: v for k, v in s.items() if k != "emoji"} for s in skills],
+        ensure_ascii=False, indent=2,
+    )
 
     categories = sorted(set(s.get("category", "Other") for s in skills))
     cat_buttons = "\n".join(
@@ -128,6 +131,7 @@ def build_html(skills):
     --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     --radius: 8px;
     --radius-lg: 12px;
+    --max-width: 820px;
 
     /* ─ LIGHT theme ─ */
     --brand-accent: #00677F;   /* teal */
@@ -135,6 +139,7 @@ def build_html(skills):
     --brand-blue: #00677F;     /* action-color alias (kept for existing rules) */
     --brand-dark: #18181b;     /* neutral near-black (code blocks, modal header) */
     --brand-light: #e7f1f3;    /* soft teal tint */
+    --accent-soft: rgba(0,103,127,0.12);
     --petrol: #4b6b73;
     --mid-blue: #26262b;
     --sand: #e5e7eb;
@@ -146,8 +151,11 @@ def build_html(skills):
     --surface: #ffffff;
     --surface-2: #f5f5f3;
     --border: #ececec;
+    --border-strong: #d4d4d8;
     --text: #18181b;
     --text-muted: #71717a;
+    --subtle: #a1a1aa;
+    --fg-soft: #27272a;
     --heading: #18181b;
     --scrollbar: #d4d4d8;
     --shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06);
@@ -183,6 +191,7 @@ def build_html(skills):
     --brand-blue: #5EC5D6;
     --brand-dark: #08080a;     /* near-black for code blocks / modal header */
     --brand-light: rgba(94,197,214,0.14);
+    --accent-soft: rgba(94,197,214,0.16);
     --petrol: #8fb7be;
     --mid-blue: #131316;
     --sand: #2e2e33;
@@ -194,8 +203,11 @@ def build_html(skills):
     --surface: #131316;
     --surface-2: #1a1a1e;
     --border: #1f1f23;
+    --border-strong: #2e2e33;
     --text: #fafafa;
     --text-muted: #a1a1aa;
+    --subtle: #71717a;
+    --fg-soft: #e4e4e7;
     --heading: #fafafa;
     --scrollbar: #2e2e33;
     --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 6px 20px rgba(0,0,0,0.34);
@@ -232,13 +244,20 @@ def build_html(skills):
     font-family: var(--font-sans);
     background: var(--bg);
     color: var(--text);
-    line-height: 1.6;
+    font-size: 16px;
+    line-height: 1.7;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    font-feature-settings: "cv02","cv03","cv04","cv11";
     transition: background .3s ease, color .3s ease;
   }}
   img {{ max-width: 100%; }}
   ::selection {{ background: rgba(0,103,127,0.18); }}
+  /* shared narrow content column (aIQ-blog editorial width) */
+  .wrap {{ max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; width: 100%; }}
+  /* tiny uppercase section eyebrow */
+  .eyebrow {{ font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--subtle); font-weight: 600; }}
 
   /* Custom scrollbar */
   ::-webkit-scrollbar {{ width: 11px; height: 11px; }}
@@ -308,17 +327,14 @@ def build_html(skills):
   }}
   header nav a.nav-cta:hover {{ transform: translateY(-1px); box-shadow: 0 6px 18px var(--hero-glow); }}
   .theme-toggle {{
-    width: 38px; height: 38px; flex-shrink: 0;
-    display: inline-flex; align-items: center; justify-content: center;
-    background: var(--glass-bg); border: 1px solid var(--header-border);
-    color: var(--header-text); border-radius: 9px; cursor: pointer;
-    transition: background .2s, transform .2s, border-color .2s;
+    flex-shrink: 0; font-family: inherit;
+    font-size: 0.8rem; font-weight: 500; letter-spacing: 0.02em;
+    padding: 0.4rem 0.75rem;
+    background: transparent; border: 1px solid var(--border-strong);
+    color: var(--header-muted); border-radius: 999px; cursor: pointer;
+    transition: color .2s, border-color .2s;
   }}
-  .theme-toggle:hover {{ transform: translateY(-1px); border-color: var(--brand-accent); }}
-  .theme-toggle svg {{ width: 18px; height: 18px; }}
-  .theme-toggle .icon-sun {{ display: none; }}
-  [data-theme="dark"] .theme-toggle .icon-sun {{ display: block; }}
-  [data-theme="dark"] .theme-toggle .icon-moon {{ display: none; }}
+  .theme-toggle:hover {{ color: var(--header-text); border-color: var(--brand-accent); }}
   @media (max-width: 640px) {{
     header nav a.navlink:not(.nav-cta) {{ display: none; }}
   }}
@@ -412,15 +428,11 @@ def build_html(skills):
     display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;
   }}
   .search-input-wrap {{ flex: 1; min-width: 220px; position: relative; }}
-  .search-input-wrap svg {{
-    position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%);
-    color: var(--text-muted); pointer-events: none;
-  }}
   #search {{
     width: 100%;
     border: 1.5px solid var(--border);
     border-radius: 10px;
-    padding: 0.7rem 0.85rem 0.7rem 2.4rem;
+    padding: 0.7rem 0.9rem;
     font-size: 0.95rem; font-family: inherit;
     outline: none; background: var(--surface-2); color: var(--text);
     transition: border-color .2s, box-shadow .2s, background .2s;
@@ -443,7 +455,7 @@ def build_html(skills):
   .filter-btn.active {{
     background: var(--chip-active-bg);
     border-color: var(--chip-active-bg);
-    color: #fff;
+    color: var(--on-accent);
   }}
 
   /* ── SKILL GRID ───────────────────────────────────── */
@@ -786,12 +798,9 @@ def build_html(skills):
       <a class="navlink" href="#skills">Browse</a>
       <a class="navlink" href="#" onclick="event.preventDefault(); openInsights()">Insights</a>
       <a class="navlink" href="#contribute">Contribute</a>
-      <a class="navlink" href="https://github.com/acc-sebastian/skill-marketplace" target="_blank">GitHub ↗</a>
-      <a class="navlink nav-cta" href="{PROPOSE_URL}" target="_blank">💡 Skill vorschlagen</a>
-      <button class="theme-toggle" id="theme-toggle" title="Toggle light / dark mode" aria-label="Toggle light / dark mode">
-        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-      </button>
+      <a class="navlink" href="https://github.com/acc-sebastian/skill-marketplace" target="_blank">GitHub</a>
+      <a class="navlink nav-cta" href="{PROPOSE_URL}" target="_blank">Suggest a skill</a>
+      <button class="theme-toggle" id="theme-toggle" title="Toggle light / dark mode" aria-label="Toggle light / dark mode"><span id="theme-label">Dark</span></button>
     </nav>
   </div>
 </header>
@@ -802,7 +811,7 @@ def build_html(skills):
     <p>Browse, install, and share reusable AI skills for Claude Code and other assistants.</p>
     <div class="hero-cta">
       <a class="btn-hero btn-hero-primary" href="#skills">Browse skills</a>
-      <a class="btn-hero btn-hero-ghost" href="https://github.com/acc-sebastian/skill-marketplace/blob/main/docs/enterprise-setup.md" target="_blank">⚡ Install as plugin</a>
+      <a class="btn-hero btn-hero-ghost" href="https://github.com/acc-sebastian/skill-marketplace/blob/main/docs/enterprise-setup.md" target="_blank">Install as plugin</a>
     </div>
     <div class="hero-stats">
       <div class="stat"><div class="stat-num" id="stat-skills">—</div><div class="stat-label">Skills available</div></div>
@@ -815,7 +824,6 @@ def build_html(skills):
 <div class="controls" id="skills">
   <div class="search-box">
     <div class="search-input-wrap">
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
       <input type="text" id="search" placeholder="Search skills, tags, descriptions…">
     </div>
     <div class="filter-wrap">
@@ -830,7 +838,6 @@ def build_html(skills):
   <p class="result-count" id="result-count"></p>
   <div class="skills-grid" id="skills-grid"></div>
   <div class="no-results" id="no-results" style="display:none">
-    <div class="no-results-emoji">🔍</div>
     <strong>No skills found</strong>
     <p>Try a different search term or category filter.</p>
   </div>
@@ -845,15 +852,15 @@ def build_html(skills):
       <div class="c-step"><div class="c-step-num">1</div><p>Fork the GitHub repo</p></div>
       <div class="c-step"><div class="c-step-num">2</div><p>Add <code>metadata.json</code> + <code>SKILL.md</code></p></div>
       <div class="c-step"><div class="c-step-num">3</div><p>Open a pull request</p></div>
-      <div class="c-step"><div class="c-step-num">4</div><p>It's live! 🚀</p></div>
+      <div class="c-step"><div class="c-step-num">4</div><p>It's live</p></div>
     </div>
     <p style="font-size:0.9rem;opacity:0.7;margin-bottom:1rem">Kein Git? Kein Problem — über das Formular geht's ganz ohne.</p>
     <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap">
       <a class="cta-btn" href="{PROPOSE_URL}" target="_blank">
-        💡 Neue Skill vorschlagen
+        Suggest a skill
       </a>
       <a class="cta-btn cta-btn-ghost" href="https://github.com/acc-sebastian/skill-marketplace/blob/main/CONTRIBUTING.md" target="_blank">
-        📖 Contributor Guide (per PR)
+        Contributor guide (via PR)
       </a>
     </div>
   </div>
@@ -863,7 +870,6 @@ def build_html(skills):
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOnOverlay(event)">
   <div class="modal" id="modal">
     <div class="modal-header">
-      <span class="modal-emoji" id="modal-emoji"></span>
       <div class="modal-title-wrap">
         <div class="modal-title" id="modal-title"></div>
         <div class="modal-subtitle" id="modal-subtitle"></div>
@@ -876,10 +882,10 @@ def build_html(skills):
       <p class="modal-desc" id="modal-desc"></p>
       <div class="modal-feedback">
         <span>Was this skill helpful?</span>
-        <a id="fb-yes" target="_blank" rel="noopener">👍 Yes</a>
-        <a id="fb-no" target="_blank" rel="noopener">👎 No</a>
+        <a id="fb-yes" target="_blank" rel="noopener">Yes</a>
+        <a id="fb-no" target="_blank" rel="noopener">No</a>
         <span class="fb-spacer"></span>
-        <a id="fb-bug" target="_blank" rel="noopener">🐞 Report a problem</a>
+        <a id="fb-bug" target="_blank" rel="noopener">Report a problem</a>
       </div>
 
       <div class="tabs">
@@ -891,7 +897,7 @@ def build_html(skills):
 
       <div class="tab-panel active" id="tab-claude-code">
         <div class="deprecation-banner" style="background:var(--brand-light);border-color:var(--glass-border);color:var(--text)">
-          ⭐ <strong>Recommended:</strong> install the whole marketplace as a plugin — you get <em>every</em> skill and stay auto-updated:
+          <strong>Recommended:</strong> install the whole marketplace as a plugin — you get <em>every</em> skill and stay auto-updated:
           <div class="code-block" style="position:relative;margin-top:0.5rem">
             <span>/plugin marketplace add acc-sebastian/skill-marketplace</span><br>
             <span>/plugin install sbo-skills@sbo-skill-marketplace</span>
@@ -915,8 +921,8 @@ def build_html(skills):
           <li>Trigger it by saying one of the trigger phrases listed in the skill description.</li>
         </ol>
         <div class="btn-row">
-          <button class="download-btn" id="btn-download-claude" onclick="downloadSkill()">⬇ Download SKILL.md</button>
-          <button class="download-btn download-btn-ghost" onclick="copySkillContent()">📋 Copy to clipboard</button>
+          <button class="download-btn" id="btn-download-claude" onclick="downloadSkill()">Download SKILL.md</button>
+          <button class="download-btn download-btn-ghost" onclick="copySkillContent()">Copy to clipboard</button>
         </div>
       </div>
 
@@ -930,7 +936,7 @@ def build_html(skills):
           <li>Save and publish your Copilot.</li>
         </ol>
         <div class="btn-row">
-          <button class="download-btn" onclick="downloadSkill()">⬇ Download SKILL.md</button>
+          <button class="download-btn" onclick="downloadSkill()">Download SKILL.md</button>
         </div>
       </div>
 
@@ -943,8 +949,8 @@ def build_html(skills):
           <li>The AI will follow the structured role, process, and output format defined in the skill.</li>
         </ol>
         <div class="btn-row">
-          <button class="download-btn" onclick="downloadSkill()">⬇ Download SKILL.md</button>
-          <button class="download-btn download-btn-ghost" onclick="copySkillContent()">📋 Copy to clipboard</button>
+          <button class="download-btn" onclick="downloadSkill()">Download SKILL.md</button>
+          <button class="download-btn download-btn-ghost" onclick="copySkillContent()">Copy to clipboard</button>
         </div>
       </div>
 
@@ -952,8 +958,8 @@ def build_html(skills):
         <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.75rem">Full content of <code>SKILL.md</code> — this is what gets installed in your AI harness.</p>
         <div class="skill-content-area" id="modal-skill-content"></div>
         <div class="btn-row">
-          <button class="download-btn" onclick="downloadSkill()">⬇ Download SKILL.md</button>
-          <button class="download-btn download-btn-ghost" onclick="copySkillContent()">📋 Copy to clipboard</button>
+          <button class="download-btn" onclick="downloadSkill()">Download SKILL.md</button>
+          <button class="download-btn download-btn-ghost" onclick="copySkillContent()">Copy to clipboard</button>
         </div>
       </div>
     </div>
@@ -964,7 +970,6 @@ def build_html(skills):
 <div class="modal-overlay" id="insights-overlay" onclick="if(event.target===this) closeInsights()">
   <div class="modal">
     <div class="modal-header">
-      <span class="modal-emoji">📊</span>
       <div class="modal-title-wrap">
         <div class="modal-title">Insights</div>
         <div class="modal-subtitle">Live usage &amp; maintenance priority — fetched from GitHub</div>
@@ -993,11 +998,11 @@ def build_html(skills):
       <a href="https://github.com/acc-sebastian/skill-marketplace/blob/main/docs/enterprise-setup.md" target="_blank">Enterprise setup</a>
       <a href="https://github.com/acc-sebastian/skill-marketplace/blob/main/CONTRIBUTING.md" target="_blank">Contributor guide</a>
       <a href="https://github.com/acc-sebastian/skill-marketplace/blob/main/ROADMAP.md" target="_blank">Roadmap</a>
-      <a href="https://github.com/acc-sebastian/skill-marketplace" target="_blank">GitHub ↗</a>
+      <a href="https://github.com/acc-sebastian/skill-marketplace" target="_blank">GitHub</a>
     </div>
   </div>
   <div class="footer-bottom">
-    Built with ♥ by accilium &nbsp;·&nbsp; Auto-generated by <code>scripts/build_site.py</code>
+    Built by accilium &nbsp;·&nbsp; Auto-generated by <code>scripts/build_site.py</code>
   </div>
 </footer>
 
@@ -1052,7 +1057,6 @@ function renderCards() {{
 
     card.innerHTML = `
       <div class="card-header">
-        <span class="card-emoji">${{skill.emoji || '🔧'}}</span>
         <div class="card-meta">
           <div class="card-name">${{skill.name || skill.id}}</div>
           <div class="card-author">by ${{skill.author || 'Unknown'}}</div>
@@ -1064,7 +1068,7 @@ function renderCards() {{
         <span class="badge ${{complexityClass}}">${{complexityLabel}}</span>
         ${{statusBadge}}${{harnessBadges}}
       </div>
-      <div class="card-install-hint">View &amp; install <span class="arrow">→</span></div>
+      <div class="card-install-hint">View &amp; install</div>
     `;
     grid.appendChild(card);
   }});
@@ -1079,7 +1083,6 @@ function statusBadgeHtml(status) {{
 
 function openModal(skill) {{
   currentSkill = skill;
-  document.getElementById('modal-emoji').textContent = skill.emoji || '🔧';
   document.getElementById('modal-title').textContent = skill.name || skill.id;
   document.getElementById('modal-subtitle').textContent = `${{skill.category}} · v${{skill.version}} · by ${{skill.author}}`;
   document.getElementById('modal-desc').textContent = skill.description || '';
@@ -1102,7 +1105,7 @@ function openModal(skill) {{
       ? `<a href="#" onclick="event.preventDefault(); openModal(SKILLS.find(s => s.id==='${{successor.id}}'))">${{successor.name}}</a>`
       : (skill.deprecated_by || 'a newer skill');
     const sunset = skill.sunset_date ? ` It will be removed on <strong>${{skill.sunset_date}}</strong>.` : '';
-    depEl.innerHTML = `<div class="deprecation-banner">⚠️ <strong>Deprecated.</strong> This skill is superseded by ${{successorLink}}.${{sunset}} Please migrate.</div>`;
+    depEl.innerHTML = `<div class="deprecation-banner"><strong>Deprecated.</strong> This skill is superseded by ${{successorLink}}.${{sunset}} Please migrate.</div>`;
   }} else {{
     depEl.innerHTML = '';
   }}
@@ -1169,7 +1172,7 @@ function copySkillContent() {{
 
 function copyCode(btn, text) {{
   navigator.clipboard.writeText(text).then(() => {{
-    btn.textContent = '✓ Copied';
+    btn.textContent = 'Copied';
     btn.classList.add('copied');
     setTimeout(() => {{ btn.textContent = 'Copy'; btn.classList.remove('copied'); }}, 2000);
   }});
@@ -1234,7 +1237,7 @@ async function loadInsights() {{
   rows.forEach(r => {{
     const p = priOf(r);
     html += `<tr class="${{p==='high'?'pri-high':''}}">`
-      + `<td><span class="insights-skill">${{r.s.emoji||'🔧'}} ${{r.s.name}}</span></td>`
+      + `<td><span class="insights-skill">${{r.s.name}}</span></td>`
       + `<td class="num">${{r.dl}}</td>`
       + `<td class="num">${{r.fb}}</td>`
       + `<td class="num">${{r.bg}}</td>`
@@ -1272,12 +1275,19 @@ const _onScroll = () => {{ _hdr.classList.toggle('scrolled', window.scrollY > 8)
 window.addEventListener('scroll', _onScroll, {{ passive: true }});
 _onScroll();
 
-// Light / dark theme toggle
+// Light / dark theme toggle (label shows the mode you'll switch to)
+function syncThemeLabel() {{
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const el = document.getElementById('theme-label');
+  if (el) el.textContent = isDark ? 'Light' : 'Dark';
+}}
+syncThemeLabel();
 document.getElementById('theme-toggle').addEventListener('click', () => {{
   const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
   const next = cur === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
   try {{ localStorage.setItem('theme', next); }} catch (e) {{}}
+  syncThemeLabel();
 }});
 
 // Init
