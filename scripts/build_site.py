@@ -104,7 +104,7 @@ def build_html(skills):
 <title>Skill Marketplace — accilium</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
 <script>
   // Set theme before paint to avoid a flash of the wrong theme
   (function() {{
@@ -118,92 +118,109 @@ def build_html(skills):
   }})();
 </script>
 <style>
-  /* Palette adapted from sbo.at — Schoeller-Bleckmann Oilfield Equipment AG.
-     Two themes: LIGHT (mostly white, default) and DARK (mostly SBO navy).
-     The SBO red (--brand-accent) is constant in both. */
+  /* Palette adapted from accilium/aIQ-blog — minimal, neutral, one teal accent.
+     LIGHT (near-white, default) + DARK (near-black). Accent flips per theme:
+     #00677F (light) / #5EC5D6 (dark). Inter + JetBrains Mono. */
   :root {{
     color-scheme: light;
-    /* fixed brand colors — identical in both themes */
-    --brand-dark: #111145;     /* SBO deep navy/indigo */
-    --brand-blue: #da3025;     /* alias kept for existing rules → red action color */
-    --brand-accent: #da3025;   /* SBO signature red */
-    --brand-accent-2: #b3241b; /* darker red for gradients */
-    --brand-light: #f8f3e5;    /* warm cream */
-    --petrol: #36494d;
-    --mid-blue: #253e5c;
-    --sand: #d6ceb9;
-    --radius: 6px;
-    --radius-lg: 14px;
-    --ring: 0 0 0 4px rgba(218,48,37,0.16);
+    /* fonts + shape (theme-independent) */
+    --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --radius: 8px;
+    --radius-lg: 12px;
 
-    /* ─ LIGHT theme (mostly white) ─ */
-    --bg: #f4f5f8;
+    /* ─ LIGHT theme ─ */
+    --brand-accent: #00677F;   /* teal */
+    --brand-accent-2: #00505f; /* darker teal for gradients/hover */
+    --brand-blue: #00677F;     /* action-color alias (kept for existing rules) */
+    --brand-dark: #18181b;     /* neutral near-black (code blocks, modal header) */
+    --brand-light: #e7f1f3;    /* soft teal tint */
+    --petrol: #4b6b73;
+    --mid-blue: #26262b;
+    --sand: #e5e7eb;
+    --on-accent: #ffffff;      /* text/icon color on top of the accent */
+    --danger: #c0362c;         /* semantic red (advanced / deprecated / high priority) */
+    --ring: 0 0 0 4px rgba(0,103,127,0.16);
+
+    --bg: #fdfdfc;
     --surface: #ffffff;
-    --surface-2: #f2f3f7;
-    --border: #e5e7ec;
-    --text: #17181d;
-    --text-muted: #5b6270;
-    --heading: #111145;
-    --scrollbar: #cfd3dc;
-    --shadow: 0 1px 2px rgba(16,16,40,0.04), 0 4px 16px rgba(16,16,40,0.06);
-    --shadow-hover: 0 18px 44px rgba(16,16,40,0.14);
+    --surface-2: #f5f5f3;
+    --border: #ececec;
+    --text: #18181b;
+    --text-muted: #71717a;
+    --heading: #18181b;
+    --scrollbar: #d4d4d8;
+    --shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06);
+    --shadow-hover: 0 18px 44px rgba(0,0,0,0.12);
 
-    --header-bg: rgba(255,255,255,0.82);
-    --header-bg-scrolled: rgba(255,255,255,0.95);
-    --header-text: #17181d;
-    --header-muted: #565d6b;
-    --header-border: rgba(16,16,40,0.10);
+    --header-bg: rgba(253,253,252,0.80);
+    --header-bg-scrolled: rgba(253,253,252,0.95);
+    --header-text: #18181b;
+    --header-muted: #52525b;
+    --header-border: #ececec;
 
     --feature-bg-a: #ffffff;
-    --feature-bg-b: #e9edf4;
-    --feature-text: #111145;
-    --feature-muted: #4a5160;
-    --feature-dot: rgba(17,17,69,0.06);
-    --hero-glow: rgba(218,48,37,0.18);
-    --glass-bg: rgba(17,17,69,0.04);
-    --glass-border: rgba(17,17,69,0.12);
-    --chip-active-bg: #111145;
+    --feature-bg-b: #f5f5f3;
+    --feature-text: #18181b;
+    --feature-muted: #52525b;
+    --feature-dot: rgba(0,0,0,0.05);
+    --hero-glow: rgba(0,103,127,0.14);
+    --glass-bg: rgba(0,103,127,0.05);
+    --glass-border: rgba(0,0,0,0.10);
+    --chip-active-bg: #00677F;
 
-    --footer-bg: #eceef3;
-    --footer-text: #4a5160;
-    --footer-heading: #111145;
-    --footer-border: rgba(16,16,40,0.10);
+    --footer-bg: #f5f5f3;
+    --footer-text: #52525b;
+    --footer-heading: #18181b;
+    --footer-border: #ececec;
   }}
 
-  /* ─ DARK theme (mostly SBO navy) ─ */
+  /* ─ DARK theme ─ */
   [data-theme="dark"] {{
     color-scheme: dark;
-    --bg: #0c0c30;
-    --surface: #17174c;
-    --surface-2: #1f1f5c;
-    --border: rgba(255,255,255,0.11);
-    --text: #ececf5;
-    --text-muted: #a6a9c6;
-    --heading: #ffffff;
-    --scrollbar: #2b2b6b;
-    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 6px 20px rgba(0,0,0,0.34);
+    --brand-accent: #5EC5D6;   /* bright cyan */
+    --brand-accent-2: #3aa9bb;
+    --brand-blue: #5EC5D6;
+    --brand-dark: #08080a;     /* near-black for code blocks / modal header */
+    --brand-light: rgba(94,197,214,0.14);
+    --petrol: #8fb7be;
+    --mid-blue: #131316;
+    --sand: #2e2e33;
+    --on-accent: #08080a;      /* dark text on the bright cyan accent */
+    --danger: #ff8f85;         /* semantic red for dark theme */
+    --ring: 0 0 0 4px rgba(94,197,214,0.22);
+
+    --bg: #0b0b0d;
+    --surface: #131316;
+    --surface-2: #1a1a1e;
+    --border: #1f1f23;
+    --text: #fafafa;
+    --text-muted: #a1a1aa;
+    --heading: #fafafa;
+    --scrollbar: #2e2e33;
+    --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 6px 20px rgba(0,0,0,0.34);
     --shadow-hover: 0 22px 50px rgba(0,0,0,0.5);
 
-    --header-bg: rgba(17,17,69,0.80);
-    --header-bg-scrolled: rgba(11,11,44,0.94);
-    --header-text: #ffffff;
-    --header-muted: rgba(255,255,255,0.82);
-    --header-border: rgba(255,255,255,0.10);
+    --header-bg: rgba(11,11,13,0.80);
+    --header-bg-scrolled: rgba(11,11,13,0.94);
+    --header-text: #fafafa;
+    --header-muted: #a1a1aa;
+    --header-border: #1f1f23;
 
-    --feature-bg-a: #0d0d38;
-    --feature-bg-b: #253e5c;
-    --feature-text: #ffffff;
-    --feature-muted: rgba(248,243,229,0.86);
-    --feature-dot: rgba(255,255,255,0.09);
-    --hero-glow: rgba(218,48,37,0.42);
-    --glass-bg: rgba(255,255,255,0.06);
-    --glass-border: rgba(255,255,255,0.14);
-    --chip-active-bg: #da3025;
+    --feature-bg-a: #0b0b0d;
+    --feature-bg-b: #131316;
+    --feature-text: #fafafa;
+    --feature-muted: #a1a1aa;
+    --feature-dot: rgba(255,255,255,0.06);
+    --hero-glow: rgba(94,197,214,0.20);
+    --glass-bg: rgba(255,255,255,0.05);
+    --glass-border: rgba(255,255,255,0.12);
+    --chip-active-bg: #5EC5D6;
 
-    --footer-bg: #0a0a26;
-    --footer-text: rgba(255,255,255,0.6);
-    --footer-heading: #ffffff;
-    --footer-border: rgba(255,255,255,0.08);
+    --footer-bg: #0b0b0d;
+    --footer-text: #a1a1aa;
+    --footer-heading: #fafafa;
+    --footer-border: #1f1f23;
   }}
 
   html {{ background: var(--bg); }}
@@ -212,7 +229,7 @@ def build_html(skills):
   html {{ scroll-behavior: smooth; }}
 
   body {{
-    font-family: "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: var(--font-sans);
     background: var(--bg);
     color: var(--text);
     line-height: 1.6;
@@ -221,7 +238,7 @@ def build_html(skills):
     transition: background .3s ease, color .3s ease;
   }}
   img {{ max-width: 100%; }}
-  ::selection {{ background: rgba(218,48,37,0.18); }}
+  ::selection {{ background: rgba(0,103,127,0.18); }}
 
   /* Custom scrollbar */
   ::-webkit-scrollbar {{ width: 11px; height: 11px; }}
@@ -263,8 +280,8 @@ def build_html(skills):
     background: linear-gradient(150deg, var(--brand-accent), var(--brand-accent-2));
     border-radius: 9px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 1.2rem; font-weight: 800;
-    box-shadow: 0 4px 14px rgba(218,48,37,0.4);
+    font-size: 1.2rem; font-weight: 800; color: var(--on-accent);
+    box-shadow: 0 4px 14px var(--hero-glow);
   }}
   .logo-text {{ font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; line-height: 1.15; }}
   .logo-sub {{ font-size: 0.66rem; opacity: 0.65; display: block; text-transform: uppercase; letter-spacing: 0.16em; }}
@@ -286,10 +303,10 @@ def build_html(skills):
   header nav a.navlink:hover::after {{ transform: scaleX(1); }}
   header nav a.nav-cta {{
     background: linear-gradient(150deg, var(--brand-accent), var(--brand-accent-2));
-    color: #fff; font-weight: 600;
-    box-shadow: 0 4px 14px rgba(218,48,37,0.35);
+    color: var(--on-accent); font-weight: 600;
+    box-shadow: 0 4px 14px var(--hero-glow);
   }}
-  header nav a.nav-cta:hover {{ transform: translateY(-1px); box-shadow: 0 6px 18px rgba(218,48,37,0.45); }}
+  header nav a.nav-cta:hover {{ transform: translateY(-1px); box-shadow: 0 6px 18px var(--hero-glow); }}
   .theme-toggle {{
     width: 38px; height: 38px; flex-shrink: 0;
     display: inline-flex; align-items: center; justify-content: center;
@@ -339,7 +356,7 @@ def build_html(skills):
     animation: fadeUp .6s ease .05s both;
   }}
   .hero h1 .accent {{
-    background: linear-gradient(120deg, #ff5a4d, var(--brand-accent));
+    background: linear-gradient(120deg, var(--brand-accent), var(--brand-accent-2));
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }}
   .hero p {{
@@ -358,9 +375,9 @@ def build_html(skills):
   }}
   .btn-hero-primary {{
     background: linear-gradient(150deg, var(--brand-accent), var(--brand-accent-2));
-    color: #fff; box-shadow: 0 8px 22px rgba(218,48,37,0.4);
+    color: var(--on-accent); box-shadow: 0 8px 22px var(--hero-glow);
   }}
-  .btn-hero-primary:hover {{ transform: translateY(-2px); box-shadow: 0 12px 28px rgba(218,48,37,0.5); }}
+  .btn-hero-primary:hover {{ transform: translateY(-2px); box-shadow: 0 12px 28px var(--hero-glow); }}
   .btn-hero-ghost {{
     background: var(--glass-bg); color: var(--feature-text); border-color: var(--glass-border);
     -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
@@ -453,10 +470,10 @@ def build_html(skills):
   .skill-card::before {{
     content: '';
     position: absolute; top: 0; left: 0; right: 0; height: 3px;
-    background: linear-gradient(90deg, var(--brand-accent), var(--brand-dark));
+    background: linear-gradient(90deg, var(--brand-accent), var(--brand-accent-2));
     transform: scaleX(0); transform-origin: left; transition: transform .3s ease;
   }}
-  .skill-card:hover {{ box-shadow: var(--shadow-hover); border-color: rgba(218,48,37,0.35); transform: translateY(-4px); }}
+  .skill-card:hover {{ box-shadow: var(--shadow-hover); border-color: var(--brand-accent); transform: translateY(-4px); }}
   .skill-card:hover::before {{ transform: scaleX(1); }}
   .card-header {{ display: flex; align-items: flex-start; gap: 0.85rem; }}
   .card-emoji {{
@@ -486,10 +503,10 @@ def build_html(skills):
   .badge-harness {{ background: #eef1f0; color: var(--petrol); border: 1px solid #d8e0de; }}
   .badge-complexity-beginner {{ background: #eef1f0; color: var(--petrol); }}
   .badge-complexity-intermediate {{ background: #f5efdd; color: #8a6d1f; }}
-  .badge-complexity-advanced {{ background: #fbeae8; color: var(--brand-accent); }}
+  .badge-complexity-advanced {{ background: #fbeae8; color: var(--danger); }}
   .badge-status-draft {{ background: #f5efdd; color: #8a6d1f; border: 1px solid #e6d9b5; }}
   .badge-status-in-review {{ background: #eaf0f6; color: var(--mid-blue); border: 1px solid #d3dfea; }}
-  .badge-status-deprecated {{ background: #fbeae8; color: var(--brand-accent); border: 1px solid #f2cdc8; }}
+  .badge-status-deprecated {{ background: #fbeae8; color: var(--danger); border: 1px solid #f2cdc8; }}
   .badge-status-published {{ background: #ecf3ec; color: #2e7d32; border: 1px solid #cfe4d0; }}
   /* dark-theme badge variants */
   [data-theme="dark"] .badge-cat {{ background: rgba(255,255,255,0.09); color: #dfe0f2; }}
@@ -597,7 +614,7 @@ def build_html(skills):
   .install-steps li::before {{
     content: counter(step);
     position: absolute; left: 0; top: 0.6rem;
-    background: var(--brand-blue); color: #fff;
+    background: var(--brand-blue); color: var(--on-accent);
     width: 22px; height: 22px; border-radius: 50%;
     font-size: 0.75rem; font-weight: 700;
     display: flex; align-items: center; justify-content: center;
@@ -605,7 +622,7 @@ def build_html(skills):
   .code-block {{
     background: var(--brand-dark); color: #e6e6f5;
     border-radius: 8px; padding: 1rem 1.25rem;
-    font-family: "SF Mono", "Fira Code", monospace; font-size: 0.85rem;
+    font-family: var(--font-mono); font-size: 0.85rem;
     overflow-x: auto; margin: 0.75rem 0;
     position: relative;
   }}
@@ -616,14 +633,14 @@ def build_html(skills):
     font-size: 0.75rem; cursor: pointer; transition: all .2s;
   }}
   .copy-btn:hover {{ background: rgba(255,255,255,0.2); color: #fff; }}
-  .copy-btn.copied {{ background: var(--brand-accent); color: #fff; border-color: var(--brand-accent); }}
+  .copy-btn.copied {{ background: var(--brand-accent); color: var(--on-accent); border-color: var(--brand-accent); }}
 
   .skill-content-area {{
     background: var(--surface-2);
     border: 1.5px solid var(--border);
     border-radius: 8px;
     padding: 1rem 1.25rem;
-    font-family: "SF Mono", "Fira Code", monospace; font-size: 0.82rem;
+    font-family: var(--font-mono); font-size: 0.82rem;
     white-space: pre-wrap; word-break: break-word;
     max-height: 320px; overflow-y: auto;
     margin: 0.75rem 0;
@@ -632,14 +649,14 @@ def build_html(skills):
   }}
   .download-btn {{
     display: inline-flex; align-items: center; gap: 0.5rem;
-    background: var(--brand-blue); color: #fff;
+    background: var(--brand-blue); color: var(--on-accent);
     border: none; border-radius: 8px;
     padding: 0.65rem 1.25rem; font-size: 0.9rem; font-weight: 600;
     cursor: pointer; text-decoration: none;
     transition: background .2s;
     margin-top: 0.75rem;
   }}
-  .download-btn:hover {{ background: var(--brand-dark); }}
+  .download-btn:hover {{ background: var(--brand-accent-2); }}
   .download-btn-ghost {{
     background: transparent; border: 1.5px solid var(--brand-blue); color: var(--brand-blue);
   }}
@@ -658,7 +675,7 @@ def build_html(skills):
   .insights-skill {{ font-weight: 600; color: var(--heading); }}
   .pri-badge {{ font-size: 0.72rem; font-weight: 700; padding: 0.1rem 0.5rem; border-radius: 999px; }}
   .pri-high {{ }}
-  .pri-badge.high {{ background: #fbeae8; color: var(--brand-accent); }}
+  .pri-badge.high {{ background: #fbeae8; color: var(--danger); }}
   .pri-badge.med {{ background: #f5efdd; color: #8a6d1f; }}
   .pri-badge.low {{ background: #eef1f0; color: var(--petrol); }}
   [data-theme="dark"] .pri-badge.high {{ background: rgba(218,48,37,0.2); color: #ff8f85; }}
@@ -689,14 +706,14 @@ def build_html(skills):
     text-align: center;
     transition: transform .2s, background .2s, border-color .2s;
   }}
-  .c-step:hover {{ transform: translateY(-4px); border-color: rgba(218,48,37,0.5); }}
+  .c-step:hover {{ transform: translateY(-4px); border-color: var(--brand-accent); }}
   .c-step-num {{
     width: 40px; height: 40px; margin: 0 auto 0.85rem;
     display: flex; align-items: center; justify-content: center;
-    font-size: 1.05rem; font-weight: 800; color: #fff;
+    font-size: 1.05rem; font-weight: 800; color: var(--on-accent);
     background: linear-gradient(150deg, var(--brand-accent), var(--brand-accent-2));
     border-radius: 50%;
-    box-shadow: 0 6px 16px rgba(218,48,37,0.4);
+    box-shadow: 0 6px 16px var(--hero-glow);
   }}
   .c-step p {{ font-size: 0.85rem; color: var(--feature-muted); }}
   .c-step p code {{ color: var(--feature-text); }}
@@ -873,7 +890,7 @@ def build_html(skills):
       </div>
 
       <div class="tab-panel active" id="tab-claude-code">
-        <div class="deprecation-banner" style="background:#eef3fb;border-color:#d3dfea;color:var(--mid-blue)">
+        <div class="deprecation-banner" style="background:var(--brand-light);border-color:var(--glass-border);color:var(--text)">
           ⭐ <strong>Recommended:</strong> install the whole marketplace as a plugin — you get <em>every</em> skill and stay auto-updated:
           <div class="code-block" style="position:relative;margin-top:0.5rem">
             <span>/plugin marketplace add acc-sebastian/skill-marketplace</span><br>
