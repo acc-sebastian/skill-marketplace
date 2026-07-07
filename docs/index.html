@@ -193,16 +193,7 @@
     padding: 0.9rem 0;
   }
   .logo { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; color: var(--header-text); }
-  .logo-mark {
-    width: 38px; height: 38px;
-    background: linear-gradient(150deg, var(--brand-accent), var(--brand-accent-2));
-    border-radius: 9px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.2rem; font-weight: 800; color: var(--on-accent);
-    box-shadow: 0 4px 14px var(--hero-glow);
-  }
-  .logo-text { font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; line-height: 1.15; }
-  .logo-sub { font-size: 0.66rem; opacity: 0.65; display: block; text-transform: uppercase; letter-spacing: 0.16em; }
+  .logo-text { font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em; }
   header nav { display: flex; align-items: center; gap: 0.4rem; }
   header nav a {
     color: var(--header-muted);
@@ -219,12 +210,6 @@
   }
   header nav a.navlink:hover { color: var(--header-text); }
   header nav a.navlink:hover::after { transform: scaleX(1); }
-  header nav a.nav-cta {
-    background: linear-gradient(150deg, var(--brand-accent), var(--brand-accent-2));
-    color: var(--on-accent); font-weight: 600;
-    box-shadow: 0 4px 14px var(--hero-glow);
-  }
-  header nav a.nav-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 18px var(--hero-glow); }
   .theme-toggle {
     flex-shrink: 0; font-family: inherit;
     font-size: 0.8rem; font-weight: 500; letter-spacing: 0.02em;
@@ -235,85 +220,19 @@
   }
   .theme-toggle:hover { color: var(--header-text); border-color: var(--brand-accent); }
   @media (max-width: 640px) {
-    header nav a.navlink:not(.nav-cta) { display: none; }
+    .header-inner { flex-wrap: wrap; gap: 0.3rem 0.5rem; }
+    header nav { flex-wrap: wrap; }
   }
 
-  /* ── HERO ─────────────────────────────────────────── */
-  .hero {
-    position: relative; overflow: hidden;
-    background: linear-gradient(160deg, var(--feature-bg-a) 0%, var(--feature-bg-b) 100%);
-    color: var(--feature-text);
-    text-align: center;
-    padding: 5rem 2rem 6.5rem;
-    transition: background .3s ease, color .3s ease;
-  }
-  /* dot-grid texture, faded toward edges */
-  .hero::before {
-    content: ''; position: absolute; inset: 0;
-    background-image: radial-gradient(var(--feature-dot) 1px, transparent 1px);
-    background-size: 24px 24px;
-    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 40%, transparent 100%);
-    mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 40%, transparent 100%);
-    pointer-events: none;
-  }
-  /* soft red glow */
-  .hero::after {
-    content: ''; position: absolute; width: 620px; height: 620px;
-    top: -220px; left: 50%; margin-left: -310px;
-    background: radial-gradient(circle, var(--hero-glow) 0%, transparent 62%);
-    filter: blur(20px); pointer-events: none;
-    animation: floatGlow 14s ease-in-out infinite;
-  }
-  .hero-inner { position: relative; z-index: 1; max-width: 780px; margin: 0 auto; }
-  .hero h1 {
-    font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 800;
-    margin-bottom: 1.1rem; letter-spacing: -0.02em; line-height: 1.08;
-    animation: fadeUp .6s ease .05s both;
-  }
-  .hero h1 .accent {
-    background: linear-gradient(120deg, var(--brand-accent), var(--brand-accent-2));
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-  .hero p {
-    font-size: 1.12rem; max-width: 600px; margin: 0 auto 2rem;
-    color: var(--feature-muted); animation: fadeUp .6s ease .1s both;
-  }
-  .hero-cta {
-    display: flex; gap: 0.85rem; justify-content: center; flex-wrap: wrap;
-    animation: fadeUp .6s ease .15s both;
-  }
-  .btn-hero {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    padding: 0.8rem 1.5rem; border-radius: 10px; font-size: 0.95rem; font-weight: 600;
-    text-decoration: none; cursor: pointer; border: 1.5px solid transparent;
-    transition: transform .18s, box-shadow .18s, background .2s;
-  }
-  .btn-hero-primary {
-    background: linear-gradient(150deg, var(--brand-accent), var(--brand-accent-2));
-    color: var(--on-accent); box-shadow: 0 8px 22px var(--hero-glow);
-  }
-  .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 28px var(--hero-glow); }
-  .btn-hero-ghost {
-    background: var(--glass-bg); color: var(--feature-text); border-color: var(--glass-border);
-    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
-  }
-  .btn-hero-ghost:hover { border-color: var(--brand-accent); transform: translateY(-2px); }
-  .hero-stats {
-    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
-    margin-top: 3rem; animation: fadeUp .6s ease .2s both;
-  }
-  .stat {
-    background: var(--glass-bg); border: 1px solid var(--glass-border);
-    border-radius: 14px; padding: 1rem 1.6rem; min-width: 130px;
-    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
-  }
-  .stat-num { font-size: 2rem; font-weight: 800; color: var(--feature-text); line-height: 1; }
-  .stat-label { font-size: 0.8rem; color: var(--feature-muted); margin-top: 0.35rem; }
+  /* ── PAGE INTRO (utilitarian, left-aligned) ───────── */
+  .page-intro { max-width: 1200px; margin: 0 auto; padding: 2.5rem 2rem 0.25rem; }
+  .page-intro h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; color: var(--heading); margin-bottom: 0.4rem; }
+  .page-intro p { color: var(--text-muted); max-width: 68ch; font-size: 0.96rem; }
 
   /* ── SEARCH + FILTERS ─────────────────────────────── */
   .controls {
     max-width: 1200px;
-    margin: -2rem auto 2rem;
+    margin: 1.5rem auto 1.5rem;
     padding: 0 2rem;
     position: relative;
     z-index: 10;
@@ -593,55 +512,33 @@
   [data-theme="dark"] .pri-badge.med { background: rgba(221,184,0,0.16); color: #e8c85a; }
   [data-theme="dark"] .pri-badge.low { background: rgba(255,255,255,0.06); color: #a7bcbc; }
 
-  /* ── HOW TO CONTRIBUTE ────────────────────────────── */
+  /* ── HOW TO CONTRIBUTE (utilitarian) ──────────────── */
   .contribute-section {
-    background: linear-gradient(160deg, var(--feature-bg-a), var(--feature-bg-b));
-    color: var(--feature-text);
-    padding: 4rem 2rem;
-    text-align: center;
-    transition: background .3s ease, color .3s ease;
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 2rem 3rem;
   }
-  .contribute-inner { max-width: 700px; margin: 0 auto; }
-  .contribute-inner h2 { font-size: 2rem; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 0.75rem; }
-  .contribute-inner p { margin-bottom: 1.5rem; color: var(--feature-muted); }
+  .contribute-inner { max-width: 1200px; margin: 0 auto; }
+  .contribute-inner h2 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; color: var(--heading); margin-bottom: 0.4rem; }
+  .contribute-inner > p { margin-bottom: 1.25rem; color: var(--text-muted); font-size: 0.96rem; max-width: 68ch; }
   .contribute-steps {
-    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
-    margin: 2rem 0;
+    display: flex; flex-direction: column; gap: 0.45rem;
+    margin: 0 0 1.25rem; padding: 0; list-style: none;
+    counter-reset: step;
   }
   .c-step {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    padding: 1.5rem 1.25rem;
-    flex: 1; min-width: 160px; max-width: 220px;
-    text-align: center;
-    transition: transform .2s, background .2s, border-color .2s;
+    display: flex; align-items: baseline; gap: 0.6rem;
+    font-size: 0.92rem; color: var(--text);
   }
-  .c-step:hover { transform: translateY(-4px); border-color: var(--brand-accent); }
-  .c-step-num {
-    width: 40px; height: 40px; margin: 0 auto 0.85rem;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.05rem; font-weight: 800; color: var(--on-accent);
-    background: linear-gradient(150deg, var(--brand-accent), var(--brand-accent-2));
-    border-radius: 50%;
-    box-shadow: 0 6px 16px var(--hero-glow);
+  .c-step::before {
+    counter-increment: step; content: counter(step) ".";
+    color: var(--text-muted); font-variant-numeric: tabular-nums;
+    font-weight: 600; min-width: 1.2rem;
   }
-  .c-step p { font-size: 0.85rem; color: var(--feature-muted); }
-  .c-step p code { color: var(--feature-text); }
-  .cta-btn {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    background: var(--brand-accent); color: #fff;
-    border-radius: 8px; padding: 0.75rem 1.5rem;
-    font-weight: 700; text-decoration: none; font-size: 0.95rem;
-    transition: opacity .2s;
-  }
-  .cta-btn:hover { opacity: 0.9; }
-  .cta-btn-ghost {
-    background: var(--glass-bg);
-    border: 1.5px solid var(--glass-border);
-    color: var(--feature-text);
-  }
-  .cta-btn-ghost:hover { border-color: var(--brand-accent); opacity: 1; }
+  .c-step code { color: var(--heading); }
+  .contribute-note { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem; }
+  .contribute-links { display: flex; gap: 1.25rem; flex-wrap: wrap; font-size: 0.9rem; }
+  .contribute-links a { color: var(--brand-accent); text-decoration: none; }
+  .contribute-links a:hover { text-decoration: underline; }
 
   /* ── FOOTER ───────────────────────────────────────── */
   footer {
@@ -651,32 +548,25 @@
     transition: background .3s ease, color .3s ease;
   }
   .footer-top {
-    max-width: 1200px; margin: 0 auto; padding: 3rem 2rem 2rem;
-    display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 2rem;
+    max-width: 1200px; margin: 0 auto; padding: 2rem 2rem 1.5rem;
+    display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; align-items: baseline;
   }
-  .footer-brand .logo-mark { margin-bottom: 0.85rem; }
-  .footer-brand p { font-size: 0.86rem; max-width: 340px; line-height: 1.6; }
-  .footer-col h4 {
-    color: var(--footer-heading); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em;
-    margin-bottom: 0.9rem; font-weight: 700;
+  .footer-top a {
+    color: var(--footer-text); text-decoration: none;
+    font-size: 0.86rem; transition: color .2s;
   }
-  .footer-col a {
-    display: block; color: var(--footer-text); text-decoration: none;
-    font-size: 0.88rem; padding: 0.28rem 0; transition: color .2s;
-  }
-  .footer-col a:hover { color: var(--brand-accent); }
+  .footer-top a:hover { color: var(--brand-accent); }
   .footer-bottom {
     border-top: 1px solid var(--footer-border);
-    padding: 1.1rem 2rem; text-align: center; font-size: 0.8rem;
-    color: var(--footer-text);
+    padding: 1rem 2rem; font-size: 0.8rem;
+    color: var(--text-muted); max-width: 1200px; margin: 0 auto;
   }
   .footer-bottom code { color: var(--footer-heading); }
-  @media (max-width: 640px) { .footer-top { grid-template-columns: 1fr; gap: 1.5rem; } }
 
   /* ── RESPONSIVE ───────────────────────────────────── */
   @media (max-width: 600px) {
-    .hero { padding: 2.5rem 1rem 3.5rem; }
-    .controls { margin-top: -1rem; padding: 0 1rem; }
+    .page-intro { padding: 1.75rem 1rem 0.25rem; }
+    .controls { margin: 1rem auto; padding: 0 1rem; }
     .grid-wrap { padding: 0 1rem 3rem; }
     .skills-grid { grid-template-columns: 1fr; }
   }
@@ -686,38 +576,21 @@
 
 <header id="site-header">
   <div class="header-inner">
-    <a class="logo" href="#">
-      <div class="logo-mark">S</div>
-      <div>
-        <span class="logo-text">Skill Marketplace</span>
-        <span class="logo-sub">by accilium</span>
-      </div>
-    </a>
+    <a class="logo" href="#"><span class="logo-text">Skill Marketplace</span></a>
     <nav>
       <a class="navlink" href="#skills">Browse</a>
       <a class="navlink" href="#" onclick="event.preventDefault(); openInsights()">Insights</a>
       <a class="navlink" href="#contribute">Contribute</a>
+      <a class="navlink" href="https://github.com/acc-sebastian/skill-marketplace/issues/new?template=new-skill.yml" target="_blank">Suggest a skill</a>
       <a class="navlink" href="https://github.com/acc-sebastian/skill-marketplace" target="_blank">GitHub</a>
-      <a class="navlink nav-cta" href="https://github.com/acc-sebastian/skill-marketplace/issues/new?template=new-skill.yml" target="_blank">Suggest a skill</a>
       <button class="theme-toggle" id="theme-toggle" title="Toggle light / dark mode" aria-label="Toggle light / dark mode"><span id="theme-label">Dark</span></button>
     </nav>
   </div>
 </header>
 
-<div class="hero">
-  <div class="hero-inner">
-    <h1>AI Skills, Ready to <span class="accent">Deploy</span></h1>
-    <p>Browse, install, and share reusable AI skills for Claude Code and other assistants.</p>
-    <div class="hero-cta">
-      <a class="btn-hero btn-hero-primary" href="#skills">Browse skills</a>
-      <a class="btn-hero btn-hero-ghost" href="https://github.com/acc-sebastian/skill-marketplace/blob/main/docs/enterprise-setup.md" target="_blank">Install as plugin</a>
-    </div>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-num" id="stat-skills">—</div><div class="stat-label">Skills available</div></div>
-      <div class="stat"><div class="stat-num" id="stat-cats">—</div><div class="stat-label">Categories</div></div>
-      <div class="stat"><div class="stat-num">3</div><div class="stat-label">Harnesses supported</div></div>
-    </div>
-  </div>
+<div class="page-intro">
+  <h1>Skill library</h1>
+  <p>Internal catalog of reusable AI skills for Claude Code and other assistants. Search, open a skill for install instructions, or add your own.</p>
 </div>
 
 <div class="controls" id="skills">
@@ -748,22 +621,17 @@
 <!-- CONTRIBUTE SECTION -->
 <section class="contribute-section" id="contribute">
   <div class="contribute-inner">
-    <h2>Add Your Own Skill</h2>
-    <p>Create a skill once — share it with the entire team. Once merged, it's live on this page within minutes.</p>
-    <div class="contribute-steps">
-      <div class="c-step"><div class="c-step-num">1</div><p>Fork the GitHub repo</p></div>
-      <div class="c-step"><div class="c-step-num">2</div><p>Add <code>metadata.json</code> + <code>SKILL.md</code></p></div>
-      <div class="c-step"><div class="c-step-num">3</div><p>Open a pull request</p></div>
-      <div class="c-step"><div class="c-step-num">4</div><p>It's live</p></div>
-    </div>
-    <p style="font-size:0.9rem;opacity:0.7;margin-bottom:1rem">Kein Git? Kein Problem — über das Formular geht's ganz ohne.</p>
-    <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap">
-      <a class="cta-btn" href="https://github.com/acc-sebastian/skill-marketplace/issues/new?template=new-skill.yml" target="_blank">
-        Suggest a skill
-      </a>
-      <a class="cta-btn cta-btn-ghost" href="https://github.com/acc-sebastian/skill-marketplace/blob/main/CONTRIBUTING.md" target="_blank">
-        Contributor guide (via PR)
-      </a>
+    <h2>Add a skill</h2>
+    <p>Once a skill is merged to main it appears here within minutes.</p>
+    <ol class="contribute-steps">
+      <li class="c-step">Fork the GitHub repo</li>
+      <li class="c-step">Add <code>metadata.json</code> + <code>SKILL.md</code></li>
+      <li class="c-step">Open a pull request</li>
+    </ol>
+    <p class="contribute-note">No Git? Use the form instead — it opens a pre-filled issue and scaffolds the skill for you.</p>
+    <div class="contribute-links">
+      <a href="https://github.com/acc-sebastian/skill-marketplace/issues/new?template=new-skill.yml" target="_blank">Suggest a skill (form)</a>
+      <a href="https://github.com/acc-sebastian/skill-marketplace/blob/main/CONTRIBUTING.md" target="_blank">Contributor guide</a>
     </div>
   </div>
 </section>
@@ -884,27 +752,15 @@
 
 <footer>
   <div class="footer-top">
-    <div class="footer-brand">
-      <div class="logo-mark">S</div>
-      <p>A curated, governed library of AI skills that plug into Claude Code, Copilot Studio, or any LLM — always up to date.</p>
-    </div>
-    <div class="footer-col">
-      <h4>Product</h4>
-      <a href="#skills">Browse skills</a>
-      <a href="https://github.com/acc-sebastian/skill-marketplace/issues/new?template=new-skill.yml" target="_blank">Propose a skill</a>
-      <a href="https://github.com/acc-sebastian/skill-marketplace/releases" target="_blank">Releases</a>
-      <a href="https://acc-sebastian.github.io/skill-marketplace/catalog.json" target="_blank">Catalog API</a>
-    </div>
-    <div class="footer-col">
-      <h4>Resources</h4>
-      <a href="https://github.com/acc-sebastian/skill-marketplace/blob/main/docs/enterprise-setup.md" target="_blank">Enterprise setup</a>
-      <a href="https://github.com/acc-sebastian/skill-marketplace/blob/main/CONTRIBUTING.md" target="_blank">Contributor guide</a>
-      <a href="https://github.com/acc-sebastian/skill-marketplace/blob/main/ROADMAP.md" target="_blank">Roadmap</a>
-      <a href="https://github.com/acc-sebastian/skill-marketplace" target="_blank">GitHub</a>
-    </div>
+    <a href="#skills">Browse skills</a>
+    <a href="https://acc-sebastian.github.io/skill-marketplace/catalog.json" target="_blank">Catalog API</a>
+    <a href="https://github.com/acc-sebastian/skill-marketplace/releases" target="_blank">Releases</a>
+    <a href="https://github.com/acc-sebastian/skill-marketplace/blob/main/docs/enterprise-setup.md" target="_blank">Enterprise setup</a>
+    <a href="https://github.com/acc-sebastian/skill-marketplace/blob/main/CONTRIBUTING.md" target="_blank">Contributor guide</a>
+    <a href="https://github.com/acc-sebastian/skill-marketplace" target="_blank">GitHub</a>
   </div>
   <div class="footer-bottom">
-    Built by accilium &nbsp;·&nbsp; Auto-generated by <code>scripts/build_site.py</code>
+    Auto-generated by <code>scripts/build_site.py</code>
   </div>
 </footer>
 
@@ -1387,11 +1243,6 @@ document.getElementById('search').addEventListener('input', e => {
   searchQuery = e.target.value;
   renderCards();
 });
-
-// Stats
-document.getElementById('stat-skills').textContent = SKILLS.length;
-const cats = new Set(SKILLS.map(s => s.category));
-document.getElementById('stat-cats').textContent = cats.size;
 
 // Sticky header shadow on scroll
 const _hdr = document.getElementById('site-header');
