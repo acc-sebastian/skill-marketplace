@@ -333,7 +333,6 @@
   .skill-card:hover .card-emoji { transform: scale(1.06) rotate(-3deg); }
   .card-meta { flex: 1; min-width: 0; }
   .card-name { font-size: 1.08rem; font-weight: 700; color: var(--heading); letter-spacing: -0.01em; }
-  .card-author { font-size: 0.8rem; color: var(--text-muted); }
   .card-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.55; }
   .card-footer { display: flex; gap: 0.45rem; flex-wrap: wrap; align-items: center; margin-top: auto; }
   .card-install-hint .arrow { display: inline-block; transition: transform .2s; }
@@ -347,23 +346,9 @@
   }
   .badge-cat { background: var(--brand-light); color: var(--brand-dark); }
   .badge-harness { background: #eef1f0; color: var(--petrol); border: 1px solid #d8e0de; }
-  .badge-complexity-beginner { background: #eef1f0; color: var(--petrol); }
-  .badge-complexity-intermediate { background: #f5efdd; color: #8a6d1f; }
-  .badge-complexity-advanced { background: #fbeae8; color: var(--danger); }
-  .badge-status-draft { background: #f5efdd; color: #8a6d1f; border: 1px solid #e6d9b5; }
-  .badge-status-in-review { background: #eaf0f6; color: var(--mid-blue); border: 1px solid #d3dfea; }
-  .badge-status-deprecated { background: #fbeae8; color: var(--danger); border: 1px solid #f2cdc8; }
-  .badge-status-published { background: #ecf3ec; color: #2e7d32; border: 1px solid #cfe4d0; }
   /* dark-theme badge variants */
   [data-theme="dark"] .badge-cat { background: rgba(255,255,255,0.09); color: #dfe0f2; }
   [data-theme="dark"] .badge-harness { background: rgba(255,255,255,0.06); color: #a7bcbc; border-color: rgba(255,255,255,0.12); }
-  [data-theme="dark"] .badge-complexity-beginner { background: rgba(255,255,255,0.06); color: #a7bcbc; }
-  [data-theme="dark"] .badge-complexity-intermediate { background: rgba(221,184,0,0.16); color: #e8c85a; }
-  [data-theme="dark"] .badge-complexity-advanced { background: rgba(218,48,37,0.20); color: #ff8f85; }
-  [data-theme="dark"] .badge-status-draft { background: rgba(221,184,0,0.16); color: #e8c85a; border-color: rgba(221,184,0,0.3); }
-  [data-theme="dark"] .badge-status-in-review { background: rgba(120,160,210,0.16); color: #9fbde6; border-color: rgba(120,160,210,0.3); }
-  [data-theme="dark"] .badge-status-deprecated { background: rgba(218,48,37,0.20); color: #ff8f85; border-color: rgba(218,48,37,0.35); }
-  [data-theme="dark"] .badge-status-published { background: rgba(53,208,127,0.16); color: #6fd39e; border-color: rgba(53,208,127,0.3); }
   [data-theme="dark"] .deprecation-banner { background: rgba(218,48,37,0.14); border-color: rgba(218,48,37,0.35); color: #ffb3ab; }
   .skill-card.is-deprecated { opacity: 0.72; }
   .skill-card.is-deprecated:hover { opacity: 1; }
@@ -1444,40 +1429,20 @@ function renderCards() {
     card.style.animationDelay = (idx * 0.05) + 's';
     card.onclick = () => openModal(skill);
 
-    const harnessBadges = (skill.harnesses || []).slice(0,2).map(h => {
-      const labels = {'claude-code':'Claude Code','copilot-studio':'Copilot Studio','generic':'Any LLM'};
-      return `<span class="badge badge-harness">${labels[h] || h}</span>`;
-    }).join('');
-
-    const complexityClass = `badge-complexity-${skill.complexity || 'beginner'}`;
-    const complexityLabel = (skill.complexity || 'beginner').charAt(0).toUpperCase() + (skill.complexity||'beginner').slice(1);
-
-    const statusBadge = statusBadgeHtml(status);
-
     card.innerHTML = `
       <div class="card-header">
         <div class="card-meta">
           <div class="card-name">${skill.name || skill.id}</div>
-          <div class="card-author">by ${skill.author || 'Unknown'}</div>
         </div>
       </div>
       <p class="card-desc">${(skill.description || '').substring(0, 130)}${(skill.description||'').length > 130 ? '…' : ''}</p>
       <div class="card-footer">
         <span class="badge badge-cat">${skill.category || 'Other'}</span>
-        <span class="badge ${complexityClass}">${complexityLabel}</span>
-        ${statusBadge}${harnessBadges}
       </div>
       <div class="card-install-hint">View &amp; install</div>
     `;
     grid.appendChild(card);
   });
-}
-
-// Status badge is shown for every status except plain "published"
-function statusBadgeHtml(status) {
-  if (!status || status === 'published') return '';
-  const labels = {'draft':'Draft','in-review':'In Review','deprecated':'Deprecated'};
-  return `<span class="badge badge-status-${status}">${labels[status] || status}</span>`;
 }
 
 function renderPromptList() {
@@ -1515,18 +1480,11 @@ function renderPromptList() {
     row.style.animationDelay = (idx * 0.04) + 's';
     row.onclick = () => openPromptModal(prompt);
 
-    const complexityClass = `badge-complexity-${prompt.complexity || 'beginner'}`;
-    const complexityLabel = (prompt.complexity || 'beginner').charAt(0).toUpperCase() + (prompt.complexity||'beginner').slice(1);
-    const nVars = (prompt.variables || []).length;
-    const varBadge = nVars ? `<span class="badge badge-harness">${nVars} variable${nVars > 1 ? 's' : ''}</span>` : '';
-
     row.innerHTML = `
       <div class="prompt-row-main">
         <div class="prompt-row-top">
           <span class="prompt-row-name">${prompt.name || prompt.id}</span>
           <span class="badge badge-cat">${prompt.category || 'Other'}</span>
-          <span class="badge ${complexityClass}">${complexityLabel}</span>
-          ${statusBadgeHtml(status)}${varBadge}
         </div>
         <div class="prompt-row-desc">${prompt.description || ''}</div>
       </div>
@@ -1539,7 +1497,7 @@ function renderPromptList() {
 function openModal(skill) {
   currentSkill = skill;
   document.getElementById('modal-title').textContent = skill.name || skill.id;
-  document.getElementById('modal-subtitle').textContent = `${skill.category} · v${skill.version} · by ${skill.author}`;
+  document.getElementById('modal-subtitle').textContent = `${skill.category} · v${skill.version}`;
   document.getElementById('modal-desc').textContent = skill.description || '';
   document.getElementById('modal-skill-content').textContent = skill.skill_content || '(No SKILL.md content found)';
 
@@ -1655,7 +1613,7 @@ function openPromptModal(prompt) {
   currentPrompt = prompt;
   promptVarValues = {};
   document.getElementById('prompt-modal-title').textContent = prompt.name || prompt.id;
-  document.getElementById('prompt-modal-subtitle').textContent = `${prompt.category} · v${prompt.version} · by ${prompt.author}`;
+  document.getElementById('prompt-modal-subtitle').textContent = `${prompt.category} · v${prompt.version}`;
   document.getElementById('prompt-modal-desc').textContent = prompt.description || '';
 
   // Feedback links -> pre-filled GitHub issues (no backend needed)
