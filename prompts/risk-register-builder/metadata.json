@@ -1,0 +1,48 @@
+{
+  "id": "risk-register-builder",
+  "name": "Risk Register Builder",
+  "description": "Turn unstructured project notes, workshop output, or meeting minutes into a formal risk register with likelihood, impact, risk score, mitigation strategy, and owner — ready for steering committee reporting.",
+  "author": "accilium",
+  "owner": "acc-sebastian",
+  "version": "1.0.0",
+  "created": "2026-07-09",
+  "last_reviewed": "2026-07-09",
+  "status": "published",
+  "category": "Compliance",
+  "tags": [
+    "risk",
+    "risk-register",
+    "governance",
+    "project-management",
+    "steering-committee"
+  ],
+  "complexity": "intermediate",
+  "variables": [
+    {
+      "name": "PROJECT_NOTES",
+      "description": "Raw input: meeting notes, workshop cards, emails, or a brain dump of concerns.",
+      "example": "Vendor contract not signed yet; key architect leaving in Sept; data quality in legacy system unclear...",
+      "required": true
+    },
+    {
+      "name": "PROJECT_CONTEXT",
+      "description": "One or two sentences on the project so risks can be assessed in context.",
+      "example": "ERP migration for a 2,000-employee utility, go-live January, fixed regulatory deadline",
+      "required": true
+    },
+    {
+      "name": "RISK_APPETITE",
+      "description": "Optional guidance on what the organization considers acceptable.",
+      "example": "Regulatory deadline is immovable; budget has 10% contingency; reputational risk highly sensitive",
+      "required": false
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-07-09",
+      "change": "Initial release"
+    }
+  ],
+  "example_input": "PROJECT_NOTES: vendor contract unsigned, architect leaving; PROJECT_CONTEXT: ERP migration, fixed go-live; RISK_APPETITE: deadline immovable"
+}

@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://acc-sebastian.github.io/skill-marketplace/schema/prompt.schema.json",
+  "title": "Prompt Metadata",
+  "description": "Schema for metadata.json of every prompt in the Prompt Library. Prompts are copy-paste templates with {{PLACEHOLDER}} variables — the low-friction sibling of skills, under the same governance.",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "description",
+    "author",
+    "owner",
+    "version",
+    "created",
+    "last_reviewed",
+    "status",
+    "category",
+    "tags",
+    "complexity",
+    "changelog"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique prompt ID. Must equal the folder name. kebab-case.",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable display name.",
+      "minLength": 3,
+      "maxLength": 60
+    },
+    "description": {
+      "type": "string",
+      "description": "What the prompt does. Shown on the library card and in the catalog.",
+      "minLength": 30,
+      "maxLength": 400
+    },
+    "author": {
+      "type": "string",
+      "description": "Original author (person or org).",
+      "minLength": 2
+    },
+    "owner": {
+      "type": "string",
+      "description": "GitHub handle of the person/team responsible for keeping this prompt up to date (without @). Coupled to CODEOWNERS.",
+      "pattern": "^[A-Za-z0-9-]+$"
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version (MAJOR.MINOR.PATCH). Breaking template changes bump MAJOR.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "created": {
+      "type": "string",
+      "description": "Creation date, ISO format.",
+      "format": "date",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "last_reviewed": {
+      "type": "string",
+      "description": "Date of the last human review. Drives stale-detection.",
+      "format": "date",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "status": {
+      "type": "string",
+      "description": "Lifecycle status of the prompt.",
+      "enum": ["draft", "in-review", "published", "deprecated", "archived"]
+    },
+    "deprecated_by": {
+      "type": "string",
+      "description": "ID of the successor prompt. Only meaningful when status is 'deprecated'.",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "sunset_date": {
+      "type": "string",
+      "description": "Planned retirement date. Only meaningful when status is 'deprecated'.",
+      "format": "date",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "category": {
+      "type": "string",
+      "description": "Primary category. Managed by the taxonomy owner (see MAINTAINERS.md).",
+      "enum": ["Productivity", "Analytics", "Strategy", "Procurement", "Finance", "Compliance", "Communication", "Other"]
+    },
+    "tags": {
+      "type": "array",
+      "description": "Free-form lowercase tags for search.",
+      "items": { "type": "string", "pattern": "^[a-z0-9]+([-_][a-z0-9]+)*$" },
+      "minItems": 1,
+      "maxItems": 8,
+      "uniqueItems": true
+    },
+    "complexity": {
+      "type": "string",
+      "enum": ["beginner", "intermediate", "advanced"]
+    },
+    "variables": {
+      "type": "array",
+      "description": "Placeholders used in PROMPT.md as {{NAME}}. Every declared variable must appear in the template and vice versa (enforced by validate_prompts.py).",
+      "items": {
+        "type": "object",
+        "required": ["name", "description", "required"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "UPPER_SNAKE_CASE placeholder name (without braces).",
+            "pattern": "^[A-Z0-9]+(_[A-Z0-9]+)*$"
+          },
+          "description": { "type": "string", "minLength": 5 },
+          "example": { "type": "string" },
+          "required": { "type": "boolean" }
+        }
+      },
+      "maxItems": 12
+    },
+    "changelog": {
+      "type": "array",
+      "description": "One entry per released version, newest first.",
+      "items": {
+        "type": "object",
+        "required": ["version", "date", "change"],
+        "additionalProperties": false,
+        "properties": {
+          "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+          "date": { "type": "string", "format": "date", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+          "change": { "type": "string", "minLength": 5 }
+        }
+      },
+      "minItems": 1
+    },
+    "example_input": {
+      "type": "string",
+      "description": "A short realistic example of filled-in variables. Used for documentation and future smoke-tests.",
+      "minLength": 10
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "status": { "const": "deprecated" } }
+      },
+      "then": {
+        "required": ["deprecated_by", "sunset_date"]
+      }
+    }
+  ]
+}

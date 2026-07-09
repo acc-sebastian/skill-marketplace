@@ -2,6 +2,8 @@
 
 A curated library of AI skills (prompts + instructions) that plug into any LLM harness — Claude Code, Copilot Studio, or any chat-based AI. Browse and install from the **[live marketplace site](https://acc-sebastian.github.io/skill-marketplace/)**.
 
+The site has two views: the **Skill Marketplace** (installable skills) and the **[Prompt Library](https://acc-sebastian.github.io/skill-marketplace/#prompts)** (copy-paste prompt templates) — see [Prompt Library](#prompt-library) below.
+
 > 📍 See the **[Roadmap](ROADMAP.md)** for the 5-phase plan from PoC to a fully governed, automated marketplace.
 
 ## What is a "skill"?
@@ -63,6 +65,28 @@ You can also download a versioned package (`SKILL.md` + `metadata.json`) from th
 1. Open the `SKILL.md` file
 2. Copy the body (after the frontmatter) and paste it as a system prompt or first message
 3. The AI will follow the structured instructions
+
+## Prompt Library
+
+Where skills are *installed* into a harness, prompts are *copy-paste templates* with
+`{{PLACEHOLDER}}` variables for ad-hoc use in any AI chat — no installation, same governance
+(schema, versioning, owner, lifecycle status, CI validation).
+
+| Prompt | Category | Description |
+|--------|----------|-------------|
+| [Executive Summary Generator](prompts/executive-summary-generator/) | Communication | One-page C-level summary of any long document |
+| [RFP Requirements Extractor](prompts/rfp-requirements-extractor/) | Procurement | Structured requirements table from an RFP/tender |
+| [Stakeholder Update Drafter](prompts/stakeholder-update-drafter/) | Communication | Status emails with the right tone, including bad news |
+| [Risk Register Builder](prompts/risk-register-builder/) | Compliance | Formal risk register from unstructured project notes |
+| [KPI Management Commentary](prompts/kpi-management-commentary/) | Analytics | Board-ready commentary from a raw KPI table |
+
+**Using a prompt:** open it in the [Prompt Library](https://acc-sebastian.github.io/skill-marketplace/#prompts),
+fill in the variables in the form, and copy the finished prompt. Machine consumers can read the
+[prompt catalog](https://acc-sebastian.github.io/skill-marketplace/prompt-catalog.json).
+
+**Adding a prompt:** create `prompts/<id>/metadata.json` + `PROMPT.md` (validated against
+[`schema/prompt.schema.json`](schema/prompt.schema.json) in CI — declared variables and
+`{{PLACEHOLDERS}}` in the template must match).
 
 ## How to Add a Skill
 
