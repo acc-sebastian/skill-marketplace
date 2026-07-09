@@ -520,7 +520,6 @@
     color: var(--heading); display: block; margin-bottom: 0.15rem;
   }
   .var-req { color: var(--danger); margin-left: 0.15rem; }
-  .var-hint { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.3rem; }
   .var-field textarea {
     width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
     padding: 0.5rem 0.7rem; font-size: 0.88rem; font-family: inherit;
@@ -805,8 +804,12 @@
         <div class="var-form" id="prompt-var-form"></div>
       </div>
 
-      <div class="var-section-label">Prompt preview</div>
-      <div class="skill-content-area" id="prompt-preview"></div>
+      <details>
+        <summary>Preview prompt</summary>
+        <div class="details-body">
+          <div class="skill-content-area" id="prompt-preview" style="margin:0"></div>
+        </div>
+      </details>
       <p class="prompt-copy-note" id="prompt-copy-note"></p>
 
       <div class="btn-row">
@@ -1573,21 +1576,20 @@ Describe the problem:
       req.textContent = '*';
       label.appendChild(req);
     }
-    const hint = document.createElement('div');
-    hint.className = 'var-hint';
-    hint.textContent = v.description + (v.example ? ` — e.g. "${v.example}"` : '');
     const input = document.createElement('textarea');
     input.rows = 1;
-    input.placeholder = v.example || '';
+    input.placeholder = v.description + (v.example ? ` — e.g. "${v.example}"` : '');
     input.addEventListener('input', () => {
       promptVarValues[v.name] = input.value;
       updatePromptPreview();
     });
     field.appendChild(label);
-    field.appendChild(hint);
     field.appendChild(input);
     form.appendChild(field);
   });
+
+  // Collapse the preview on every open
+  document.querySelectorAll('#prompt-modal-overlay details').forEach(d => d.removeAttribute('open'));
 
   updatePromptPreview();
   document.getElementById('prompt-modal-overlay').classList.add('open');
