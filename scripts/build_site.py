@@ -443,7 +443,7 @@ def build_html(skills, prompts):
     display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;
   }}
   .search-input-wrap {{ flex: 1; min-width: 220px; position: relative; }}
-  #search {{
+  #search, #prompt-search {{
     width: 100%;
     border: 1.5px solid var(--border);
     border-radius: 10px;
@@ -452,8 +452,8 @@ def build_html(skills, prompts):
     outline: none; background: var(--surface-2); color: var(--text);
     transition: border-color .2s, box-shadow .2s, background .2s;
   }}
-  #search::placeholder {{ color: var(--text-muted); }}
-  #search:focus {{ border-color: var(--brand-accent); box-shadow: var(--ring); background: var(--surface); }}
+  #search::placeholder, #prompt-search::placeholder {{ color: var(--text-muted); }}
+  #search:focus, #prompt-search:focus {{ border-color: var(--brand-accent); box-shadow: var(--ring); background: var(--surface); }}
   .filter-wrap {{ display: flex; gap: 0.45rem; flex-wrap: wrap; align-items: center; }}
   .filter-label {{ font-size: 0.85rem; color: var(--text-muted); white-space: nowrap; }}
   .filter-btn {{
