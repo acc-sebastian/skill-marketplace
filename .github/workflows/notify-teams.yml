@@ -6,7 +6,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "skills/**"
+      - "plugins/sbo-skills/skills/**"
 
 permissions:
   contents: read
@@ -26,8 +26,8 @@ jobs:
           TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
         run: |
           set -e
-          CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'skills/**' \
-            | sed -n 's#^skills/\([^/]*\)/.*#\1#p' | sort -u)
+          CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'plugins/sbo-skills/skills/**' \
+            | sed -n 's#^plugins/sbo-skills/skills/\([^/]*\)/.*#\1#p' | sort -u)
           if [ -z "$CHANGED" ]; then
             echo "No skill directories changed."; exit 0
           fi

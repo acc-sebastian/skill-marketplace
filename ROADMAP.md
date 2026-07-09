@@ -44,8 +44,8 @@ flowchart LR
 
 Ausgangspunkt, auf dem alles aufbaut:
 
-- [x] Git als Single Source of Truth (`skills/<name>/metadata.json` + `SKILL.md`)
-- [x] `scripts/build_site.py` generiert die statische Website aus `skills/`
+- [x] Git als Single Source of Truth (`plugins/sbo-skills/skills/<name>/metadata.json` + `SKILL.md`)
+- [x] `scripts/build_site.py` generiert die statische Website aus den Skill-Ordnern
 - [x] GitHub Actions Workflow deployt automatisch auf GitHub Pages bei Push
 - [x] `CONTRIBUTING.md` dokumentiert das Beitragsformat
 - [x] Website (Konsum-Schicht) im SBO-Corporate-Design
@@ -129,7 +129,7 @@ Stufen „BUILD" und „DEPLOY" plus Distribution.
 - [x] **Issue-→-PR-Automatisierung** — `scaffold-skill.yml` erzeugt aus einem ausgefüllten „Neue Skill"-Issue die Ordnerstruktur, pusht einen Branch und öffnet einen PR (schließt das Issue). Business-User sehen nie Git.
 
 **Harness-Distribution (Claude Code)** — damit alle Anwender automatisch immer alle aktuellen Skills haben:
-- [x] **Repo als Claude-Code-Plugin-Marketplace**: `.claude-plugin/marketplace.json` + `.claude-plugin/plugin.json`. Ein einziges Plugin `sbo-skills` bündelt **alle** veröffentlichten Skills (`skills/<id>/SKILL.md`) → neue Skills fließen automatisch mit.
+- [x] **Repo als Claude-Code-Plugin-Marketplace**: `.claude-plugin/marketplace.json` (Root) + Plugin unter `plugins/sbo-skills/` (eigenes `.claude-plugin/plugin.json`). Ein einziges Plugin `sbo-skills` bündelt **alle** veröffentlichten Skills (`plugins/sbo-skills/skills/<id>/SKILL.md`) → neue Skills fließen automatisch mit.
 - [x] **SHA-Pinning**: kein festes `version` im Manifest → Plugin folgt dem `main`-HEAD; jeder Merge = neuer Stand.
 - [x] **Org-weite Auto-Bereitstellung** dokumentiert (`docs/enterprise-setup.md`): Managed-Settings-JSON (`extraKnownMarketplaces` + `enabledPlugins` + `autoUpdate`) für Teams/Enterprise (kein Nutzer-Zutun) sowie Ein-Befehl-Variante für Einzel-Accounts.
 - [x] Kanonische Skill-Datei auf `SKILL.md` umgestellt (Claude-Code-Konvention); Build, Validator, CLI, Scaffold angepasst.

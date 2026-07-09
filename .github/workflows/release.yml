@@ -7,7 +7,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "skills/**"
+      - "plugins/sbo-skills/skills/**"
   workflow_dispatch: {}
 
 permissions:

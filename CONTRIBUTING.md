@@ -12,7 +12,7 @@ You never touch Git.
 ### 🅱 Via pull request (for Git users)
 
 1. **Fork** this repo
-2. **Create** a folder: `skills/<your-skill-name>/` (use kebab-case, e.g. `budget-variance-report`)
+2. **Create** a folder: `plugins/sbo-skills/skills/<your-skill-name>/` (use kebab-case, e.g. `budget-variance-report`)
 3. **Add two files**: `metadata.json` and `SKILL.md`
 4. **Validate locally**: `python scripts/validate_skills.py`
 5. **Submit a pull request** — the PR template walks you through the checklist

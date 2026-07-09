@@ -8,8 +8,12 @@
   "plugins": [
     {
       "name": "sbo-skills",
-      "source": ".",
-      "description": "All published skills from the SBO Skill Marketplace, bundled as one plugin. New skills appear automatically on update."
+      "source": "./plugins/sbo-skills",
+      "description": "All published skills from the SBO Skill Marketplace, bundled as one plugin. New skills appear automatically on update.",
+      "author": {
+        "name": "acc-sebastian",
+        "email": "sebastian.kindl@accilium.com"
+      }
     }
   ]
 }

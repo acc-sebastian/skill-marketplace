@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, master]
     paths:
-      - "skills/**"
+      - "plugins/sbo-skills/skills/**"
       - "prompts/**"
       - "scripts/**"
   workflow_dispatch:
