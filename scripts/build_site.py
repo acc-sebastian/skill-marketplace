@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
-Build the Skill Marketplace static site + machine-readable catalog.
+Build the Skill Marketplace static site + machine-readable catalogs.
 
-Reads:  skills/*/metadata.json + skills/*/SKILL.md
-Writes: docs/index.html   (website)
-        docs/catalog.json (machine-readable manifest for other harnesses/CLIs)
+Reads:  skills/*/metadata.json  + skills/*/SKILL.md
+        prompts/*/metadata.json + prompts/*/PROMPT.md
+Writes: docs/index.html          (website: Skill Marketplace + Prompt Library)
+        docs/catalog.json        (machine-readable skill manifest)
+        docs/prompt-catalog.json (machine-readable prompt manifest)
 
 Run locally:
     python scripts/build_site.py
@@ -17,10 +19,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 SKILLS_DIR = ROOT / "skills"
+PROMPTS_DIR = ROOT / "prompts"
 DOCS_DIR = ROOT / "docs"
 
 REPO = "acc-sebastian/skill-marketplace"
 RAW_BASE = f"https://raw.githubusercontent.com/{REPO}/main/skills"
+RAW_PROMPTS_BASE = f"https://raw.githubusercontent.com/{REPO}/main/prompts"
 SITE_URL = "https://acc-sebastian.github.io/skill-marketplace"
 PROPOSE_URL = f"https://github.com/{REPO}/issues/new?template=new-skill.yml"
 
@@ -46,6 +50,39 @@ def load_skills():
         skills.append(meta)
         print(f"  OK  {meta.get('name', skill_dir.name)}")
     return skills
+
+
+FRONTMATTER_RE = re.compile(r"^---\s*\n.*?\n---\s*\n", re.DOTALL)
+
+
+def strip_frontmatter(text):
+    return FRONTMATTER_RE.sub("", text, count=1).lstrip("\n")
+
+
+def load_prompts():
+    prompts = []
+    if not PROMPTS_DIR.exists():
+        return prompts
+    for prompt_dir in sorted(PROMPTS_DIR.iterdir()):
+        if not prompt_dir.is_dir():
+            continue
+        meta_file = prompt_dir / "metadata.json"
+        prompt_file = prompt_dir / "PROMPT.md"
+        if not meta_file.exists():
+            print(f"  SKIP {prompt_dir.name} — no metadata.json")
+            continue
+        with open(meta_file, encoding="utf-8") as f:
+            meta = json.load(f)
+        raw = ""
+        if prompt_file.exists():
+            with open(prompt_file, encoding="utf-8") as f:
+                raw = f.read()
+        meta["prompt_content"] = raw                      # full file, for download
+        meta["prompt_template"] = strip_frontmatter(raw)  # copy/fill payload
+        meta["folder"] = prompt_dir.name
+        prompts.append(meta)
+        print(f"  OK  {meta.get('name', prompt_dir.name)}")
+    return prompts
 
 
 def escape_js(s):
@@ -86,17 +123,59 @@ def build_catalog(skills):
     }
 
 
-def build_html(skills):
+def build_prompt_catalog(prompts):
+    """Machine-readable manifest of the Prompt Library (no HTML parsing needed)."""
+    entries = []
+    for p in prompts:
+        entries.append({
+            "id": p.get("id"),
+            "name": p.get("name"),
+            "description": p.get("description"),
+            "version": p.get("version"),
+            "status": p.get("status", "published"),
+            "category": p.get("category"),
+            "tags": p.get("tags", []),
+            "complexity": p.get("complexity"),
+            "owner": p.get("owner"),
+            "author": p.get("author"),
+            "last_reviewed": p.get("last_reviewed"),
+            "deprecated_by": p.get("deprecated_by"),
+            "sunset_date": p.get("sunset_date"),
+            "variables": [
+                {"name": v.get("name"), "required": v.get("required", False)}
+                for v in p.get("variables", [])
+            ],
+            "download_url": f"{RAW_PROMPTS_BASE}/{p['folder']}/PROMPT.md",
+            "metadata_url": f"{RAW_PROMPTS_BASE}/{p['folder']}/metadata.json",
+        })
+    return {
+        "$schema_note": "Catalog manifest of the Prompt Library. One entry per non-archived prompt.",
+        "catalog_version": 1,
+        "site": SITE_URL,
+        "repository": f"https://github.com/{REPO}",
+        "prompt_schema": f"{SITE_URL}/schema/prompt.schema.json",
+        "count": len(entries),
+        "prompts": entries,
+    }
+
+
+def build_html(skills, prompts):
     # strip the (now-unused) emoji field so the page carries no emoji at all
     skills_json = json.dumps(
         [{k: v for k, v in s.items() if k != "emoji"} for s in skills],
         ensure_ascii=False, indent=2,
     )
+    prompts_json = json.dumps(prompts, ensure_ascii=False, indent=2)
 
     categories = sorted(set(s.get("category", "Other") for s in skills))
     cat_buttons = "\n".join(
         f'<button class="filter-btn" data-filter="{c}">{c}</button>'
         for c in categories
+    )
+    prompt_categories = sorted(set(p.get("category", "Other") for p in prompts))
+    prompt_cat_buttons = "\n".join(
+        f'<button class="filter-btn p-filter-btn" data-filter="{c}">{c}</button>'
+        for c in prompt_categories
     )
 
     return f"""<!DOCTYPE html>
@@ -295,6 +374,22 @@ def build_html(skills):
   }}
   .logo {{ display: flex; align-items: center; gap: 0.7rem; text-decoration: none; color: var(--header-text); }}
   .logo-text {{ font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em; }}
+
+  /* View switcher (Skill Marketplace | Prompt Library) in the logo position */
+  .view-switch {{ display: flex; align-items: center; gap: 0.6rem; }}
+  .view-btn {{
+    background: none; border: none; cursor: pointer; font-family: inherit;
+    font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em;
+    color: var(--header-muted); padding: 0.2rem 0; position: relative;
+    text-decoration: none; transition: color .2s;
+  }}
+  .view-btn:hover {{ color: var(--header-text); }}
+  .view-btn.active {{ color: var(--header-text); }}
+  .view-btn.active::after {{
+    content: ''; position: absolute; left: 0; right: 0; bottom: -0.22rem; height: 2px;
+    background: var(--brand-accent); border-radius: 2px;
+  }}
+  .view-sep {{ color: var(--border-strong); font-weight: 400; user-select: none; }}
   header nav {{ display: flex; align-items: center; gap: 0.4rem; }}
   header nav a {{
     color: var(--header-muted);
@@ -578,6 +673,33 @@ def build_html(skills):
     line-height: 1.6;
     color: var(--text);
   }}
+
+  /* ── PROMPT MODAL: variable form + live preview ───── */
+  .var-section-label {{
+    font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em;
+    font-weight: 600; color: var(--text-muted); margin: 1.1rem 0 0.6rem;
+  }}
+  .var-form {{ display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 0.5rem; }}
+  .var-field label {{
+    font-family: var(--font-mono); font-size: 0.82rem; font-weight: 600;
+    color: var(--heading); display: block; margin-bottom: 0.15rem;
+  }}
+  .var-req {{ color: var(--danger); margin-left: 0.15rem; }}
+  .var-hint {{ font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.3rem; }}
+  .var-field textarea {{
+    width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
+    padding: 0.5rem 0.7rem; font-size: 0.88rem; font-family: inherit;
+    resize: vertical; min-height: 40px;
+    background: var(--surface-2); color: var(--text); outline: none;
+    transition: border-color .2s, box-shadow .2s, background .2s;
+  }}
+  .var-field textarea:focus {{ border-color: var(--brand-accent); box-shadow: var(--ring); background: var(--surface); }}
+  mark.var-missing {{
+    background: var(--accent-soft); color: var(--brand-accent);
+    font-weight: 600; border-radius: 4px; padding: 0 3px;
+  }}
+  mark.var-filled {{ background: transparent; color: var(--brand-accent); }}
+  .prompt-copy-note {{ font-size: 0.8rem; color: var(--danger); min-height: 1.2em; margin-top: 0.4rem; }}
   .download-btn {{
     display: inline-flex; align-items: center; gap: 0.5rem;
     background: var(--brand-blue); color: var(--on-accent);
@@ -677,7 +799,11 @@ def build_html(skills):
 
 <header id="site-header">
   <div class="header-inner">
-    <a class="logo" href="#"><span class="logo-text">Skill Marketplace</span></a>
+    <div class="view-switch">
+      <a class="view-btn active" data-view="skills" href="#skills">Skill Marketplace</a>
+      <span class="view-sep">|</span>
+      <a class="view-btn" data-view="prompts" href="#prompts">Prompt Library</a>
+    </div>
     <nav>
       <a class="navlink" href="#skills">Browse</a>
       <a class="navlink" href="#" onclick="event.preventDefault(); openInsights()">Insights</a>
@@ -689,41 +815,72 @@ def build_html(skills):
   </div>
 </header>
 
-<div class="page-intro">
-  <h1>Skill library</h1>
-  <p>Internal catalog of reusable AI skills for Claude Code and other assistants. Search, open a skill for install instructions, or add your own.</p>
-</div>
+<main id="view-skills">
+  <div class="page-intro">
+    <h1>Skill library</h1>
+    <p>Internal catalog of reusable AI skills for Claude Code and other assistants. Search, open a skill for install instructions, or add your own.</p>
+  </div>
 
-<div class="controls" id="skills">
-  <div class="search-box">
-    <div class="search-input-wrap">
-      <input type="text" id="search" placeholder="Search skills, tags, descriptions…">
-    </div>
-    <div class="filter-wrap">
-      <span class="filter-label">Category:</span>
-      <button class="filter-btn active" data-filter="all">All</button>
-      {cat_buttons}
+  <div class="controls">
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <input type="text" id="search" placeholder="Search skills, tags, descriptions…">
+      </div>
+      <div class="filter-wrap">
+        <span class="filter-label">Category:</span>
+        <button class="filter-btn active" data-filter="all">All</button>
+        {cat_buttons}
+      </div>
     </div>
   </div>
-</div>
 
-<div class="grid-wrap">
-  <p class="result-count" id="result-count"></p>
-  <div class="skills-grid" id="skills-grid"></div>
-  <div class="no-results" id="no-results" style="display:none">
-    <strong>No skills found</strong>
-    <p>Try a different search term or category filter.</p>
+  <div class="grid-wrap">
+    <p class="result-count" id="result-count"></p>
+    <div class="skills-grid" id="skills-grid"></div>
+    <div class="no-results" id="no-results" style="display:none">
+      <strong>No skills found</strong>
+      <p>Try a different search term or category filter.</p>
+    </div>
   </div>
-</div>
+</main>
+
+<main id="view-prompts" style="display:none">
+  <div class="page-intro">
+    <h1>Prompt library</h1>
+    <p>Copy-paste prompt templates for recurring tasks. Open a prompt, fill in the variables, and paste the finished prompt into any AI chat — no installation needed.</p>
+  </div>
+
+  <div class="controls">
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <input type="text" id="prompt-search" placeholder="Search prompts, tags, descriptions…">
+      </div>
+      <div class="filter-wrap">
+        <span class="filter-label">Category:</span>
+        <button class="filter-btn p-filter-btn active" data-filter="all">All</button>
+        {prompt_cat_buttons}
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-wrap">
+    <p class="result-count" id="prompt-result-count"></p>
+    <div class="skills-grid" id="prompts-grid"></div>
+    <div class="no-results" id="prompt-no-results" style="display:none">
+      <strong>No prompts found</strong>
+      <p>Try a different search term or category filter.</p>
+    </div>
+  </div>
+</main>
 
 <!-- CONTRIBUTE SECTION -->
 <section class="contribute-section" id="contribute">
   <div class="contribute-inner">
-    <h2>Add a skill</h2>
-    <p>Once a skill is merged to main it appears here within minutes.</p>
+    <h2>Add a skill or prompt</h2>
+    <p>Once merged to main it appears here within minutes.</p>
     <ol class="contribute-steps">
       <li class="c-step">Fork the GitHub repo</li>
-      <li class="c-step">Add <code>metadata.json</code> + <code>SKILL.md</code></li>
+      <li class="c-step">Add <code>metadata.json</code> + <code>SKILL.md</code> under <code>skills/</code> — or <code>metadata.json</code> + <code>PROMPT.md</code> under <code>prompts/</code></li>
       <li class="c-step">Open a pull request</li>
     </ol>
     <p class="contribute-note">No Git? Use the form instead — it opens a pre-filled issue and scaffolds the skill for you.</p>
@@ -834,6 +991,46 @@ def build_html(skills):
   </div>
 </div>
 
+<!-- PROMPT MODAL -->
+<div class="modal-overlay" id="prompt-modal-overlay" onclick="closePromptModalOnOverlay(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+        <div class="modal-title" id="prompt-modal-title"></div>
+        <div class="modal-subtitle" id="prompt-modal-subtitle"></div>
+      </div>
+      <button class="modal-close" onclick="closePromptModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="prompt-modal-deprecation"></div>
+      <div class="modal-tags" id="prompt-modal-tags"></div>
+      <p class="modal-desc" id="prompt-modal-desc"></p>
+      <div class="modal-feedback">
+        <span>Was this prompt helpful?</span>
+        <a id="pfb-yes" target="_blank" rel="noopener">Yes</a>
+        <a id="pfb-no" target="_blank" rel="noopener">No</a>
+        <span class="fb-spacer"></span>
+        <a id="pfb-bug" target="_blank" rel="noopener">Report a problem</a>
+      </div>
+
+      <div id="prompt-var-block">
+        <div class="var-section-label">Fill in the variables</div>
+        <div class="var-form" id="prompt-var-form"></div>
+      </div>
+
+      <div class="var-section-label">Prompt preview</div>
+      <div class="skill-content-area" id="prompt-preview"></div>
+      <p class="prompt-copy-note" id="prompt-copy-note"></p>
+
+      <div class="btn-row">
+        <button class="download-btn" id="btn-copy-prompt" onclick="copyFilledPrompt(this)">Copy prompt</button>
+        <button class="download-btn download-btn-ghost" onclick="copyRawTemplate(this)">Copy raw template</button>
+        <button class="download-btn download-btn-ghost" onclick="downloadPrompt()">Download PROMPT.md</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- INSIGHTS OVERLAY -->
 <div class="modal-overlay" id="insights-overlay" onclick="if(event.target===this) closeInsights()">
   <div class="modal">
@@ -851,7 +1048,9 @@ def build_html(skills):
 <footer>
   <div class="footer-top">
     <a href="#skills">Browse skills</a>
-    <a href="{SITE_URL}/catalog.json" target="_blank">Catalog API</a>
+    <a href="#prompts">Browse prompts</a>
+    <a href="{SITE_URL}/catalog.json" target="_blank">Skill catalog API</a>
+    <a href="{SITE_URL}/prompt-catalog.json" target="_blank">Prompt catalog API</a>
     <a href="https://github.com/acc-sebastian/skill-marketplace/releases" target="_blank">Releases</a>
     <a href="https://github.com/acc-sebastian/skill-marketplace/blob/main/docs/enterprise-setup.md" target="_blank">Enterprise setup</a>
     <a href="https://github.com/acc-sebastian/skill-marketplace/blob/main/CONTRIBUTING.md" target="_blank">Contributor guide</a>
@@ -864,9 +1063,12 @@ def build_html(skills):
 
 <script>
 const SKILLS = {skills_json};
+const PROMPTS = {prompts_json};
 
 let activeFilter = 'all';
 let searchQuery = '';
+let promptFilter = 'all';
+let promptQuery = '';
 
 function renderCards() {{
   const grid = document.getElementById('skills-grid');
@@ -937,6 +1139,63 @@ function statusBadgeHtml(status) {{
   return `<span class="badge badge-status-${{status}}">${{labels[status] || status}}</span>`;
 }}
 
+function renderPromptCards() {{
+  const grid = document.getElementById('prompts-grid');
+  const noRes = document.getElementById('prompt-no-results');
+  const count = document.getElementById('prompt-result-count');
+
+  const filtered = PROMPTS.filter(p => {{
+    const matchCat = promptFilter === 'all' || p.category === promptFilter;
+    const q = promptQuery.toLowerCase();
+    const matchSearch = !q ||
+      (p.name || '').toLowerCase().includes(q) ||
+      (p.description || '').toLowerCase().includes(q) ||
+      (p.tags || []).some(t => t.toLowerCase().includes(q)) ||
+      (p.category || '').toLowerCase().includes(q) ||
+      (p.author || '').toLowerCase().includes(q);
+    return matchCat && matchSearch;
+  }});
+
+  grid.innerHTML = '';
+  if (filtered.length === 0) {{
+    noRes.style.display = 'block';
+    count.textContent = '';
+    return;
+  }}
+  noRes.style.display = 'none';
+  count.textContent = `Showing ${{filtered.length}} of ${{PROMPTS.length}} prompts`;
+
+  filtered.forEach((prompt, idx) => {{
+    const card = document.createElement('div');
+    const status = prompt.status || 'published';
+    card.className = 'skill-card' + (status === 'deprecated' ? ' is-deprecated' : '');
+    card.style.animationDelay = (idx * 0.05) + 's';
+    card.onclick = () => openPromptModal(prompt);
+
+    const complexityClass = `badge-complexity-${{prompt.complexity || 'beginner'}}`;
+    const complexityLabel = (prompt.complexity || 'beginner').charAt(0).toUpperCase() + (prompt.complexity||'beginner').slice(1);
+    const nVars = (prompt.variables || []).length;
+    const varBadge = nVars ? `<span class="badge badge-harness">${{nVars}} variable${{nVars > 1 ? 's' : ''}}</span>` : '';
+
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-meta">
+          <div class="card-name">${{prompt.name || prompt.id}}</div>
+          <div class="card-author">by ${{prompt.author || 'Unknown'}}</div>
+        </div>
+      </div>
+      <p class="card-desc">${{(prompt.description || '').substring(0, 130)}}${{(prompt.description||'').length > 130 ? '…' : ''}}</p>
+      <div class="card-footer">
+        <span class="badge badge-cat">${{prompt.category || 'Other'}}</span>
+        <span class="badge ${{complexityClass}}">${{complexityLabel}}</span>
+        ${{statusBadgeHtml(status)}}${{varBadge}}
+      </div>
+      <div class="card-install-hint">Fill &amp; copy</div>
+    `;
+    grid.appendChild(card);
+  }});
+}}
+
 function openModal(skill) {{
   currentSkill = skill;
   document.getElementById('modal-title').textContent = skill.name || skill.id;
@@ -996,7 +1255,7 @@ function closeModal() {{
 function closeModalOnOverlay(e) {{
   if (e.target === document.getElementById('modal-overlay')) closeModal();
 }}
-document.addEventListener('keydown', e => {{ if (e.key === 'Escape') {{ closeModal(); closeInsights(); }} }});
+document.addEventListener('keydown', e => {{ if (e.key === 'Escape') {{ closeModal(); closePromptModal(); closeInsights(); }} }});
 
 function switchTab(e, tabId) {{
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1032,6 +1291,147 @@ function copyCode(btn, text) {{
     btn.classList.add('copied');
     setTimeout(() => {{ btn.textContent = 'Copy'; btn.classList.remove('copied'); }}, 2000);
   }});
+}}
+
+// ── PROMPT MODAL (fill variables → live preview → copy) ──
+let currentPrompt = null;
+let promptVarValues = {{}};
+
+function escapeHtml(s) {{
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}}
+
+function openPromptModal(prompt) {{
+  currentPrompt = prompt;
+  promptVarValues = {{}};
+  document.getElementById('prompt-modal-title').textContent = prompt.name || prompt.id;
+  document.getElementById('prompt-modal-subtitle').textContent = `${{prompt.category}} · v${{prompt.version}} · by ${{prompt.author}}`;
+  document.getElementById('prompt-modal-desc').textContent = prompt.description || '';
+
+  // Feedback links -> pre-filled GitHub issues (no backend needed)
+  const _newIssue = 'https://github.com/acc-sebastian/skill-marketplace/issues/new';
+  const _iurl = (title, body, label) =>
+    `${{_newIssue}}?title=${{encodeURIComponent(title)}}&body=${{encodeURIComponent(body)}}&labels=${{encodeURIComponent(label)}}`;
+  const _pid = prompt.id;
+  document.getElementById('pfb-yes').href = _iurl(`[Feedback] ${{_pid}}: helpful`, `Prompt: ${{_pid}}\nHelpful: yes\n\nWhat worked well?`, 'feedback');
+  document.getElementById('pfb-no').href = _iurl(`[Feedback] ${{_pid}}: not helpful`, `Prompt: ${{_pid}}\nHelpful: no\n\nWhat was missing or wrong?`, 'feedback');
+  document.getElementById('pfb-bug').href = _iurl(`[Bug] ${{_pid}}`, `Prompt: ${{_pid}}\nVersion: ${{prompt.version}}\n\nDescribe the problem:\n`, 'bug');
+
+  // Deprecation banner
+  const depEl = document.getElementById('prompt-modal-deprecation');
+  if ((prompt.status || 'published') === 'deprecated') {{
+    const successor = PROMPTS.find(p => p.id === prompt.deprecated_by);
+    const successorLink = successor
+      ? `<a href="#" onclick="event.preventDefault(); openPromptModal(PROMPTS.find(p => p.id==='${{successor.id}}'))">${{successor.name}}</a>`
+      : (prompt.deprecated_by || 'a newer prompt');
+    const sunset = prompt.sunset_date ? ` It will be removed on <strong>${{prompt.sunset_date}}</strong>.` : '';
+    depEl.innerHTML = `<div class="deprecation-banner"><strong>Deprecated.</strong> This prompt is superseded by ${{successorLink}}.${{sunset}} Please migrate.</div>`;
+  }} else {{
+    depEl.innerHTML = '';
+  }}
+
+  // Tags
+  const tags = document.getElementById('prompt-modal-tags');
+  tags.innerHTML = '';
+  (prompt.tags || []).forEach(t => {{
+    const b = document.createElement('span');
+    b.className = 'badge badge-cat';
+    b.textContent = '#' + t;
+    tags.appendChild(b);
+  }});
+
+  // Variable form
+  const form = document.getElementById('prompt-var-form');
+  form.innerHTML = '';
+  const vars = prompt.variables || [];
+  document.getElementById('prompt-var-block').style.display = vars.length ? '' : 'none';
+  vars.forEach(v => {{
+    const field = document.createElement('div');
+    field.className = 'var-field';
+    const label = document.createElement('label');
+    label.textContent = '{{{{' + v.name + '}}}}';
+    if (v.required) {{
+      const req = document.createElement('span');
+      req.className = 'var-req';
+      req.textContent = '*';
+      label.appendChild(req);
+    }}
+    const hint = document.createElement('div');
+    hint.className = 'var-hint';
+    hint.textContent = v.description + (v.example ? ` — e.g. "${{v.example}}"` : '');
+    const input = document.createElement('textarea');
+    input.rows = 1;
+    input.placeholder = v.example || '';
+    input.addEventListener('input', () => {{
+      promptVarValues[v.name] = input.value;
+      updatePromptPreview();
+    }});
+    field.appendChild(label);
+    field.appendChild(hint);
+    field.appendChild(input);
+    form.appendChild(field);
+  }});
+
+  updatePromptPreview();
+  document.getElementById('prompt-modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}}
+
+function filledPromptText() {{
+  if (!currentPrompt) return '';
+  let t = currentPrompt.prompt_template || '';
+  (currentPrompt.variables || []).forEach(v => {{
+    const val = (promptVarValues[v.name] || '').trim();
+    if (val) t = t.split('{{{{' + v.name + '}}}}').join(val);
+  }});
+  return t;
+}}
+
+function updatePromptPreview() {{
+  const esc = escapeHtml(filledPromptText());
+  document.getElementById('prompt-preview').innerHTML =
+    esc.replace(/\\{{\\{{([A-Z0-9_]+)\\}}\\}}/g, '<mark class="var-missing">{{{{$1}}}}</mark>');
+
+  const missing = (currentPrompt.variables || []).filter(v =>
+    v.required && !(promptVarValues[v.name] || '').trim());
+  document.getElementById('prompt-copy-note').textContent = missing.length
+    ? `${{missing.length}} required variable${{missing.length > 1 ? 's' : ''}} not filled yet: ${{missing.map(v => v.name).join(', ')}}`
+    : '';
+}}
+
+function copyFilledPrompt(btn) {{
+  navigator.clipboard.writeText(filledPromptText()).then(() => {{
+    const orig = btn.textContent;
+    btn.textContent = 'Copied';
+    setTimeout(() => {{ btn.textContent = orig; }}, 2000);
+  }});
+}}
+
+function copyRawTemplate(btn) {{
+  if (!currentPrompt) return;
+  navigator.clipboard.writeText(currentPrompt.prompt_template || '').then(() => {{
+    const orig = btn.textContent;
+    btn.textContent = 'Copied';
+    setTimeout(() => {{ btn.textContent = orig; }}, 2000);
+  }});
+}}
+
+function downloadPrompt() {{
+  if (!currentPrompt) return;
+  const blob = new Blob([currentPrompt.prompt_content || ''], {{type: 'text/markdown'}});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'PROMPT.md';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}}
+
+function closePromptModal() {{
+  document.getElementById('prompt-modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}}
+function closePromptModalOnOverlay(e) {{
+  if (e.target === document.getElementById('prompt-modal-overlay')) closePromptModal();
 }}
 
 // ── INSIGHTS (live, from the public GitHub API) ──
@@ -1104,13 +1504,23 @@ async function loadInsights() {{
   body.innerHTML = html;
 }}
 
-// Filters
-document.querySelectorAll('.filter-btn').forEach(btn => {{
+// Filters (skills)
+document.querySelectorAll('.filter-btn:not(.p-filter-btn)').forEach(btn => {{
   btn.addEventListener('click', () => {{
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.filter-btn:not(.p-filter-btn)').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     activeFilter = btn.dataset.filter;
     renderCards();
+  }});
+}});
+
+// Filters (prompts)
+document.querySelectorAll('.p-filter-btn').forEach(btn => {{
+  btn.addEventListener('click', () => {{
+    document.querySelectorAll('.p-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    promptFilter = btn.dataset.filter;
+    renderPromptCards();
   }});
 }});
 
@@ -1118,6 +1528,24 @@ document.querySelectorAll('.filter-btn').forEach(btn => {{
 document.getElementById('search').addEventListener('input', e => {{
   searchQuery = e.target.value;
   renderCards();
+}});
+document.getElementById('prompt-search').addEventListener('input', e => {{
+  promptQuery = e.target.value;
+  renderPromptCards();
+}});
+
+// ── VIEW SWITCHING (Skill Marketplace | Prompt Library) via hash routing ──
+function applyView(view) {{
+  document.getElementById('view-skills').style.display = view === 'skills' ? '' : 'none';
+  document.getElementById('view-prompts').style.display = view === 'prompts' ? '' : 'none';
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+}}
+window.addEventListener('hashchange', () => {{
+  const h = location.hash.replace('#', '');
+  if (h === 'skills' || h === 'prompts') {{
+    applyView(h);
+    window.scrollTo({{ top: 0, behavior: 'smooth' }});
+  }}
 }});
 
 // Sticky header shadow on scroll
@@ -1143,6 +1571,8 @@ document.getElementById('theme-toggle').addEventListener('click', () => {{
 
 // Init
 renderCards();
+renderPromptCards();
+applyView(location.hash === '#prompts' ? 'prompts' : 'skills');
 </script>
 </body>
 </html>
@@ -1153,15 +1583,21 @@ def main():
     DOCS_DIR.mkdir(exist_ok=True)
     print("Loading skills...")
     skills = load_skills()
+    print("Loading prompts...")
+    prompts = load_prompts()
 
-    # Archived skills stay in the repo for provenance but leave site + catalog
+    # Archived entries stay in the repo for provenance but leave site + catalogs
     visible = [s for s in skills if s.get("status") != "archived"]
     hidden = len(skills) - len(visible)
     if hidden:
         print(f"  ({hidden} archived skill(s) excluded)")
+    visible_prompts = [p for p in prompts if p.get("status") != "archived"]
+    hidden_prompts = len(prompts) - len(visible_prompts)
+    if hidden_prompts:
+        print(f"  ({hidden_prompts} archived prompt(s) excluded)")
 
-    print(f"\nBuilding site with {len(visible)} skills...")
-    html = build_html(visible)
+    print(f"\nBuilding site with {len(visible)} skills and {len(visible_prompts)} prompts...")
+    html = build_html(visible, visible_prompts)
     out = DOCS_DIR / "index.html"
     with open(out, "w", encoding="utf-8") as f:
         f.write(html)
@@ -1176,15 +1612,23 @@ def main():
         f.write("\n")
     print(f"Catalog -> {cat_out} ({catalog['count']} skills)")
 
-    # Publish the skill schema alongside the site so catalog consumers can validate
-    schema_src = ROOT / "schema" / "skill.schema.json"
-    if schema_src.exists():
-        schema_dir = DOCS_DIR / "schema"
-        schema_dir.mkdir(exist_ok=True)
-        (schema_dir / "skill.schema.json").write_text(
-            schema_src.read_text(encoding="utf-8"), encoding="utf-8"
-        )
-        print(f"Schema  -> {schema_dir / 'skill.schema.json'}")
+    prompt_catalog = build_prompt_catalog(visible_prompts)
+    pcat_out = DOCS_DIR / "prompt-catalog.json"
+    with open(pcat_out, "w", encoding="utf-8") as f:
+        json.dump(prompt_catalog, f, ensure_ascii=False, indent=2)
+        f.write("\n")
+    print(f"Catalog -> {pcat_out} ({prompt_catalog['count']} prompts)")
+
+    # Publish the schemas alongside the site so catalog consumers can validate
+    schema_dir = DOCS_DIR / "schema"
+    for schema_name in ("skill.schema.json", "prompt.schema.json"):
+        schema_src = ROOT / "schema" / schema_name
+        if schema_src.exists():
+            schema_dir.mkdir(exist_ok=True)
+            (schema_dir / schema_name).write_text(
+                schema_src.read_text(encoding="utf-8"), encoding="utf-8"
+            )
+            print(f"Schema  -> {schema_dir / schema_name}")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,48 @@
+{
+  "id": "kpi-management-commentary",
+  "name": "KPI Management Commentary",
+  "description": "Turn a raw KPI table or metrics export into board-ready management commentary: what changed, why it changed, what it means, and which actions follow — separating signal from noise.",
+  "author": "accilium",
+  "owner": "acc-sebastian",
+  "version": "1.0.0",
+  "created": "2026-07-09",
+  "last_reviewed": "2026-07-09",
+  "status": "published",
+  "category": "Analytics",
+  "tags": [
+    "kpi",
+    "reporting",
+    "analytics",
+    "management-commentary",
+    "board-reporting"
+  ],
+  "complexity": "intermediate",
+  "variables": [
+    {
+      "name": "KPI_DATA",
+      "description": "The KPI table or metrics export (paste as text, CSV, or markdown table).",
+      "example": "Revenue: 4.2m (prev 3.9m, target 4.5m); Churn: 2.1% (prev 1.6%, target <1.8%); NPS: 42 (prev 44)...",
+      "required": true
+    },
+    {
+      "name": "PERIOD",
+      "description": "Reporting period and comparison basis.",
+      "example": "Q2 2026 vs. Q1 2026 and vs. plan",
+      "required": true
+    },
+    {
+      "name": "BUSINESS_CONTEXT",
+      "description": "Known events that may explain movements (launches, price changes, outages, seasonality).",
+      "example": "Price increase of 8% effective April; major client onboarded in May; system outage June 12-14",
+      "required": false
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-07-09",
+      "change": "Initial release"
+    }
+  ],
+  "example_input": "KPI_DATA: revenue 4.2m vs 3.9m, churn 2.1% vs 1.6%; PERIOD: Q2 vs Q1; BUSINESS_CONTEXT: April price increase"
+}

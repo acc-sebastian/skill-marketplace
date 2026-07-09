@@ -25,6 +25,9 @@ jobs:
       - name: Validate all skills (schema, naming, uniqueness, links, SKILL.md lint)
         run: python scripts/validate_skills.py
 
+      - name: Validate all prompts (schema, naming, uniqueness, variable consistency)
+        run: python scripts/validate_prompts.py
+
       - name: Scan for secrets & sensitive data (secrets fail; PII/injection warn)
         run: python scripts/scan_skills.py
 

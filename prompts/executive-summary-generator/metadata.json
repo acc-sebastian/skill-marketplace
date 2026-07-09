@@ -1,0 +1,48 @@
+{
+  "id": "executive-summary-generator",
+  "name": "Executive Summary Generator",
+  "description": "Condense any long document — report, study, proposal, or analysis — into a one-page executive summary tailored to a specific C-level audience, with key findings, implications, and a clear recommendation.",
+  "author": "accilium",
+  "owner": "acc-sebastian",
+  "version": "1.0.0",
+  "created": "2026-07-09",
+  "last_reviewed": "2026-07-09",
+  "status": "published",
+  "category": "Communication",
+  "tags": [
+    "executive",
+    "summary",
+    "c-level",
+    "reporting",
+    "communication"
+  ],
+  "complexity": "beginner",
+  "variables": [
+    {
+      "name": "DOCUMENT",
+      "description": "The full text of the document to summarize (paste as-is).",
+      "example": "Q2 market entry study for the Austrian e-mobility charging market, 42 pages...",
+      "required": true
+    },
+    {
+      "name": "AUDIENCE",
+      "description": "Who will read the summary and what they care about.",
+      "example": "CFO — cares about capex, payback period, and risk exposure",
+      "required": true
+    },
+    {
+      "name": "LANGUAGE",
+      "description": "Output language for the summary.",
+      "example": "English",
+      "required": false
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-07-09",
+      "change": "Initial release"
+    }
+  ],
+  "example_input": "DOCUMENT: 42-page market entry study; AUDIENCE: CFO focused on capex and payback; LANGUAGE: English"
+}

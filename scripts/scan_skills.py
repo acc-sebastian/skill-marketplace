@@ -15,6 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 SKILLS_DIR = ROOT / "skills"
+PROMPTS_DIR = ROOT / "prompts"
 
 # High-confidence secrets -> hard fail
 SECRET_PATTERNS = [
@@ -52,20 +53,25 @@ def scan_text(text):
 def main():
     n_secret = 0
     n_warn = 0
-    for d in sorted(SKILLS_DIR.iterdir()):
-        if not d.is_dir():
+    targets = [(SKILLS_DIR, "skills", ("SKILL.md", "metadata.json")),
+               (PROMPTS_DIR, "prompts", ("PROMPT.md", "metadata.json"))]
+    for base_dir, rel, fnames in targets:
+        if not base_dir.exists():
             continue
-        for fname in ("SKILL.md", "metadata.json"):
-            f = d / fname
-            if not f.exists():
+        for d in sorted(base_dir.iterdir()):
+            if not d.is_dir():
                 continue
-            secrets, warnings = scan_text(f.read_text(encoding="utf-8"))
-            for s in secrets:
-                print(f"::error file=skills/{d.name}/{fname}::SECRET — {s}")
-                n_secret += 1
-            for w in warnings:
-                print(f"  WARN  skills/{d.name}/{fname}: possible {w}")
-                n_warn += 1
+            for fname in fnames:
+                f = d / fname
+                if not f.exists():
+                    continue
+                secrets, warnings = scan_text(f.read_text(encoding="utf-8"))
+                for s in secrets:
+                    print(f"::error file={rel}/{d.name}/{fname}::SECRET — {s}")
+                    n_secret += 1
+                for w in warnings:
+                    print(f"  WARN  {rel}/{d.name}/{fname}: possible {w}")
+                    n_warn += 1
 
     print(f"\nScan complete: {n_secret} secret(s), {n_warn} warning(s).")
     if n_secret:

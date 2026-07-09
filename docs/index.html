@@ -194,6 +194,22 @@
   }
   .logo { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; color: var(--header-text); }
   .logo-text { font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em; }
+
+  /* View switcher (Skill Marketplace | Prompt Library) in the logo position */
+  .view-switch { display: flex; align-items: center; gap: 0.6rem; }
+  .view-btn {
+    background: none; border: none; cursor: pointer; font-family: inherit;
+    font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em;
+    color: var(--header-muted); padding: 0.2rem 0; position: relative;
+    text-decoration: none; transition: color .2s;
+  }
+  .view-btn:hover { color: var(--header-text); }
+  .view-btn.active { color: var(--header-text); }
+  .view-btn.active::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: -0.22rem; height: 2px;
+    background: var(--brand-accent); border-radius: 2px;
+  }
+  .view-sep { color: var(--border-strong); font-weight: 400; user-select: none; }
   header nav { display: flex; align-items: center; gap: 0.4rem; }
   header nav a {
     color: var(--header-muted);
@@ -477,6 +493,33 @@
     line-height: 1.6;
     color: var(--text);
   }
+
+  /* ── PROMPT MODAL: variable form + live preview ───── */
+  .var-section-label {
+    font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em;
+    font-weight: 600; color: var(--text-muted); margin: 1.1rem 0 0.6rem;
+  }
+  .var-form { display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 0.5rem; }
+  .var-field label {
+    font-family: var(--font-mono); font-size: 0.82rem; font-weight: 600;
+    color: var(--heading); display: block; margin-bottom: 0.15rem;
+  }
+  .var-req { color: var(--danger); margin-left: 0.15rem; }
+  .var-hint { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.3rem; }
+  .var-field textarea {
+    width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
+    padding: 0.5rem 0.7rem; font-size: 0.88rem; font-family: inherit;
+    resize: vertical; min-height: 40px;
+    background: var(--surface-2); color: var(--text); outline: none;
+    transition: border-color .2s, box-shadow .2s, background .2s;
+  }
+  .var-field textarea:focus { border-color: var(--brand-accent); box-shadow: var(--ring); background: var(--surface); }
+  mark.var-missing {
+    background: var(--accent-soft); color: var(--brand-accent);
+    font-weight: 600; border-radius: 4px; padding: 0 3px;
+  }
+  mark.var-filled { background: transparent; color: var(--brand-accent); }
+  .prompt-copy-note { font-size: 0.8rem; color: var(--danger); min-height: 1.2em; margin-top: 0.4rem; }
   .download-btn {
     display: inline-flex; align-items: center; gap: 0.5rem;
     background: var(--brand-blue); color: var(--on-accent);
@@ -576,7 +619,11 @@
 
 <header id="site-header">
   <div class="header-inner">
-    <a class="logo" href="#"><span class="logo-text">Skill Marketplace</span></a>
+    <div class="view-switch">
+      <a class="view-btn active" data-view="skills" href="#skills">Skill Marketplace</a>
+      <span class="view-sep">|</span>
+      <a class="view-btn" data-view="prompts" href="#prompts">Prompt Library</a>
+    </div>
     <nav>
       <a class="navlink" href="#skills">Browse</a>
       <a class="navlink" href="#" onclick="event.preventDefault(); openInsights()">Insights</a>
@@ -588,44 +635,78 @@
   </div>
 </header>
 
-<div class="page-intro">
-  <h1>Skill library</h1>
-  <p>Internal catalog of reusable AI skills for Claude Code and other assistants. Search, open a skill for install instructions, or add your own.</p>
-</div>
+<main id="view-skills">
+  <div class="page-intro">
+    <h1>Skill library</h1>
+    <p>Internal catalog of reusable AI skills for Claude Code and other assistants. Search, open a skill for install instructions, or add your own.</p>
+  </div>
 
-<div class="controls" id="skills">
-  <div class="search-box">
-    <div class="search-input-wrap">
-      <input type="text" id="search" placeholder="Search skills, tags, descriptions…">
-    </div>
-    <div class="filter-wrap">
-      <span class="filter-label">Category:</span>
-      <button class="filter-btn active" data-filter="all">All</button>
-      <button class="filter-btn" data-filter="Analytics">Analytics</button>
+  <div class="controls">
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <input type="text" id="search" placeholder="Search skills, tags, descriptions…">
+      </div>
+      <div class="filter-wrap">
+        <span class="filter-label">Category:</span>
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="Analytics">Analytics</button>
 <button class="filter-btn" data-filter="Procurement">Procurement</button>
 <button class="filter-btn" data-filter="Productivity">Productivity</button>
 <button class="filter-btn" data-filter="Strategy">Strategy</button>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="grid-wrap">
-  <p class="result-count" id="result-count"></p>
-  <div class="skills-grid" id="skills-grid"></div>
-  <div class="no-results" id="no-results" style="display:none">
-    <strong>No skills found</strong>
-    <p>Try a different search term or category filter.</p>
+  <div class="grid-wrap">
+    <p class="result-count" id="result-count"></p>
+    <div class="skills-grid" id="skills-grid"></div>
+    <div class="no-results" id="no-results" style="display:none">
+      <strong>No skills found</strong>
+      <p>Try a different search term or category filter.</p>
+    </div>
   </div>
-</div>
+</main>
+
+<main id="view-prompts" style="display:none">
+  <div class="page-intro">
+    <h1>Prompt library</h1>
+    <p>Copy-paste prompt templates for recurring tasks. Open a prompt, fill in the variables, and paste the finished prompt into any AI chat — no installation needed.</p>
+  </div>
+
+  <div class="controls">
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <input type="text" id="prompt-search" placeholder="Search prompts, tags, descriptions…">
+      </div>
+      <div class="filter-wrap">
+        <span class="filter-label">Category:</span>
+        <button class="filter-btn p-filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn p-filter-btn" data-filter="Analytics">Analytics</button>
+<button class="filter-btn p-filter-btn" data-filter="Communication">Communication</button>
+<button class="filter-btn p-filter-btn" data-filter="Compliance">Compliance</button>
+<button class="filter-btn p-filter-btn" data-filter="Procurement">Procurement</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-wrap">
+    <p class="result-count" id="prompt-result-count"></p>
+    <div class="skills-grid" id="prompts-grid"></div>
+    <div class="no-results" id="prompt-no-results" style="display:none">
+      <strong>No prompts found</strong>
+      <p>Try a different search term or category filter.</p>
+    </div>
+  </div>
+</main>
 
 <!-- CONTRIBUTE SECTION -->
 <section class="contribute-section" id="contribute">
   <div class="contribute-inner">
-    <h2>Add a skill</h2>
-    <p>Once a skill is merged to main it appears here within minutes.</p>
+    <h2>Add a skill or prompt</h2>
+    <p>Once merged to main it appears here within minutes.</p>
     <ol class="contribute-steps">
       <li class="c-step">Fork the GitHub repo</li>
-      <li class="c-step">Add <code>metadata.json</code> + <code>SKILL.md</code></li>
+      <li class="c-step">Add <code>metadata.json</code> + <code>SKILL.md</code> under <code>skills/</code> — or <code>metadata.json</code> + <code>PROMPT.md</code> under <code>prompts/</code></li>
       <li class="c-step">Open a pull request</li>
     </ol>
     <p class="contribute-note">No Git? Use the form instead — it opens a pre-filled issue and scaffolds the skill for you.</p>
@@ -736,6 +817,46 @@
   </div>
 </div>
 
+<!-- PROMPT MODAL -->
+<div class="modal-overlay" id="prompt-modal-overlay" onclick="closePromptModalOnOverlay(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+        <div class="modal-title" id="prompt-modal-title"></div>
+        <div class="modal-subtitle" id="prompt-modal-subtitle"></div>
+      </div>
+      <button class="modal-close" onclick="closePromptModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="prompt-modal-deprecation"></div>
+      <div class="modal-tags" id="prompt-modal-tags"></div>
+      <p class="modal-desc" id="prompt-modal-desc"></p>
+      <div class="modal-feedback">
+        <span>Was this prompt helpful?</span>
+        <a id="pfb-yes" target="_blank" rel="noopener">Yes</a>
+        <a id="pfb-no" target="_blank" rel="noopener">No</a>
+        <span class="fb-spacer"></span>
+        <a id="pfb-bug" target="_blank" rel="noopener">Report a problem</a>
+      </div>
+
+      <div id="prompt-var-block">
+        <div class="var-section-label">Fill in the variables</div>
+        <div class="var-form" id="prompt-var-form"></div>
+      </div>
+
+      <div class="var-section-label">Prompt preview</div>
+      <div class="skill-content-area" id="prompt-preview"></div>
+      <p class="prompt-copy-note" id="prompt-copy-note"></p>
+
+      <div class="btn-row">
+        <button class="download-btn" id="btn-copy-prompt" onclick="copyFilledPrompt(this)">Copy prompt</button>
+        <button class="download-btn download-btn-ghost" onclick="copyRawTemplate(this)">Copy raw template</button>
+        <button class="download-btn download-btn-ghost" onclick="downloadPrompt()">Download PROMPT.md</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- INSIGHTS OVERLAY -->
 <div class="modal-overlay" id="insights-overlay" onclick="if(event.target===this) closeInsights()">
   <div class="modal">
@@ -753,7 +874,9 @@
 <footer>
   <div class="footer-top">
     <a href="#skills">Browse skills</a>
-    <a href="https://acc-sebastian.github.io/skill-marketplace/catalog.json" target="_blank">Catalog API</a>
+    <a href="#prompts">Browse prompts</a>
+    <a href="https://acc-sebastian.github.io/skill-marketplace/catalog.json" target="_blank">Skill catalog API</a>
+    <a href="https://acc-sebastian.github.io/skill-marketplace/prompt-catalog.json" target="_blank">Prompt catalog API</a>
     <a href="https://github.com/acc-sebastian/skill-marketplace/releases" target="_blank">Releases</a>
     <a href="https://github.com/acc-sebastian/skill-marketplace/blob/main/docs/enterprise-setup.md" target="_blank">Enterprise setup</a>
     <a href="https://github.com/acc-sebastian/skill-marketplace/blob/main/CONTRIBUTING.md" target="_blank">Contributor guide</a>
@@ -978,9 +1101,268 @@ const SKILLS = [
     "folder": "vendor-proposal-comparison"
   }
 ];
+const PROMPTS = [
+  {
+    "id": "executive-summary-generator",
+    "name": "Executive Summary Generator",
+    "description": "Condense any long document — report, study, proposal, or analysis — into a one-page executive summary tailored to a specific C-level audience, with key findings, implications, and a clear recommendation.",
+    "author": "accilium",
+    "owner": "acc-sebastian",
+    "version": "1.0.0",
+    "created": "2026-07-09",
+    "last_reviewed": "2026-07-09",
+    "status": "published",
+    "category": "Communication",
+    "tags": [
+      "executive",
+      "summary",
+      "c-level",
+      "reporting",
+      "communication"
+    ],
+    "complexity": "beginner",
+    "variables": [
+      {
+        "name": "DOCUMENT",
+        "description": "The full text of the document to summarize (paste as-is).",
+        "example": "Q2 market entry study for the Austrian e-mobility charging market, 42 pages...",
+        "required": true
+      },
+      {
+        "name": "AUDIENCE",
+        "description": "Who will read the summary and what they care about.",
+        "example": "CFO — cares about capex, payback period, and risk exposure",
+        "required": true
+      },
+      {
+        "name": "LANGUAGE",
+        "description": "Output language for the summary.",
+        "example": "English",
+        "required": false
+      }
+    ],
+    "changelog": [
+      {
+        "version": "1.0.0",
+        "date": "2026-07-09",
+        "change": "Initial release"
+      }
+    ],
+    "example_input": "DOCUMENT: 42-page market entry study; AUDIENCE: CFO focused on capex and payback; LANGUAGE: English",
+    "prompt_content": "---\nname: executive-summary-generator\ndescription: Condense any long document into a one-page executive summary tailored to a specific C-level audience.\n---\n\nYou are a senior management consultant preparing an executive summary for a C-level reader.\n\n## Audience\n{{AUDIENCE}}\n\nWrite for exactly this reader: lead with what they care about, cut everything they would skim past.\n\n## Source document\n<document>\n{{DOCUMENT}}\n</document>\n\n## Task\nProduce a one-page executive summary of the source document in {{LANGUAGE}}. Follow these rules:\n\n1. **Lead with the \"so what\".** The first paragraph (max 3 sentences) must state the single most important conclusion and its business implication for the audience.\n2. **Structure the body as:**\n   - **Situation** — 2-3 sentences of context, only what is needed to understand the findings.\n   - **Key findings** — 3-5 bullets, each one finding with the supporting number or fact from the document. No finding without evidence.\n   - **Implications** — what the findings mean for the audience's decisions, stated in their language (financial impact for a CFO, operational impact for a COO, etc.).\n   - **Recommendation** — one clearly worded recommended course of action, plus the immediate next step and who should own it.\n3. **Constraints:**\n   - Maximum 350 words total. If you cannot fit everything, cut findings, never the recommendation.\n   - Use only facts from the source document. If a critical number is missing, write \"[not stated in source]\" rather than inventing it.\n   - No filler phrases (\"it is important to note\", \"in today's fast-paced world\").\n   - Numbers: always include unit and time period.\n4. After the summary, add a short section **\"Questions the reader will ask\"** — the 3 most likely challenge questions from this audience, each with a one-sentence answer based on the document (or \"not covered in source\" if it isn't).\n",
+    "prompt_template": "You are a senior management consultant preparing an executive summary for a C-level reader.\n\n## Audience\n{{AUDIENCE}}\n\nWrite for exactly this reader: lead with what they care about, cut everything they would skim past.\n\n## Source document\n<document>\n{{DOCUMENT}}\n</document>\n\n## Task\nProduce a one-page executive summary of the source document in {{LANGUAGE}}. Follow these rules:\n\n1. **Lead with the \"so what\".** The first paragraph (max 3 sentences) must state the single most important conclusion and its business implication for the audience.\n2. **Structure the body as:**\n   - **Situation** — 2-3 sentences of context, only what is needed to understand the findings.\n   - **Key findings** — 3-5 bullets, each one finding with the supporting number or fact from the document. No finding without evidence.\n   - **Implications** — what the findings mean for the audience's decisions, stated in their language (financial impact for a CFO, operational impact for a COO, etc.).\n   - **Recommendation** — one clearly worded recommended course of action, plus the immediate next step and who should own it.\n3. **Constraints:**\n   - Maximum 350 words total. If you cannot fit everything, cut findings, never the recommendation.\n   - Use only facts from the source document. If a critical number is missing, write \"[not stated in source]\" rather than inventing it.\n   - No filler phrases (\"it is important to note\", \"in today's fast-paced world\").\n   - Numbers: always include unit and time period.\n4. After the summary, add a short section **\"Questions the reader will ask\"** — the 3 most likely challenge questions from this audience, each with a one-sentence answer based on the document (or \"not covered in source\" if it isn't).\n",
+    "folder": "executive-summary-generator"
+  },
+  {
+    "id": "kpi-management-commentary",
+    "name": "KPI Management Commentary",
+    "description": "Turn a raw KPI table or metrics export into board-ready management commentary: what changed, why it changed, what it means, and which actions follow — separating signal from noise.",
+    "author": "accilium",
+    "owner": "acc-sebastian",
+    "version": "1.0.0",
+    "created": "2026-07-09",
+    "last_reviewed": "2026-07-09",
+    "status": "published",
+    "category": "Analytics",
+    "tags": [
+      "kpi",
+      "reporting",
+      "analytics",
+      "management-commentary",
+      "board-reporting"
+    ],
+    "complexity": "intermediate",
+    "variables": [
+      {
+        "name": "KPI_DATA",
+        "description": "The KPI table or metrics export (paste as text, CSV, or markdown table).",
+        "example": "Revenue: 4.2m (prev 3.9m, target 4.5m); Churn: 2.1% (prev 1.6%, target <1.8%); NPS: 42 (prev 44)...",
+        "required": true
+      },
+      {
+        "name": "PERIOD",
+        "description": "Reporting period and comparison basis.",
+        "example": "Q2 2026 vs. Q1 2026 and vs. plan",
+        "required": true
+      },
+      {
+        "name": "BUSINESS_CONTEXT",
+        "description": "Known events that may explain movements (launches, price changes, outages, seasonality).",
+        "example": "Price increase of 8% effective April; major client onboarded in May; system outage June 12-14",
+        "required": false
+      }
+    ],
+    "changelog": [
+      {
+        "version": "1.0.0",
+        "date": "2026-07-09",
+        "change": "Initial release"
+      }
+    ],
+    "example_input": "KPI_DATA: revenue 4.2m vs 3.9m, churn 2.1% vs 1.6%; PERIOD: Q2 vs Q1; BUSINESS_CONTEXT: April price increase",
+    "prompt_content": "---\nname: kpi-management-commentary\ndescription: Turn a raw KPI table into board-ready management commentary — what changed, why, what it means, and which actions follow.\n---\n\nYou are a controller writing the management commentary for a board reporting pack. Your readers see the numbers already — your job is the *interpretation*, not the recitation.\n\n## Reporting period\n{{PERIOD}}\n\n## KPI data\n<data>\n{{KPI_DATA}}\n</data>\n\n## Known business context\n{{BUSINESS_CONTEXT}}\n\n## Task\nWrite the management commentary:\n\n1. **Headline** — one sentence stating the overall picture for the period (e.g. \"Growth on plan, but churn deterioration puts the H2 target at risk.\").\n2. **Signal, not noise.** Classify every KPI movement:\n   - **Material** — beyond normal fluctuation *and* relevant to targets → gets commentary.\n   - **Noise** — within normal fluctuation → listed in one collective sentence at the end, no individual commentary.\n   State the threshold you applied (e.g. \"movements under ±3% vs. prior period treated as noise unless target-relevant\").\n3. **For each material movement (max 5), write a block:**\n   - **What:** the movement with numbers — actual, prior period, target, delta.\n   - **Why:** the most plausible driver. Use the business context first; if the data doesn't support a cause, write \"Driver unclear — needs analysis\" rather than speculating.\n   - **So what:** consequence for full-year target or business risk, quantified where possible.\n   - **Action:** the follow-up that management should own — a decision, an analysis, or a countermeasure with a suggested deadline.\n4. **Outlook** — 2-3 sentences: trajectory for the next period if current drivers persist, and the one metric to watch most closely.\n\n**Style rules:**\n- Maximum 400 words. Board members read 30 packs a quarter.\n- Every claim tied to a number from the data. No adjectives without evidence (\"strong growth\" → \"+7.7% vs. prior quarter\").\n- Never mix \"why\" speculation into the \"what\" — keep facts and interpretation visibly separate.\n- If the data is incomplete for a proper assessment (e.g. no target values), state precisely what is missing at the top before commenting.\n",
+    "prompt_template": "You are a controller writing the management commentary for a board reporting pack. Your readers see the numbers already — your job is the *interpretation*, not the recitation.\n\n## Reporting period\n{{PERIOD}}\n\n## KPI data\n<data>\n{{KPI_DATA}}\n</data>\n\n## Known business context\n{{BUSINESS_CONTEXT}}\n\n## Task\nWrite the management commentary:\n\n1. **Headline** — one sentence stating the overall picture for the period (e.g. \"Growth on plan, but churn deterioration puts the H2 target at risk.\").\n2. **Signal, not noise.** Classify every KPI movement:\n   - **Material** — beyond normal fluctuation *and* relevant to targets → gets commentary.\n   - **Noise** — within normal fluctuation → listed in one collective sentence at the end, no individual commentary.\n   State the threshold you applied (e.g. \"movements under ±3% vs. prior period treated as noise unless target-relevant\").\n3. **For each material movement (max 5), write a block:**\n   - **What:** the movement with numbers — actual, prior period, target, delta.\n   - **Why:** the most plausible driver. Use the business context first; if the data doesn't support a cause, write \"Driver unclear — needs analysis\" rather than speculating.\n   - **So what:** consequence for full-year target or business risk, quantified where possible.\n   - **Action:** the follow-up that management should own — a decision, an analysis, or a countermeasure with a suggested deadline.\n4. **Outlook** — 2-3 sentences: trajectory for the next period if current drivers persist, and the one metric to watch most closely.\n\n**Style rules:**\n- Maximum 400 words. Board members read 30 packs a quarter.\n- Every claim tied to a number from the data. No adjectives without evidence (\"strong growth\" → \"+7.7% vs. prior quarter\").\n- Never mix \"why\" speculation into the \"what\" — keep facts and interpretation visibly separate.\n- If the data is incomplete for a proper assessment (e.g. no target values), state precisely what is missing at the top before commenting.\n",
+    "folder": "kpi-management-commentary"
+  },
+  {
+    "id": "rfp-requirements-extractor",
+    "name": "RFP Requirements Extractor",
+    "description": "Extract every requirement from an RFP or tender document into a structured, numbered requirements table with type classification, MoSCoW priority, and flagged ambiguities — the foundation for a compliant bid response.",
+    "author": "accilium",
+    "owner": "acc-sebastian",
+    "version": "1.0.0",
+    "created": "2026-07-09",
+    "last_reviewed": "2026-07-09",
+    "status": "published",
+    "category": "Procurement",
+    "tags": [
+      "rfp",
+      "tender",
+      "requirements",
+      "procurement",
+      "bid-management"
+    ],
+    "complexity": "intermediate",
+    "variables": [
+      {
+        "name": "RFP_TEXT",
+        "description": "The RFP / tender text or the relevant sections (paste as-is).",
+        "example": "Section 4 — Functional requirements: The system shall provide single sign-on...",
+        "required": true
+      },
+      {
+        "name": "FOCUS_AREA",
+        "description": "Optional lens to prioritize, e.g. a lot, work package, or discipline.",
+        "example": "IT integration and data migration requirements only",
+        "required": false
+      }
+    ],
+    "changelog": [
+      {
+        "version": "1.0.0",
+        "date": "2026-07-09",
+        "change": "Initial release"
+      }
+    ],
+    "example_input": "RFP_TEXT: 12-page tender for a fleet management platform; FOCUS_AREA: data migration",
+    "prompt_content": "---\nname: rfp-requirements-extractor\ndescription: Extract every requirement from an RFP or tender document into a structured requirements table with type, MoSCoW priority, and flagged ambiguities.\n---\n\nYou are a bid manager analyzing an RFP for a compliant response. Your job is to extract **every** requirement — missing one can disqualify the bid.\n\n## RFP text\n<rfp>\n{{RFP_TEXT}}\n</rfp>\n\n## Focus area (if given, extract everything but list these first)\n{{FOCUS_AREA}}\n\n## Task\nExtract all requirements into the table below. Work section by section so nothing is skipped.\n\n| ID | Requirement (verbatim gist) | Source (section/page) | Type | Binding? | MoSCoW | Ambiguity flag |\n|----|------------------------------|----------------------|------|----------|--------|----------------|\n\n**Column rules:**\n- **ID** — `R-001`, `R-002`, ... in document order.\n- **Requirement** — one sentence, faithful to the source wording. Do not merge multiple requirements into one row; split \"and\"-sentences into separate rows.\n- **Source** — the section number, heading, or page so the team can trace it back.\n- **Type** — one of: `Functional`, `Non-functional`, `Commercial`, `Legal/Compliance`, `Formal` (submission formalities like deadlines, formats, signatures).\n- **Binding?** — `Must` for \"shall/must/mandatory\" wording, `Should` for \"should/preferably\", `Info` for descriptive statements that still imply expectations.\n- **MoSCoW** — your prioritization for the bid response: Must / Should / Could / Won't.\n- **Ambiguity flag** — `—` if clear; otherwise a short note on what is vague, contradictory, or undefined (e.g. \"'timely' not quantified\").\n\n**After the table, add three short sections:**\n1. **Clarification questions** — numbered list of questions to submit in the Q&A phase, one per flagged ambiguity, phrased neutrally so they don't reveal bid strategy.\n2. **Knock-out criteria** — the formal requirements (deadlines, certifications, references, legal forms) whose failure would disqualify the bid outright.\n3. **Coverage check** — state which sections of the RFP you extracted from and explicitly name any section you could not parse or that contained no requirements.\n\n**Rules:** Never invent requirements. Never silently normalize contradictions — flag them. If the text is truncated, say so and list what appears to be missing.\n",
+    "prompt_template": "You are a bid manager analyzing an RFP for a compliant response. Your job is to extract **every** requirement — missing one can disqualify the bid.\n\n## RFP text\n<rfp>\n{{RFP_TEXT}}\n</rfp>\n\n## Focus area (if given, extract everything but list these first)\n{{FOCUS_AREA}}\n\n## Task\nExtract all requirements into the table below. Work section by section so nothing is skipped.\n\n| ID | Requirement (verbatim gist) | Source (section/page) | Type | Binding? | MoSCoW | Ambiguity flag |\n|----|------------------------------|----------------------|------|----------|--------|----------------|\n\n**Column rules:**\n- **ID** — `R-001`, `R-002`, ... in document order.\n- **Requirement** — one sentence, faithful to the source wording. Do not merge multiple requirements into one row; split \"and\"-sentences into separate rows.\n- **Source** — the section number, heading, or page so the team can trace it back.\n- **Type** — one of: `Functional`, `Non-functional`, `Commercial`, `Legal/Compliance`, `Formal` (submission formalities like deadlines, formats, signatures).\n- **Binding?** — `Must` for \"shall/must/mandatory\" wording, `Should` for \"should/preferably\", `Info` for descriptive statements that still imply expectations.\n- **MoSCoW** — your prioritization for the bid response: Must / Should / Could / Won't.\n- **Ambiguity flag** — `—` if clear; otherwise a short note on what is vague, contradictory, or undefined (e.g. \"'timely' not quantified\").\n\n**After the table, add three short sections:**\n1. **Clarification questions** — numbered list of questions to submit in the Q&A phase, one per flagged ambiguity, phrased neutrally so they don't reveal bid strategy.\n2. **Knock-out criteria** — the formal requirements (deadlines, certifications, references, legal forms) whose failure would disqualify the bid outright.\n3. **Coverage check** — state which sections of the RFP you extracted from and explicitly name any section you could not parse or that contained no requirements.\n\n**Rules:** Never invent requirements. Never silently normalize contradictions — flag them. If the text is truncated, say so and list what appears to be missing.\n",
+    "folder": "rfp-requirements-extractor"
+  },
+  {
+    "id": "risk-register-builder",
+    "name": "Risk Register Builder",
+    "description": "Turn unstructured project notes, workshop output, or meeting minutes into a formal risk register with likelihood, impact, risk score, mitigation strategy, and owner — ready for steering committee reporting.",
+    "author": "accilium",
+    "owner": "acc-sebastian",
+    "version": "1.0.0",
+    "created": "2026-07-09",
+    "last_reviewed": "2026-07-09",
+    "status": "published",
+    "category": "Compliance",
+    "tags": [
+      "risk",
+      "risk-register",
+      "governance",
+      "project-management",
+      "steering-committee"
+    ],
+    "complexity": "intermediate",
+    "variables": [
+      {
+        "name": "PROJECT_NOTES",
+        "description": "Raw input: meeting notes, workshop cards, emails, or a brain dump of concerns.",
+        "example": "Vendor contract not signed yet; key architect leaving in Sept; data quality in legacy system unclear...",
+        "required": true
+      },
+      {
+        "name": "PROJECT_CONTEXT",
+        "description": "One or two sentences on the project so risks can be assessed in context.",
+        "example": "ERP migration for a 2,000-employee utility, go-live January, fixed regulatory deadline",
+        "required": true
+      },
+      {
+        "name": "RISK_APPETITE",
+        "description": "Optional guidance on what the organization considers acceptable.",
+        "example": "Regulatory deadline is immovable; budget has 10% contingency; reputational risk highly sensitive",
+        "required": false
+      }
+    ],
+    "changelog": [
+      {
+        "version": "1.0.0",
+        "date": "2026-07-09",
+        "change": "Initial release"
+      }
+    ],
+    "example_input": "PROJECT_NOTES: vendor contract unsigned, architect leaving; PROJECT_CONTEXT: ERP migration, fixed go-live; RISK_APPETITE: deadline immovable",
+    "prompt_content": "---\nname: risk-register-builder\ndescription: Turn unstructured project notes into a formal risk register with likelihood, impact, score, mitigation, and owner.\n---\n\nYou are a project risk manager preparing a formal risk register for steering committee reporting.\n\n## Project context\n{{PROJECT_CONTEXT}}\n\n## Risk appetite / constraints\n{{RISK_APPETITE}}\n\n## Raw input\n<notes>\n{{PROJECT_NOTES}}\n</notes>\n\n## Task\nBuild a risk register from the raw input:\n\n1. **Extract and normalize.** Identify every risk in the notes. Rewrite each as a proper risk statement in cause-risk-effect form: \"Because of [cause], there is a risk that [event], which would lead to [impact].\" Split compound concerns into separate risks; merge duplicates.\n2. **Assess.** Rate Likelihood and Impact on 1-5 scales (1 = very low, 5 = very high) and compute **Score = L × I**. Base ratings on the project context and risk appetite; where you must assume, mark the rating with an asterisk and explain the assumption below the table.\n3. **Classify.** Category: `Schedule`, `Budget`, `Scope/Quality`, `Resources`, `Vendor/Contract`, `Technology`, `Regulatory/Compliance`, `Organizational`.\n4. **Mitigate.** For each risk, state the response strategy (`Avoid`, `Reduce`, `Transfer`, `Accept`) and one concrete mitigation action with a suggested owner role (e.g. \"PMO lead\", \"Client IT manager\") — never leave mitigation empty for scores ≥ 12.\n\n**Output format:**\n\n| ID | Risk statement (cause → risk → effect) | Category | L | I | Score | Strategy | Mitigation action | Suggested owner |\n|----|------------------------------------------|----------|---|---|-------|----------|-------------------|-----------------|\n\nSort by Score, highest first. Use `RSK-01`, `RSK-02`, ... as IDs.\n\n**After the table:**\n- **Top 3 risks** — one short paragraph each: why it tops the list and what the steering committee should decide about it now.\n- **Assumptions** — every asterisked rating with its underlying assumption.\n- **Blind spots** — 2-3 typical risk categories for this project type that the notes did *not* mention, phrased as questions for the next risk workshop.\n\n**Rules:** Only derive risks from the input and context — do not pad the register with generic boilerplate risks. Keep risk statements under 30 words each.\n",
+    "prompt_template": "You are a project risk manager preparing a formal risk register for steering committee reporting.\n\n## Project context\n{{PROJECT_CONTEXT}}\n\n## Risk appetite / constraints\n{{RISK_APPETITE}}\n\n## Raw input\n<notes>\n{{PROJECT_NOTES}}\n</notes>\n\n## Task\nBuild a risk register from the raw input:\n\n1. **Extract and normalize.** Identify every risk in the notes. Rewrite each as a proper risk statement in cause-risk-effect form: \"Because of [cause], there is a risk that [event], which would lead to [impact].\" Split compound concerns into separate risks; merge duplicates.\n2. **Assess.** Rate Likelihood and Impact on 1-5 scales (1 = very low, 5 = very high) and compute **Score = L × I**. Base ratings on the project context and risk appetite; where you must assume, mark the rating with an asterisk and explain the assumption below the table.\n3. **Classify.** Category: `Schedule`, `Budget`, `Scope/Quality`, `Resources`, `Vendor/Contract`, `Technology`, `Regulatory/Compliance`, `Organizational`.\n4. **Mitigate.** For each risk, state the response strategy (`Avoid`, `Reduce`, `Transfer`, `Accept`) and one concrete mitigation action with a suggested owner role (e.g. \"PMO lead\", \"Client IT manager\") — never leave mitigation empty for scores ≥ 12.\n\n**Output format:**\n\n| ID | Risk statement (cause → risk → effect) | Category | L | I | Score | Strategy | Mitigation action | Suggested owner |\n|----|------------------------------------------|----------|---|---|-------|----------|-------------------|-----------------|\n\nSort by Score, highest first. Use `RSK-01`, `RSK-02`, ... as IDs.\n\n**After the table:**\n- **Top 3 risks** — one short paragraph each: why it tops the list and what the steering committee should decide about it now.\n- **Assumptions** — every asterisked rating with its underlying assumption.\n- **Blind spots** — 2-3 typical risk categories for this project type that the notes did *not* mention, phrased as questions for the next risk workshop.\n\n**Rules:** Only derive risks from the input and context — do not pad the register with generic boilerplate risks. Keep risk statements under 30 words each.\n",
+    "folder": "risk-register-builder"
+  },
+  {
+    "id": "stakeholder-update-drafter",
+    "name": "Stakeholder Update Drafter",
+    "description": "Draft a professional project status email for a specific stakeholder — including difficult messages like delays, budget overruns, or scope changes — with the right tone, framing, and a clear ask.",
+    "author": "accilium",
+    "owner": "acc-sebastian",
+    "version": "1.0.0",
+    "created": "2026-07-09",
+    "last_reviewed": "2026-07-09",
+    "status": "published",
+    "category": "Communication",
+    "tags": [
+      "stakeholder",
+      "email",
+      "status-update",
+      "project-management",
+      "communication"
+    ],
+    "complexity": "beginner",
+    "variables": [
+      {
+        "name": "PROJECT_CONTEXT",
+        "description": "Current project situation: progress, issues, decisions needed (bullet points are fine).",
+        "example": "Rollout phase 2 delayed by 3 weeks due to vendor API issues; budget still on track; need steering committee decision on scope of phase 3",
+        "required": true
+      },
+      {
+        "name": "RECIPIENT",
+        "description": "Who receives the email and their relationship to the project.",
+        "example": "Program sponsor (client CIO), skeptical about timeline, hates surprises",
+        "required": true
+      },
+      {
+        "name": "KEY_MESSAGES",
+        "description": "The 1-3 messages that must land, in order of importance.",
+        "example": "1) Delay is contained and does not affect go-live; 2) We need the scope decision by Friday",
+        "required": true
+      },
+      {
+        "name": "TONE",
+        "description": "Desired tone of voice.",
+        "example": "Confident and transparent, no sugarcoating, no alarmism",
+        "required": false
+      }
+    ],
+    "changelog": [
+      {
+        "version": "1.0.0",
+        "date": "2026-07-09",
+        "change": "Initial release"
+      }
+    ],
+    "example_input": "PROJECT_CONTEXT: phase 2 delayed 3 weeks; RECIPIENT: client CIO; KEY_MESSAGES: delay contained, decision needed Friday; TONE: confident, transparent",
+    "prompt_content": "---\nname: stakeholder-update-drafter\ndescription: Draft a professional project status email for a specific stakeholder, including difficult messages, with the right tone and a clear ask.\n---\n\nYou are an experienced engagement manager writing a status email to a project stakeholder. You are known for being direct, structured, and never surprising a sponsor with bad news they should have heard earlier.\n\n## Situation\n{{PROJECT_CONTEXT}}\n\n## Recipient\n{{RECIPIENT}}\n\n## Messages that must land (in this order of priority)\n{{KEY_MESSAGES}}\n\n## Tone\n{{TONE}}\n\n## Task\nDraft the email. Requirements:\n\n1. **Subject line** — specific and scannable: project name + the one thing that matters (e.g. \"Fleet Rollout — Phase 2 delay contained, decision needed by Fri\").\n2. **First two sentences** — the recipient must know the overall state (on track / at risk / off track) and the single most important message without reading further.\n3. **Body structure:**\n   - **Status** — 2-4 bullets: what happened since the last update, factual, with dates and numbers.\n   - **Issue & handling** (only if there is bad news) — state the problem plainly in one sentence, then immediately what has been done about it and what the residual impact is. Never bury bad news mid-paragraph, never lead with excuses.\n   - **Ask / next step** — exactly what you need from the recipient, by when, and what happens if the decision slips.\n4. **Length** — under 220 words. A sponsor reads this on a phone between meetings.\n5. **Style rules:**\n   - No passive-voice blame constructions (\"mistakes were made\") — name the cause neutrally.\n   - No hedging filler (\"I just wanted to quickly...\", \"as you may know\").\n   - One concrete date for every commitment or ask. Never \"soon\" or \"asap\".\n   - Close with the sender's name placeholder `[NAME]`.\n\nAfter the email, add a two-line **\"Why this framing\"** note explaining the key wording choice you made for this recipient — so the sender can adapt it consciously instead of copying blindly.\n",
+    "prompt_template": "You are an experienced engagement manager writing a status email to a project stakeholder. You are known for being direct, structured, and never surprising a sponsor with bad news they should have heard earlier.\n\n## Situation\n{{PROJECT_CONTEXT}}\n\n## Recipient\n{{RECIPIENT}}\n\n## Messages that must land (in this order of priority)\n{{KEY_MESSAGES}}\n\n## Tone\n{{TONE}}\n\n## Task\nDraft the email. Requirements:\n\n1. **Subject line** — specific and scannable: project name + the one thing that matters (e.g. \"Fleet Rollout — Phase 2 delay contained, decision needed by Fri\").\n2. **First two sentences** — the recipient must know the overall state (on track / at risk / off track) and the single most important message without reading further.\n3. **Body structure:**\n   - **Status** — 2-4 bullets: what happened since the last update, factual, with dates and numbers.\n   - **Issue & handling** (only if there is bad news) — state the problem plainly in one sentence, then immediately what has been done about it and what the residual impact is. Never bury bad news mid-paragraph, never lead with excuses.\n   - **Ask / next step** — exactly what you need from the recipient, by when, and what happens if the decision slips.\n4. **Length** — under 220 words. A sponsor reads this on a phone between meetings.\n5. **Style rules:**\n   - No passive-voice blame constructions (\"mistakes were made\") — name the cause neutrally.\n   - No hedging filler (\"I just wanted to quickly...\", \"as you may know\").\n   - One concrete date for every commitment or ask. Never \"soon\" or \"asap\".\n   - Close with the sender's name placeholder `[NAME]`.\n\nAfter the email, add a two-line **\"Why this framing\"** note explaining the key wording choice you made for this recipient — so the sender can adapt it consciously instead of copying blindly.\n",
+    "folder": "stakeholder-update-drafter"
+  }
+];
 
 let activeFilter = 'all';
 let searchQuery = '';
+let promptFilter = 'all';
+let promptQuery = '';
 
 function renderCards() {
   const grid = document.getElementById('skills-grid');
@@ -1049,6 +1431,63 @@ function statusBadgeHtml(status) {
   if (!status || status === 'published') return '';
   const labels = {'draft':'Draft','in-review':'In Review','deprecated':'Deprecated'};
   return `<span class="badge badge-status-${status}">${labels[status] || status}</span>`;
+}
+
+function renderPromptCards() {
+  const grid = document.getElementById('prompts-grid');
+  const noRes = document.getElementById('prompt-no-results');
+  const count = document.getElementById('prompt-result-count');
+
+  const filtered = PROMPTS.filter(p => {
+    const matchCat = promptFilter === 'all' || p.category === promptFilter;
+    const q = promptQuery.toLowerCase();
+    const matchSearch = !q ||
+      (p.name || '').toLowerCase().includes(q) ||
+      (p.description || '').toLowerCase().includes(q) ||
+      (p.tags || []).some(t => t.toLowerCase().includes(q)) ||
+      (p.category || '').toLowerCase().includes(q) ||
+      (p.author || '').toLowerCase().includes(q);
+    return matchCat && matchSearch;
+  });
+
+  grid.innerHTML = '';
+  if (filtered.length === 0) {
+    noRes.style.display = 'block';
+    count.textContent = '';
+    return;
+  }
+  noRes.style.display = 'none';
+  count.textContent = `Showing ${filtered.length} of ${PROMPTS.length} prompts`;
+
+  filtered.forEach((prompt, idx) => {
+    const card = document.createElement('div');
+    const status = prompt.status || 'published';
+    card.className = 'skill-card' + (status === 'deprecated' ? ' is-deprecated' : '');
+    card.style.animationDelay = (idx * 0.05) + 's';
+    card.onclick = () => openPromptModal(prompt);
+
+    const complexityClass = `badge-complexity-${prompt.complexity || 'beginner'}`;
+    const complexityLabel = (prompt.complexity || 'beginner').charAt(0).toUpperCase() + (prompt.complexity||'beginner').slice(1);
+    const nVars = (prompt.variables || []).length;
+    const varBadge = nVars ? `<span class="badge badge-harness">${nVars} variable${nVars > 1 ? 's' : ''}</span>` : '';
+
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-meta">
+          <div class="card-name">${prompt.name || prompt.id}</div>
+          <div class="card-author">by ${prompt.author || 'Unknown'}</div>
+        </div>
+      </div>
+      <p class="card-desc">${(prompt.description || '').substring(0, 130)}${(prompt.description||'').length > 130 ? '…' : ''}</p>
+      <div class="card-footer">
+        <span class="badge badge-cat">${prompt.category || 'Other'}</span>
+        <span class="badge ${complexityClass}">${complexityLabel}</span>
+        ${statusBadgeHtml(status)}${varBadge}
+      </div>
+      <div class="card-install-hint">Fill &amp; copy</div>
+    `;
+    grid.appendChild(card);
+  });
 }
 
 function openModal(skill) {
@@ -1120,7 +1559,7 @@ function closeModal() {
 function closeModalOnOverlay(e) {
   if (e.target === document.getElementById('modal-overlay')) closeModal();
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeInsights(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closePromptModal(); closeInsights(); } });
 
 function switchTab(e, tabId) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1156,6 +1595,157 @@ function copyCode(btn, text) {
     btn.classList.add('copied');
     setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
   });
+}
+
+// ── PROMPT MODAL (fill variables → live preview → copy) ──
+let currentPrompt = null;
+let promptVarValues = {};
+
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function openPromptModal(prompt) {
+  currentPrompt = prompt;
+  promptVarValues = {};
+  document.getElementById('prompt-modal-title').textContent = prompt.name || prompt.id;
+  document.getElementById('prompt-modal-subtitle').textContent = `${prompt.category} · v${prompt.version} · by ${prompt.author}`;
+  document.getElementById('prompt-modal-desc').textContent = prompt.description || '';
+
+  // Feedback links -> pre-filled GitHub issues (no backend needed)
+  const _newIssue = 'https://github.com/acc-sebastian/skill-marketplace/issues/new';
+  const _iurl = (title, body, label) =>
+    `${_newIssue}?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}&labels=${encodeURIComponent(label)}`;
+  const _pid = prompt.id;
+  document.getElementById('pfb-yes').href = _iurl(`[Feedback] ${_pid}: helpful`, `Prompt: ${_pid}
+Helpful: yes
+
+What worked well?`, 'feedback');
+  document.getElementById('pfb-no').href = _iurl(`[Feedback] ${_pid}: not helpful`, `Prompt: ${_pid}
+Helpful: no
+
+What was missing or wrong?`, 'feedback');
+  document.getElementById('pfb-bug').href = _iurl(`[Bug] ${_pid}`, `Prompt: ${_pid}
+Version: ${prompt.version}
+
+Describe the problem:
+`, 'bug');
+
+  // Deprecation banner
+  const depEl = document.getElementById('prompt-modal-deprecation');
+  if ((prompt.status || 'published') === 'deprecated') {
+    const successor = PROMPTS.find(p => p.id === prompt.deprecated_by);
+    const successorLink = successor
+      ? `<a href="#" onclick="event.preventDefault(); openPromptModal(PROMPTS.find(p => p.id==='${successor.id}'))">${successor.name}</a>`
+      : (prompt.deprecated_by || 'a newer prompt');
+    const sunset = prompt.sunset_date ? ` It will be removed on <strong>${prompt.sunset_date}</strong>.` : '';
+    depEl.innerHTML = `<div class="deprecation-banner"><strong>Deprecated.</strong> This prompt is superseded by ${successorLink}.${sunset} Please migrate.</div>`;
+  } else {
+    depEl.innerHTML = '';
+  }
+
+  // Tags
+  const tags = document.getElementById('prompt-modal-tags');
+  tags.innerHTML = '';
+  (prompt.tags || []).forEach(t => {
+    const b = document.createElement('span');
+    b.className = 'badge badge-cat';
+    b.textContent = '#' + t;
+    tags.appendChild(b);
+  });
+
+  // Variable form
+  const form = document.getElementById('prompt-var-form');
+  form.innerHTML = '';
+  const vars = prompt.variables || [];
+  document.getElementById('prompt-var-block').style.display = vars.length ? '' : 'none';
+  vars.forEach(v => {
+    const field = document.createElement('div');
+    field.className = 'var-field';
+    const label = document.createElement('label');
+    label.textContent = '{{' + v.name + '}}';
+    if (v.required) {
+      const req = document.createElement('span');
+      req.className = 'var-req';
+      req.textContent = '*';
+      label.appendChild(req);
+    }
+    const hint = document.createElement('div');
+    hint.className = 'var-hint';
+    hint.textContent = v.description + (v.example ? ` — e.g. "${v.example}"` : '');
+    const input = document.createElement('textarea');
+    input.rows = 1;
+    input.placeholder = v.example || '';
+    input.addEventListener('input', () => {
+      promptVarValues[v.name] = input.value;
+      updatePromptPreview();
+    });
+    field.appendChild(label);
+    field.appendChild(hint);
+    field.appendChild(input);
+    form.appendChild(field);
+  });
+
+  updatePromptPreview();
+  document.getElementById('prompt-modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function filledPromptText() {
+  if (!currentPrompt) return '';
+  let t = currentPrompt.prompt_template || '';
+  (currentPrompt.variables || []).forEach(v => {
+    const val = (promptVarValues[v.name] || '').trim();
+    if (val) t = t.split('{{' + v.name + '}}').join(val);
+  });
+  return t;
+}
+
+function updatePromptPreview() {
+  const esc = escapeHtml(filledPromptText());
+  document.getElementById('prompt-preview').innerHTML =
+    esc.replace(/\{\{([A-Z0-9_]+)\}\}/g, '<mark class="var-missing">{{$1}}</mark>');
+
+  const missing = (currentPrompt.variables || []).filter(v =>
+    v.required && !(promptVarValues[v.name] || '').trim());
+  document.getElementById('prompt-copy-note').textContent = missing.length
+    ? `${missing.length} required variable${missing.length > 1 ? 's' : ''} not filled yet: ${missing.map(v => v.name).join(', ')}`
+    : '';
+}
+
+function copyFilledPrompt(btn) {
+  navigator.clipboard.writeText(filledPromptText()).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied';
+    setTimeout(() => { btn.textContent = orig; }, 2000);
+  });
+}
+
+function copyRawTemplate(btn) {
+  if (!currentPrompt) return;
+  navigator.clipboard.writeText(currentPrompt.prompt_template || '').then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied';
+    setTimeout(() => { btn.textContent = orig; }, 2000);
+  });
+}
+
+function downloadPrompt() {
+  if (!currentPrompt) return;
+  const blob = new Blob([currentPrompt.prompt_content || ''], {type: 'text/markdown'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'PROMPT.md';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function closePromptModal() {
+  document.getElementById('prompt-modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closePromptModalOnOverlay(e) {
+  if (e.target === document.getElementById('prompt-modal-overlay')) closePromptModal();
 }
 
 // ── INSIGHTS (live, from the public GitHub API) ──
@@ -1228,13 +1818,23 @@ async function loadInsights() {
   body.innerHTML = html;
 }
 
-// Filters
-document.querySelectorAll('.filter-btn').forEach(btn => {
+// Filters (skills)
+document.querySelectorAll('.filter-btn:not(.p-filter-btn)').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.filter-btn:not(.p-filter-btn)').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     activeFilter = btn.dataset.filter;
     renderCards();
+  });
+});
+
+// Filters (prompts)
+document.querySelectorAll('.p-filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.p-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    promptFilter = btn.dataset.filter;
+    renderPromptCards();
   });
 });
 
@@ -1242,6 +1842,24 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 document.getElementById('search').addEventListener('input', e => {
   searchQuery = e.target.value;
   renderCards();
+});
+document.getElementById('prompt-search').addEventListener('input', e => {
+  promptQuery = e.target.value;
+  renderPromptCards();
+});
+
+// ── VIEW SWITCHING (Skill Marketplace | Prompt Library) via hash routing ──
+function applyView(view) {
+  document.getElementById('view-skills').style.display = view === 'skills' ? '' : 'none';
+  document.getElementById('view-prompts').style.display = view === 'prompts' ? '' : 'none';
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+}
+window.addEventListener('hashchange', () => {
+  const h = location.hash.replace('#', '');
+  if (h === 'skills' || h === 'prompts') {
+    applyView(h);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 });
 
 // Sticky header shadow on scroll
@@ -1267,6 +1885,8 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
 
 // Init
 renderCards();
+renderPromptCards();
+applyView(location.hash === '#prompts' ? 'prompts' : 'skills');
 </script>
 </body>
 </html>

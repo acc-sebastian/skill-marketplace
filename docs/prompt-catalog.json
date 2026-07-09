@@ -1,0 +1,195 @@
+{
+  "$schema_note": "Catalog manifest of the Prompt Library. One entry per non-archived prompt.",
+  "catalog_version": 1,
+  "site": "https://acc-sebastian.github.io/skill-marketplace",
+  "repository": "https://github.com/acc-sebastian/skill-marketplace",
+  "prompt_schema": "https://acc-sebastian.github.io/skill-marketplace/schema/prompt.schema.json",
+  "count": 5,
+  "prompts": [
+    {
+      "id": "executive-summary-generator",
+      "name": "Executive Summary Generator",
+      "description": "Condense any long document — report, study, proposal, or analysis — into a one-page executive summary tailored to a specific C-level audience, with key findings, implications, and a clear recommendation.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Communication",
+      "tags": [
+        "executive",
+        "summary",
+        "c-level",
+        "reporting",
+        "communication"
+      ],
+      "complexity": "beginner",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-09",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "variables": [
+        {
+          "name": "DOCUMENT",
+          "required": true
+        },
+        {
+          "name": "AUDIENCE",
+          "required": true
+        },
+        {
+          "name": "LANGUAGE",
+          "required": false
+        }
+      ],
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/executive-summary-generator/PROMPT.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/executive-summary-generator/metadata.json"
+    },
+    {
+      "id": "kpi-management-commentary",
+      "name": "KPI Management Commentary",
+      "description": "Turn a raw KPI table or metrics export into board-ready management commentary: what changed, why it changed, what it means, and which actions follow — separating signal from noise.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Analytics",
+      "tags": [
+        "kpi",
+        "reporting",
+        "analytics",
+        "management-commentary",
+        "board-reporting"
+      ],
+      "complexity": "intermediate",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-09",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "variables": [
+        {
+          "name": "KPI_DATA",
+          "required": true
+        },
+        {
+          "name": "PERIOD",
+          "required": true
+        },
+        {
+          "name": "BUSINESS_CONTEXT",
+          "required": false
+        }
+      ],
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/kpi-management-commentary/PROMPT.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/kpi-management-commentary/metadata.json"
+    },
+    {
+      "id": "rfp-requirements-extractor",
+      "name": "RFP Requirements Extractor",
+      "description": "Extract every requirement from an RFP or tender document into a structured, numbered requirements table with type classification, MoSCoW priority, and flagged ambiguities — the foundation for a compliant bid response.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Procurement",
+      "tags": [
+        "rfp",
+        "tender",
+        "requirements",
+        "procurement",
+        "bid-management"
+      ],
+      "complexity": "intermediate",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-09",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "variables": [
+        {
+          "name": "RFP_TEXT",
+          "required": true
+        },
+        {
+          "name": "FOCUS_AREA",
+          "required": false
+        }
+      ],
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/rfp-requirements-extractor/PROMPT.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/rfp-requirements-extractor/metadata.json"
+    },
+    {
+      "id": "risk-register-builder",
+      "name": "Risk Register Builder",
+      "description": "Turn unstructured project notes, workshop output, or meeting minutes into a formal risk register with likelihood, impact, risk score, mitigation strategy, and owner — ready for steering committee reporting.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Compliance",
+      "tags": [
+        "risk",
+        "risk-register",
+        "governance",
+        "project-management",
+        "steering-committee"
+      ],
+      "complexity": "intermediate",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-09",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "variables": [
+        {
+          "name": "PROJECT_NOTES",
+          "required": true
+        },
+        {
+          "name": "PROJECT_CONTEXT",
+          "required": true
+        },
+        {
+          "name": "RISK_APPETITE",
+          "required": false
+        }
+      ],
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/risk-register-builder/PROMPT.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/risk-register-builder/metadata.json"
+    },
+    {
+      "id": "stakeholder-update-drafter",
+      "name": "Stakeholder Update Drafter",
+      "description": "Draft a professional project status email for a specific stakeholder — including difficult messages like delays, budget overruns, or scope changes — with the right tone, framing, and a clear ask.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Communication",
+      "tags": [
+        "stakeholder",
+        "email",
+        "status-update",
+        "project-management",
+        "communication"
+      ],
+      "complexity": "beginner",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-09",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "variables": [
+        {
+          "name": "PROJECT_CONTEXT",
+          "required": true
+        },
+        {
+          "name": "RECIPIENT",
+          "required": true
+        },
+        {
+          "name": "KEY_MESSAGES",
+          "required": true
+        },
+        {
+          "name": "TONE",
+          "required": false
+        }
+      ],
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/stakeholder-update-drafter/PROMPT.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/stakeholder-update-drafter/metadata.json"
+    }
+  ]
+}

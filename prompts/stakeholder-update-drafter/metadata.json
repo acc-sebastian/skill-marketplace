@@ -1,0 +1,54 @@
+{
+  "id": "stakeholder-update-drafter",
+  "name": "Stakeholder Update Drafter",
+  "description": "Draft a professional project status email for a specific stakeholder — including difficult messages like delays, budget overruns, or scope changes — with the right tone, framing, and a clear ask.",
+  "author": "accilium",
+  "owner": "acc-sebastian",
+  "version": "1.0.0",
+  "created": "2026-07-09",
+  "last_reviewed": "2026-07-09",
+  "status": "published",
+  "category": "Communication",
+  "tags": [
+    "stakeholder",
+    "email",
+    "status-update",
+    "project-management",
+    "communication"
+  ],
+  "complexity": "beginner",
+  "variables": [
+    {
+      "name": "PROJECT_CONTEXT",
+      "description": "Current project situation: progress, issues, decisions needed (bullet points are fine).",
+      "example": "Rollout phase 2 delayed by 3 weeks due to vendor API issues; budget still on track; need steering committee decision on scope of phase 3",
+      "required": true
+    },
+    {
+      "name": "RECIPIENT",
+      "description": "Who receives the email and their relationship to the project.",
+      "example": "Program sponsor (client CIO), skeptical about timeline, hates surprises",
+      "required": true
+    },
+    {
+      "name": "KEY_MESSAGES",
+      "description": "The 1-3 messages that must land, in order of importance.",
+      "example": "1) Delay is contained and does not affect go-live; 2) We need the scope decision by Friday",
+      "required": true
+    },
+    {
+      "name": "TONE",
+      "description": "Desired tone of voice.",
+      "example": "Confident and transparent, no sugarcoating, no alarmism",
+      "required": false
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-07-09",
+      "change": "Initial release"
+    }
+  ],
+  "example_input": "PROJECT_CONTEXT: phase 2 delayed 3 weeks; RECIPIENT: client CIO; KEY_MESSAGES: delay contained, decision needed Friday; TONE: confident, transparent"
+}

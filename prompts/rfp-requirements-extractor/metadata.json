@@ -1,0 +1,42 @@
+{
+  "id": "rfp-requirements-extractor",
+  "name": "RFP Requirements Extractor",
+  "description": "Extract every requirement from an RFP or tender document into a structured, numbered requirements table with type classification, MoSCoW priority, and flagged ambiguities — the foundation for a compliant bid response.",
+  "author": "accilium",
+  "owner": "acc-sebastian",
+  "version": "1.0.0",
+  "created": "2026-07-09",
+  "last_reviewed": "2026-07-09",
+  "status": "published",
+  "category": "Procurement",
+  "tags": [
+    "rfp",
+    "tender",
+    "requirements",
+    "procurement",
+    "bid-management"
+  ],
+  "complexity": "intermediate",
+  "variables": [
+    {
+      "name": "RFP_TEXT",
+      "description": "The RFP / tender text or the relevant sections (paste as-is).",
+      "example": "Section 4 — Functional requirements: The system shall provide single sign-on...",
+      "required": true
+    },
+    {
+      "name": "FOCUS_AREA",
+      "description": "Optional lens to prioritize, e.g. a lot, work package, or discipline.",
+      "example": "IT integration and data migration requirements only",
+      "required": false
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-07-09",
+      "change": "Initial release"
+    }
+  ],
+  "example_input": "RFP_TEXT: 12-page tender for a fleet management platform; FOCUS_AREA: data migration"
+}

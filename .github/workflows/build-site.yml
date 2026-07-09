@@ -5,6 +5,7 @@ on:
     branches: [main, master]
     paths:
       - "skills/**"
+      - "prompts/**"
       - "scripts/**"
   workflow_dispatch:
 
