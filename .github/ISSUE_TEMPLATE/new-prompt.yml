@@ -1,0 +1,104 @@
+name: 💬 Neuen Prompt vorschlagen
+description: Schlage einen neuen Prompt für die Prompt Library vor — ganz ohne Git-Kenntnisse. Einfach Formular ausfüllen und absenden.
+title: "[Prompt-Vorschlag] "
+labels: ["new-prompt", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Danke für deinen Beitrag! 🎉
+        Fülle die Felder unten aus — ein Maintainer macht daraus den fertigen Prompt.
+        **Du musst kein Git kennen.** Pflichtfelder sind markiert.
+
+  - type: input
+    id: prompt-name
+    attributes:
+      label: Prompt-Name
+      description: Kurzer, sprechender Name (3–60 Zeichen)
+      placeholder: z. B. "Workshop Agenda Builder"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Was soll der Prompt tun?
+      description: Beschreibe in 2–4 Sätzen, was der Prompt leistet und für wen er gedacht ist (30–400 Zeichen).
+      placeholder: z. B. "Erzeugt aus Ziel, Teilnehmerkreis und Dauer eine strukturierte Workshop-Agenda mit Zeitblöcken..."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Kategorie
+      description: In welche Kategorie gehört der Prompt?
+      options:
+        - Productivity
+        - Analytics
+        - Strategy
+        - Procurement
+        - Finance
+        - Compliance
+        - Communication
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Komplexität
+      options:
+        - beginner
+        - intermediate
+        - advanced
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: prompt-text
+    attributes:
+      label: Prompt-Text
+      description: |
+        Der eigentliche Prompt. Verwende {{GROSSBUCHSTABEN}}-Platzhalter für Stellen,
+        die der Nutzer ausfüllen soll (z. B. {{DOCUMENT}}, {{AUDIENCE}}).
+      placeholder: |
+        You are a ...
+
+        ## Input
+        {{INPUT_TEXT}}
+
+        ## Task
+        ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: variables
+    attributes:
+      label: Variablen
+      description: Eine pro Zeile — Name, Beschreibung und ob Pflichtfeld. Muss zu den {{PLATZHALTERN}} im Prompt-Text passen.
+      placeholder: |
+        INPUT_TEXT — der zu verarbeitende Text (Pflicht)
+        AUDIENCE — Zielgruppe des Ergebnisses (optional)
+    validations:
+      required: true
+
+  - type: input
+    id: owner
+    attributes:
+      label: Wer soll Owner des Prompts sein? (GitHub-Handle, optional)
+      description: Die Person, die den Prompt langfristig aktuell hält. Leer lassen = Vorschlagender/Maintainer.
+      placeholder: z. B. acc-sebastian
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Bestätigung
+      options:
+        - label: Der Inhalt enthält keine vertraulichen oder personenbezogenen Daten.
+          required: true
+        - label: Ich habe geprüft, dass es noch keinen vergleichbaren Prompt in der Library gibt.
+          required: true

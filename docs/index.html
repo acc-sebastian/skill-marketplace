@@ -379,6 +379,52 @@
     margin-top: 0.25rem;
   }
 
+  /* ── PROMPT LIST (top-to-bottom rows) ─────────────── */
+  .prompt-list {
+    display: flex; flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .prompt-row {
+    display: flex; align-items: center; gap: 1.25rem;
+    padding: 1.05rem 1.4rem;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer; position: relative;
+    transition: background .15s;
+    animation: fadeUp .4s ease both;
+  }
+  .prompt-row:last-child { border-bottom: none; }
+  .prompt-row::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: linear-gradient(180deg, var(--brand-accent), var(--brand-accent-2));
+    transform: scaleY(0); transition: transform .2s ease;
+  }
+  .prompt-row:hover { background: var(--surface-2); }
+  .prompt-row:hover::before { transform: scaleY(1); }
+  .prompt-row.is-deprecated { opacity: 0.72; }
+  .prompt-row.is-deprecated:hover { opacity: 1; }
+  .prompt-row-main { flex: 1; min-width: 0; }
+  .prompt-row-top { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.2rem; }
+  .prompt-row-name { font-size: 0.98rem; font-weight: 700; color: var(--heading); letter-spacing: -0.01em; }
+  .prompt-row-desc {
+    font-size: 0.86rem; color: var(--text-muted); line-height: 1.5;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .prompt-row-action {
+    flex-shrink: 0; font-size: 0.82rem; font-weight: 600; color: var(--brand-accent);
+    white-space: nowrap;
+  }
+  .prompt-row-action .arrow { display: inline-block; transition: transform .2s; }
+  .prompt-row:hover .prompt-row-action .arrow { transform: translateX(4px); }
+  @media (max-width: 640px) {
+    .prompt-row { padding: 0.9rem 1rem; }
+    .prompt-row-action { display: none; }
+    .prompt-row-desc { white-space: normal; }
+  }
+
   .no-results {
     text-align: center; padding: 4rem 2rem; color: var(--text-muted);
   }
@@ -625,10 +671,10 @@
       <a class="view-btn" data-view="prompts" href="#prompts">Prompt Library</a>
     </div>
     <nav>
-      <a class="navlink" href="#skills">Browse</a>
+      <a class="navlink" id="nav-browse" href="#skills" onclick="navBrowse(event)">Browse</a>
       <a class="navlink" href="#" onclick="event.preventDefault(); openInsights()">Insights</a>
       <a class="navlink" href="#contribute">Contribute</a>
-      <a class="navlink" href="https://github.com/acc-sebastian/skill-marketplace/issues/new?template=new-skill.yml" target="_blank">Suggest a skill</a>
+      <a class="navlink" id="nav-suggest" href="https://github.com/acc-sebastian/skill-marketplace/issues/new?template=new-skill.yml" target="_blank">Suggest a skill</a>
       <a class="navlink" href="https://github.com/acc-sebastian/skill-marketplace" target="_blank">GitHub</a>
       <button class="theme-toggle" id="theme-toggle" title="Toggle light / dark mode" aria-label="Toggle light / dark mode"><span id="theme-label">Dark</span></button>
     </nav>
@@ -691,7 +737,7 @@
 
   <div class="grid-wrap">
     <p class="result-count" id="prompt-result-count"></p>
-    <div class="skills-grid" id="prompts-grid"></div>
+    <div class="prompt-list" id="prompts-list"></div>
     <div class="no-results" id="prompt-no-results" style="display:none">
       <strong>No prompts found</strong>
       <p>Try a different search term or category filter.</p>
@@ -712,6 +758,7 @@
     <p class="contribute-note">No Git? Use the form instead — it opens a pre-filled issue and scaffolds the skill for you.</p>
     <div class="contribute-links">
       <a href="https://github.com/acc-sebastian/skill-marketplace/issues/new?template=new-skill.yml" target="_blank">Suggest a skill (form)</a>
+      <a href="https://github.com/acc-sebastian/skill-marketplace/issues/new?template=new-prompt.yml" target="_blank">Suggest a prompt (form)</a>
       <a href="https://github.com/acc-sebastian/skill-marketplace/blob/main/CONTRIBUTING.md" target="_blank">Contributor guide</a>
     </div>
   </div>
@@ -1433,8 +1480,8 @@ function statusBadgeHtml(status) {
   return `<span class="badge badge-status-${status}">${labels[status] || status}</span>`;
 }
 
-function renderPromptCards() {
-  const grid = document.getElementById('prompts-grid');
+function renderPromptList() {
+  const list = document.getElementById('prompts-list');
   const noRes = document.getElementById('prompt-no-results');
   const count = document.getElementById('prompt-result-count');
 
@@ -1450,43 +1497,42 @@ function renderPromptCards() {
     return matchCat && matchSearch;
   });
 
-  grid.innerHTML = '';
+  list.innerHTML = '';
   if (filtered.length === 0) {
+    list.style.display = 'none';
     noRes.style.display = 'block';
     count.textContent = '';
     return;
   }
+  list.style.display = '';
   noRes.style.display = 'none';
   count.textContent = `Showing ${filtered.length} of ${PROMPTS.length} prompts`;
 
   filtered.forEach((prompt, idx) => {
-    const card = document.createElement('div');
+    const row = document.createElement('div');
     const status = prompt.status || 'published';
-    card.className = 'skill-card' + (status === 'deprecated' ? ' is-deprecated' : '');
-    card.style.animationDelay = (idx * 0.05) + 's';
-    card.onclick = () => openPromptModal(prompt);
+    row.className = 'prompt-row' + (status === 'deprecated' ? ' is-deprecated' : '');
+    row.style.animationDelay = (idx * 0.04) + 's';
+    row.onclick = () => openPromptModal(prompt);
 
     const complexityClass = `badge-complexity-${prompt.complexity || 'beginner'}`;
     const complexityLabel = (prompt.complexity || 'beginner').charAt(0).toUpperCase() + (prompt.complexity||'beginner').slice(1);
     const nVars = (prompt.variables || []).length;
     const varBadge = nVars ? `<span class="badge badge-harness">${nVars} variable${nVars > 1 ? 's' : ''}</span>` : '';
 
-    card.innerHTML = `
-      <div class="card-header">
-        <div class="card-meta">
-          <div class="card-name">${prompt.name || prompt.id}</div>
-          <div class="card-author">by ${prompt.author || 'Unknown'}</div>
+    row.innerHTML = `
+      <div class="prompt-row-main">
+        <div class="prompt-row-top">
+          <span class="prompt-row-name">${prompt.name || prompt.id}</span>
+          <span class="badge badge-cat">${prompt.category || 'Other'}</span>
+          <span class="badge ${complexityClass}">${complexityLabel}</span>
+          ${statusBadgeHtml(status)}${varBadge}
         </div>
+        <div class="prompt-row-desc">${prompt.description || ''}</div>
       </div>
-      <p class="card-desc">${(prompt.description || '').substring(0, 130)}${(prompt.description||'').length > 130 ? '…' : ''}</p>
-      <div class="card-footer">
-        <span class="badge badge-cat">${prompt.category || 'Other'}</span>
-        <span class="badge ${complexityClass}">${complexityLabel}</span>
-        ${statusBadgeHtml(status)}${varBadge}
-      </div>
-      <div class="card-install-hint">Fill &amp; copy</div>
+      <div class="prompt-row-action">Fill &amp; copy <span class="arrow">→</span></div>
     `;
-    grid.appendChild(card);
+    list.appendChild(row);
   });
 }
 
@@ -1751,7 +1797,10 @@ function closePromptModalOnOverlay(e) {
 // ── INSIGHTS (live, from the public GitHub API) ──
 const REPO_API = 'https://api.github.com/repos/acc-sebastian/skill-marketplace';
 
+let insightsFor = 'skills';
+
 function openInsights() {
+  insightsFor = activeView;
   document.getElementById('insights-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
   loadInsights();
@@ -1767,17 +1816,22 @@ function monthsSince(iso) {
 }
 
 async function loadInsights() {
+  const isPrompts = insightsFor === 'prompts';
+  const ITEMS = isPrompts ? PROMPTS : SKILLS;
   const body = document.getElementById('insights-body');
   body.innerHTML = '<p class="insights-note">Loading live data from GitHub…</p>';
   const downloads = {}, feedback = {}, bugs = {};
-  try {
-    const rels = await fetch(REPO_API + '/releases?per_page=100').then(r => r.json());
-    (Array.isArray(rels) ? rels : []).forEach(rel => {
-      const id = (rel.tag_name || '').split('@')[0];
-      const dl = (rel.assets || []).reduce((s,a) => s + (a.download_count||0), 0);
-      downloads[id] = (downloads[id]||0) + dl;
-    });
-  } catch (e) {}
+  if (!isPrompts) {
+    // Release download counts only exist for skills (tag id@version)
+    try {
+      const rels = await fetch(REPO_API + '/releases?per_page=100').then(r => r.json());
+      (Array.isArray(rels) ? rels : []).forEach(rel => {
+        const id = (rel.tag_name || '').split('@')[0];
+        const dl = (rel.assets || []).reduce((s,a) => s + (a.download_count||0), 0);
+        downloads[id] = (downloads[id]||0) + dl;
+      });
+    } catch (e) {}
+  }
   try {
     const iss = await fetch(REPO_API + '/issues?state=all&per_page=100').then(r => r.json());
     (Array.isArray(iss) ? iss : []).forEach(i => {
@@ -1791,7 +1845,7 @@ async function loadInsights() {
     });
   } catch (e) {}
 
-  const rows = SKILLS.map(s => {
+  const rows = ITEMS.map(s => {
     const dl = downloads[s.id]||0, fb = feedback[s.id]||0, bg = bugs[s.id]||0;
     const age = monthsSince(s.last_reviewed);
     const score = dl*1 + bg*40 + age*8 + fb*3;
@@ -1802,13 +1856,15 @@ async function loadInsights() {
   const totalDl = rows.reduce((s,r) => s + r.dl, 0);
   const priOf = r => { const rel = r.score / maxScore; return rel >= 0.66 ? 'high' : (rel >= 0.33 ? 'med' : 'low'); };
 
-  let html = `<p class="insights-note">Live from the GitHub API — release download counts and feedback/bug issues (unauthenticated, may be rate-limited). Total downloads: <strong>${totalDl}</strong>. <em>Maintenance priority</em> ranks popularity × open bugs × months since last review.</p>`;
-  html += '<div style="overflow-x:auto"><table class="insights-table"><thead><tr><th>Skill</th><th class="num">Downloads</th><th class="num">Feedback</th><th class="num">Bugs</th><th class="num">Reviewed</th><th>Priority</th></tr></thead><tbody>';
+  let html = isPrompts
+    ? `<p class="insights-note">Live from the GitHub API — feedback/bug issues per prompt (unauthenticated, may be rate-limited). <em>Maintenance priority</em> ranks open bugs × months since last review × feedback volume.</p>`
+    : `<p class="insights-note">Live from the GitHub API — release download counts and feedback/bug issues (unauthenticated, may be rate-limited). Total downloads: <strong>${totalDl}</strong>. <em>Maintenance priority</em> ranks popularity × open bugs × months since last review.</p>`;
+  html += `<div style="overflow-x:auto"><table class="insights-table"><thead><tr><th>${isPrompts ? 'Prompt' : 'Skill'}</th>${isPrompts ? '' : '<th class="num">Downloads</th>'}<th class="num">Feedback</th><th class="num">Bugs</th><th class="num">Reviewed</th><th>Priority</th></tr></thead><tbody>`;
   rows.forEach(r => {
     const p = priOf(r);
     html += `<tr class="${p==='high'?'pri-high':''}">`
       + `<td><span class="insights-skill">${r.s.name}</span></td>`
-      + `<td class="num">${r.dl}</td>`
+      + (isPrompts ? '' : `<td class="num">${r.dl}</td>`)
       + `<td class="num">${r.fb}</td>`
       + `<td class="num">${r.bg}</td>`
       + `<td class="num">${r.age} mo</td>`
@@ -1834,7 +1890,7 @@ document.querySelectorAll('.p-filter-btn').forEach(btn => {
     document.querySelectorAll('.p-filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     promptFilter = btn.dataset.filter;
-    renderPromptCards();
+    renderPromptList();
   });
 });
 
@@ -1845,14 +1901,31 @@ document.getElementById('search').addEventListener('input', e => {
 });
 document.getElementById('prompt-search').addEventListener('input', e => {
   promptQuery = e.target.value;
-  renderPromptCards();
+  renderPromptList();
 });
 
 // ── VIEW SWITCHING (Skill Marketplace | Prompt Library) via hash routing ──
+let activeView = 'skills';
+const PROPOSE_URLS = { skills: 'https://github.com/acc-sebastian/skill-marketplace/issues/new?template=new-skill.yml', prompts: 'https://github.com/acc-sebastian/skill-marketplace/issues/new?template=new-prompt.yml' };
+
 function applyView(view) {
+  activeView = view;
   document.getElementById('view-skills').style.display = view === 'skills' ? '' : 'none';
   document.getElementById('view-prompts').style.display = view === 'prompts' ? '' : 'none';
   document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+
+  // Nav adapts to the active view
+  document.getElementById('nav-browse').href = view === 'prompts' ? '#prompts' : '#skills';
+  const suggest = document.getElementById('nav-suggest');
+  suggest.textContent = view === 'prompts' ? 'Suggest a prompt' : 'Suggest a skill';
+  suggest.href = PROPOSE_URLS[view];
+}
+
+function navBrowse(e) {
+  e.preventDefault();
+  const target = activeView === 'prompts' ? '#prompts' : '#skills';
+  if (location.hash !== target) location.hash = target; // triggers applyView + scroll
+  else window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 window.addEventListener('hashchange', () => {
   const h = location.hash.replace('#', '');
@@ -1885,7 +1958,7 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
 
 // Init
 renderCards();
-renderPromptCards();
+renderPromptList();
 applyView(location.hash === '#prompts' ? 'prompts' : 'skills');
 </script>
 </body>
