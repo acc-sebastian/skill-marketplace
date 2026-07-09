@@ -17,19 +17,19 @@ A skill is a structured prompt file that turns your AI assistant into a speciali
 
 | Skill | Category | Description |
 |-------|----------|-------------|
-| [MOM Generator](plugins/sbo-skills/skills/mom-generator/) | Productivity | Transform meeting notes into structured minutes |
-| [Action Item Tracker](plugins/sbo-skills/skills/action-item-tracker/) | Productivity | Manage, track, and send reminders for action items |
-| [KPI Anomaly Check](plugins/sbo-skills/skills/kpi-anomaly-check/) | Analytics | Validate KPI data and flag threshold breaches |
-| [Vendor Proposal Comparison](plugins/sbo-skills/skills/vendor-proposal-comparison/) | Procurement | Score and rank vendor proposals systematically |
-| [Competitor Analysis](plugins/sbo-skills/skills/competitor-analysis/) | Strategy | Structured competitive intelligence reports |
+| [MOM Generator](plugins/accilium-skills/skills/mom-generator/) | Productivity | Transform meeting notes into structured minutes |
+| [Action Item Tracker](plugins/accilium-skills/skills/action-item-tracker/) | Productivity | Manage, track, and send reminders for action items |
+| [KPI Anomaly Check](plugins/accilium-skills/skills/kpi-anomaly-check/) | Analytics | Validate KPI data and flag threshold breaches |
+| [Vendor Proposal Comparison](plugins/accilium-skills/skills/vendor-proposal-comparison/) | Procurement | Score and rank vendor proposals systematically |
+| [Competitor Analysis](plugins/accilium-skills/skills/competitor-analysis/) | Strategy | Structured competitive intelligence reports |
 
 ## How to Install a Skill
 
 ### Claude Code plugin (recommended — get *all* skills, auto-updated)
-Add the marketplace once and install the bundled `sbo-skills` plugin:
+Add the marketplace once and install the bundled `accilium-skills` plugin:
 ```
 /plugin marketplace add acc-sebastian/skill-marketplace
-/plugin install sbo-skills@sbo-skill-marketplace
+/plugin install accilium-skills@accilium-skill-marketplace
 ```
 You now have every published skill, and new ones arrive automatically on update.
 **Organizations** can push this to all users automatically (zero user action) via
@@ -48,9 +48,9 @@ python scripts/skill_cli.py install mom-generator --harness generic --dest ./ski
 ### Claude Code (manual)
 Copy the `SKILL.md` file into your `.claude/skills/` directory:
 ```bash
-cp plugins/sbo-skills/skills/mom-generator/SKILL.md ~/.claude/skills/
+cp plugins/accilium-skills/skills/mom-generator/SKILL.md ~/.claude/skills/
 # or into your project
-cp plugins/sbo-skills/skills/mom-generator/SKILL.md .claude/skills/
+cp plugins/accilium-skills/skills/mom-generator/SKILL.md .claude/skills/
 ```
 
 You can also download a versioned package (`SKILL.md` + `metadata.json`) from the
@@ -91,7 +91,7 @@ fill in the variables in the form, and copy the finished prompt. Machine consume
 ## How to Add a Skill
 
 1. Fork this repository
-2. Create a new directory under `plugins/sbo-skills/skills/` with your skill's kebab-case name
+2. Create a new directory under `plugins/accilium-skills/skills/` with your skill's kebab-case name
 3. Add `metadata.json` and `SKILL.md` (copy an existing skill as template)
 4. Submit a pull request
 5. Once merged, the skill automatically appears on the marketplace website within minutes
@@ -105,7 +105,7 @@ skill_marketplace/
 ├── .claude-plugin/
 │   └── marketplace.json     # Claude Code plugin marketplace manifest
 ├── plugins/
-│   └── sbo-skills/          # The Claude Code plugin (all skills)
+│   └── accilium-skills/          # The Claude Code plugin (all skills)
 │       ├── .claude-plugin/
 │       │   └── plugin.json
 │       └── skills/          # Skill source files

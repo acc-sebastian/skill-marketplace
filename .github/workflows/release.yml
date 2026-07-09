@@ -7,7 +7,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "plugins/sbo-skills/skills/**"
+      - "plugins/accilium-skills/skills/**"
   workflow_dispatch: {}
 
 permissions:

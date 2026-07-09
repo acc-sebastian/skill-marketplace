@@ -11,8 +11,8 @@
 /.github/                           @acc-sebastian
 
 # Skills — one line per skill, owner = metadata.json "owner"
-/plugins/sbo-skills/skills/mom-generator/              @acc-sebastian
-/plugins/sbo-skills/skills/action-item-tracker/        @acc-sebastian
-/plugins/sbo-skills/skills/kpi-anomaly-check/          @acc-sebastian
-/plugins/sbo-skills/skills/vendor-proposal-comparison/ @acc-sebastian
-/plugins/sbo-skills/skills/competitor-analysis/        @acc-sebastian
+/plugins/accilium-skills/skills/mom-generator/              @acc-sebastian
+/plugins/accilium-skills/skills/action-item-tracker/        @acc-sebastian
+/plugins/accilium-skills/skills/kpi-anomaly-check/          @acc-sebastian
+/plugins/accilium-skills/skills/vendor-proposal-comparison/ @acc-sebastian
+/plugins/accilium-skills/skills/competitor-analysis/        @acc-sebastian

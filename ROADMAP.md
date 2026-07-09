@@ -31,7 +31,7 @@ flowchart LR
 
 | Phase | Thema | Kernergebnis |
 |-------|-------|--------------|
-| **0** | *Baseline (erledigt)* | Git-Repo, 5 Skills, Build-Skript, Auto-Deploy auf Pages, Website im SBO-Design |
+| **0** | *Baseline (erledigt)* | Git-Repo, 5 Skills, Build-Skript, Auto-Deploy auf Pages, Website im accilium-Design |
 | **1** | Fundament & Governance | Verbindliches Metadaten-Schema, Lifecycle-Felder, Ownership, niedrigschwellige Beiträge |
 | **2** | Validierung & Quality Gates | Kein kaputter Skill kommt mehr durch — CI erzwingt Qualität vor dem Merge |
 | **3** | Build, Katalog & Distribution | Maschinenlesbarer Katalog, Status-Badges, Versionierung, CLI-Installation |
@@ -44,11 +44,11 @@ flowchart LR
 
 Ausgangspunkt, auf dem alles aufbaut:
 
-- [x] Git als Single Source of Truth (`plugins/sbo-skills/skills/<name>/metadata.json` + `SKILL.md`)
+- [x] Git als Single Source of Truth (`plugins/accilium-skills/skills/<name>/metadata.json` + `SKILL.md`)
 - [x] `scripts/build_site.py` generiert die statische Website aus den Skill-Ordnern
 - [x] GitHub Actions Workflow deployt automatisch auf GitHub Pages bei Push
 - [x] `CONTRIBUTING.md` dokumentiert das Beitragsformat
-- [x] Website (Konsum-Schicht) im SBO-Corporate-Design
+- [x] Website (Konsum-Schicht) im accilium-Corporate-Design
 
 ---
 
@@ -129,7 +129,7 @@ Stufen „BUILD" und „DEPLOY" plus Distribution.
 - [x] **Issue-→-PR-Automatisierung** — `scaffold-skill.yml` erzeugt aus einem ausgefüllten „Neue Skill"-Issue die Ordnerstruktur, pusht einen Branch und öffnet einen PR (schließt das Issue). Business-User sehen nie Git.
 
 **Harness-Distribution (Claude Code)** — damit alle Anwender automatisch immer alle aktuellen Skills haben:
-- [x] **Repo als Claude-Code-Plugin-Marketplace**: `.claude-plugin/marketplace.json` (Root) + Plugin unter `plugins/sbo-skills/` (eigenes `.claude-plugin/plugin.json`). Ein einziges Plugin `sbo-skills` bündelt **alle** veröffentlichten Skills (`plugins/sbo-skills/skills/<id>/SKILL.md`) → neue Skills fließen automatisch mit.
+- [x] **Repo als Claude-Code-Plugin-Marketplace**: `.claude-plugin/marketplace.json` (Root) + Plugin unter `plugins/accilium-skills/` (eigenes `.claude-plugin/plugin.json`). Ein einziges Plugin `accilium-skills` bündelt **alle** veröffentlichten Skills (`plugins/accilium-skills/skills/<id>/SKILL.md`) → neue Skills fließen automatisch mit.
 - [x] **SHA-Pinning**: kein festes `version` im Manifest → Plugin folgt dem `main`-HEAD; jeder Merge = neuer Stand.
 - [x] **Org-weite Auto-Bereitstellung** dokumentiert (`docs/enterprise-setup.md`): Managed-Settings-JSON (`extraKnownMarketplaces` + `enabledPlugins` + `autoUpdate`) für Teams/Enterprise (kein Nutzer-Zutun) sowie Ein-Befehl-Variante für Einzel-Accounts.
 - [x] Kanonische Skill-Datei auf `SKILL.md` umgestellt (Claude-Code-Konvention); Build, Validator, CLI, Scaffold angepasst.
@@ -247,7 +247,7 @@ Nach Phase 5 sind **alle** Einträge erledigt.
 | # | Feature | Phase |
 |---|---------|-------|
 | 40 | Repo als Claude-Code-Plugin-Marketplace (`.claude-plugin/marketplace.json` + `plugin.json`) | 3 |
-| 41 | Ein Plugin `sbo-skills` bündelt alle Skills; SHA-Pinning → immer aktuell | 3 |
+| 41 | Ein Plugin `accilium-skills` bündelt alle Skills; SHA-Pinning → immer aktuell | 3 |
 | 42 | Org-weite Auto-Bereitstellung via Managed Settings (dokumentiert) + Ein-Befehl-Variante | 3 |
 
 ---
