@@ -2,7 +2,7 @@
 """
 Build the Skill Marketplace static site + machine-readable catalogs.
 
-Reads:  plugins/sbo-skills/skills/*/metadata.json + SKILL.md
+Reads:  plugins/accilium-skills/skills/*/metadata.json + SKILL.md
         prompts/*/metadata.json + prompts/*/PROMPT.md
 Writes: docs/index.html          (website: Skill Marketplace + Prompt Library)
         docs/catalog.json        (machine-readable skill manifest)
@@ -18,12 +18,12 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
-SKILLS_DIR = ROOT / "plugins" / "sbo-skills" / "skills"
+SKILLS_DIR = ROOT / "plugins" / "accilium-skills" / "skills"
 PROMPTS_DIR = ROOT / "prompts"
 DOCS_DIR = ROOT / "docs"
 
 REPO = "acc-sebastian/skill-marketplace"
-RAW_BASE = f"https://raw.githubusercontent.com/{REPO}/main/plugins/sbo-skills/skills"
+RAW_BASE = f"https://raw.githubusercontent.com/{REPO}/main/plugins/accilium-skills/skills"
 RAW_PROMPTS_BASE = f"https://raw.githubusercontent.com/{REPO}/main/prompts"
 SITE_URL = "https://acc-sebastian.github.io/skill-marketplace"
 PROPOSE_URL = f"https://github.com/{REPO}/issues/new?template=new-skill.yml"
@@ -344,7 +344,7 @@ def build_html(skills, prompts):
   ::-webkit-scrollbar-thumb {{ background: var(--scrollbar); border-radius: 8px; border: 3px solid var(--bg); }}
   ::-webkit-scrollbar-thumb:hover {{ filter: brightness(0.92); }}
 
-  /* Wide, uppercase display treatment — echoes SBO's extended grotesk headings */
+  /* Wide, uppercase display treatment — echoes an extended grotesk display style */
   .display {{ text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }}
 
   @keyframes fadeUp {{ from {{ opacity: 0; transform: translateY(14px); }} to {{ opacity: 1; transform: translateY(0); }} }}
@@ -895,7 +895,7 @@ def build_html(skills, prompts):
     <p>Once merged to main it appears here within minutes.</p>
     <ol class="contribute-steps">
       <li class="c-step">Fork the GitHub repo</li>
-      <li class="c-step">Add <code>metadata.json</code> + <code>SKILL.md</code> under <code>plugins/sbo-skills/skills/</code> — or <code>metadata.json</code> + <code>PROMPT.md</code> under <code>prompts/</code></li>
+      <li class="c-step">Add <code>metadata.json</code> + <code>SKILL.md</code> under <code>plugins/accilium-skills/skills/</code> — or <code>metadata.json</code> + <code>PROMPT.md</code> under <code>prompts/</code></li>
       <li class="c-step">Open a pull request</li>
     </ol>
     <p class="contribute-note">No Git? Use the form instead — it opens a pre-filled issue and scaffolds the skill for you.</p>
@@ -924,8 +924,8 @@ def build_html(skills, prompts):
       <div class="var-section-label" style="margin-top:0">Install — Claude Code</div>
       <div class="code-block" style="position:relative;margin-top:0.5rem">
         <span>/plugin marketplace add acc-sebastian/skill-marketplace</span><br>
-        <span>/plugin install sbo-skills@sbo-skill-marketplace</span>
-        <button class="copy-btn" onclick="copyCode(this, '/plugin marketplace add acc-sebastian/skill-marketplace\n/plugin install sbo-skills@sbo-skill-marketplace')">Copy</button>
+        <span>/plugin install accilium-skills@accilium-skill-marketplace</span>
+        <button class="copy-btn" onclick="copyCode(this, '/plugin marketplace add acc-sebastian/skill-marketplace\n/plugin install accilium-skills@accilium-skill-marketplace')">Copy</button>
       </div>
       <div class="btn-row">
         <button class="download-btn" id="btn-download-claude" onclick="downloadSkill()">Download SKILL.md</button>

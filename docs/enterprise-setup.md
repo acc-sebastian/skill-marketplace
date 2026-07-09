@@ -1,10 +1,10 @@
 # Claude Code Distribution — Setup Guide
 
-How to get the SBO Skill Marketplace into Claude Code so that **every user always
+How to get the accilium Skill Marketplace into Claude Code so that **every user always
 has all current skills, automatically**.
 
 The repo is a **Claude Code plugin marketplace**: `.claude-plugin/marketplace.json`
-declares one plugin, `sbo-skills`, that bundles **all published skills**. Because it's
+declares one plugin, `accilium-skills`, that bundles **all published skills**. Because it's
 one plugin, any newly merged skill flows to users on the next update — nobody has to
 enable skills one by one.
 
@@ -24,24 +24,24 @@ enable skills one by one.
 ```json
 {
   "extraKnownMarketplaces": {
-    "sbo-skill-marketplace": {
+    "accilium-skill-marketplace": {
       "source": { "source": "github", "repo": "acc-sebastian/skill-marketplace" },
       "autoUpdate": true
     }
   },
   "enabledPlugins": {
-    "sbo-skills@sbo-skill-marketplace": true
+    "accilium-skills@accilium-skill-marketplace": true
   }
 }
 ```
 
 3. Save. On each user's next Claude Code start (settings are fetched on auth and
-   refreshed hourly), the marketplace is registered and the `sbo-skills` plugin is
+   refreshed hourly), the marketplace is registered and the `accilium-skills` plugin is
    enabled automatically. All skills become available to the model with no further
    steps.
 
 **Optional hardening:**
-- `"pluginSuggestionMarketplaces": ["sbo-skill-marketplace"]` — let Claude Code suggest these skills.
+- `"pluginSuggestionMarketplaces": ["accilium-skill-marketplace"]` — let Claude Code suggest these skills.
 - `"strictKnownMarketplaces": true` — restrict users to approved marketplaces only.
 
 **Requirements:** Claude for Teams (client v2.1.38+) or Enterprise (v2.1.30+).
@@ -57,24 +57,24 @@ still applies afterward.
 
 ```
 /plugin marketplace add acc-sebastian/skill-marketplace
-/plugin install sbo-skills@sbo-skill-marketplace
+/plugin install accilium-skills@accilium-skill-marketplace
 ```
 
 That's it. New skills arrive automatically on later updates. To force a refresh:
 
 ```
-/plugin marketplace update sbo-skill-marketplace
+/plugin marketplace update accilium-skill-marketplace
 ```
 
 ---
 
 ## What gets distributed
 
-- Only skills that live in `plugins/sbo-skills/skills/` on `main` are shipped.
+- Only skills that live in `plugins/accilium-skills/skills/` on `main` are shipped.
 - **Operating rule:** keep only `published` skills on `main`. Drafts live on PR
   branches until published; `archived` skills are moved out of the skills folder
   (Roadmap Phase 4 auto-archive), so they leave the plugin as well.
-- Every skill is a folder `plugins/sbo-skills/skills/<id>/` containing `SKILL.md`
+- Every skill is a folder `plugins/accilium-skills/skills/<id>/` containing `SKILL.md`
   (the instructions Claude Code loads) and `metadata.json`.
 
 ## How a new skill reaches everyone

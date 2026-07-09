@@ -23,7 +23,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
-SKILLS_DIR = ROOT / "plugins" / "sbo-skills" / "skills"
+SKILLS_DIR = ROOT / "plugins" / "accilium-skills" / "skills"
 ARCHIVE_DIR = ROOT / "archived"
 
 

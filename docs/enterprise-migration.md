@@ -1,7 +1,7 @@
 # Enterprise Migration Guide — GitHub → Azure DevOps / Entra ID
 
 **Status: documented, not executed** (Roadmap Phase 5). The marketplace runs on
-GitHub today. If SBO later wants it fully inside the corporate Microsoft tenant
+GitHub today. If accilium later wants it fully inside the corporate Microsoft tenant
 — Entra ID SSO, internal permissions, no public repo — the architecture ports
 1:1. This is the mapping so a migration is a config exercise, not a redesign.
 

@@ -20,7 +20,7 @@ except ImportError:
     sys.exit(2)
 
 ROOT = Path(__file__).parent.parent
-SKILLS_DIR = ROOT / "plugins" / "sbo-skills" / "skills"
+SKILLS_DIR = ROOT / "plugins" / "accilium-skills" / "skills"
 SCHEMA_FILE = ROOT / "schema" / "skill.schema.json"
 
 

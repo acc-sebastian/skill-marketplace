@@ -24,7 +24,7 @@ except Exception:
     pass
 
 ROOT = Path(__file__).parent.parent
-SKILLS_DIR = ROOT / "plugins" / "sbo-skills" / "skills"
+SKILLS_DIR = ROOT / "plugins" / "accilium-skills" / "skills"
 SITE = "https://acc-sebastian.github.io/skill-marketplace"
 
 
