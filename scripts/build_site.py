@@ -15,6 +15,8 @@ Run locally:
 import json
 import os
 import re
+import shutil
+import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
@@ -51,6 +53,26 @@ def load_skills():
         skills.append(meta)
         print(f"  OK  {meta.get('name', skill_dir.name)}")
     return skills
+
+
+def skill_payload_files(skill_dir):
+    """Every file that belongs in the installed skill — SKILL.md plus any
+    supporting files/subfolders (scripts/, references/, assets/, ...).
+    Excludes metadata.json, which is marketplace-only bookkeeping, not part
+    of what Claude reads."""
+    return sorted(
+        p for p in skill_dir.rglob("*")
+        if p.is_file() and p.name != "metadata.json"
+    )
+
+
+def write_skill_zip(skill_dir, skill_id, dest_path):
+    """Zip the skill folder as <skill_id>/<relative files>, matching the
+    layout claude.ai's Skills upload (and Claude Code's manual install)
+    expect — a single folder containing SKILL.md and any supporting files."""
+    with zipfile.ZipFile(dest_path, "w", zipfile.ZIP_DEFLATED) as zf:
+        for f in skill_payload_files(skill_dir):
+            zf.write(f, arcname=f"{skill_id}/{f.relative_to(skill_dir)}")
 
 
 FRONTMATTER_RE = re.compile(r"^---\s*\n.*?\n---\s*\n", re.DOTALL)
@@ -112,6 +134,7 @@ def build_catalog(skills):
             "sunset_date": s.get("sunset_date"),
             "download_url": f"{RAW_BASE}/{s['folder']}/SKILL.md",
             "metadata_url": f"{RAW_BASE}/{s['folder']}/metadata.json",
+            "download_zip_url": f"{SITE_URL}/downloads/{s['id']}.zip",
         })
     return {
         "$schema_note": "Catalog manifest of the Skill Marketplace. One entry per non-archived skill.",
@@ -928,14 +951,15 @@ def build_html(skills, prompts):
         <button class="copy-btn" onclick="copyCode(this, '/plugin marketplace add acc-sebastian/skill-marketplace\n/plugin install accilium-skills@accilium-skill-marketplace')">Copy</button>
       </div>
       <div class="btn-row">
-        <button class="download-btn" id="btn-download-claude" onclick="downloadSkill()">Download SKILL.md</button>
+        <a class="download-btn" id="btn-download-claude" download>Download skill (.zip)</a>
         <button class="download-btn download-btn-ghost" onclick="copySkillContent()">Copy to clipboard</button>
       </div>
 
       <details>
         <summary>Manual install &amp; other harnesses</summary>
         <div class="details-body">
-          <p><strong>Claude Code (single skill):</strong> put <code>SKILL.md</code> into <code>.claude/skills/&lt;skill-id&gt;/</code> (project) or <code>~/.claude/skills/&lt;skill-id&gt;/</code> (global), then restart or run <code>/reload</code>.</p>
+          <p><strong>Claude Code (single skill):</strong> unzip into <code>.claude/skills/&lt;skill-id&gt;/</code> (project) or <code>~/.claude/skills/&lt;skill-id&gt;/</code> (global), then restart or run <code>/reload</code>.</p>
+          <p><strong>claude.ai (web):</strong> Settings → Capabilities → Skills → Upload skill, and pick the downloaded zip directly.</p>
           <p><strong>Copilot Studio:</strong> copy the content after the frontmatter (below the second <code>---</code>) into the System Prompt of a Topic, then publish.</p>
           <p><strong>Any LLM:</strong> paste the content after the frontmatter as a system prompt or first message.</p>
         </div>
@@ -1145,6 +1169,9 @@ function openModal(skill) {{
   document.getElementById('modal-subtitle').textContent = `${{skill.category}} · v${{skill.version}}`;
   document.getElementById('modal-desc').textContent = skill.description || '';
   document.getElementById('modal-skill-content').textContent = skill.skill_content || '(No SKILL.md content found)';
+  const _dlBtn = document.getElementById('btn-download-claude');
+  _dlBtn.href = `downloads/${{skill.id}}.zip`;
+  _dlBtn.setAttribute('download', `${{skill.id}}.zip`);
 
   // Feedback links -> pre-filled GitHub issues (no backend needed)
   const _newIssue = 'https://github.com/acc-sebastian/skill-marketplace/issues/new';
@@ -1185,16 +1212,6 @@ function closeModalOnOverlay(e) {{
   if (e.target === document.getElementById('modal-overlay')) closeModal();
 }}
 document.addEventListener('keydown', e => {{ if (e.key === 'Escape') {{ closeModal(); closePromptModal(); closeInsights(); }} }});
-
-function downloadSkill() {{
-  if (!currentSkill) return;
-  const blob = new Blob([currentSkill.skill_content || ''], {{type: 'text/markdown'}});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'SKILL.md';
-  a.click();
-  URL.revokeObjectURL(a.href);
-}}
 
 function copySkillContent() {{
   if (!currentSkill) return;
@@ -1541,6 +1558,15 @@ def main():
         json.dump(prompt_catalog, f, ensure_ascii=False, indent=2)
         f.write("\n")
     print(f"Catalog -> {pcat_out} ({prompt_catalog['count']} prompts)")
+
+    # One downloadable zip per skill: SKILL.md + any supporting files,
+    # folder-named for direct upload to claude.ai or unzip into .claude/skills/
+    downloads_dir = DOCS_DIR / "downloads"
+    shutil.rmtree(downloads_dir, ignore_errors=True)
+    downloads_dir.mkdir(parents=True)
+    for s in visible:
+        write_skill_zip(SKILLS_DIR / s["folder"], s["id"], downloads_dir / f"{s['id']}.zip")
+    print(f"Zips    -> {downloads_dir} ({len(visible)} skill archive(s))")
 
     # Publish the schemas alongside the site so catalog consumers can validate
     schema_dir = DOCS_DIR / "schema"

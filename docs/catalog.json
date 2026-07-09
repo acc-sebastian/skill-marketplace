@@ -31,7 +31,8 @@
       "deprecated_by": null,
       "sunset_date": null,
       "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/plugins/accilium-skills/skills/action-item-tracker/SKILL.md",
-      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/plugins/accilium-skills/skills/action-item-tracker/metadata.json"
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/plugins/accilium-skills/skills/action-item-tracker/metadata.json",
+      "download_zip_url": "https://acc-sebastian.github.io/skill-marketplace/downloads/action-item-tracker.zip"
     },
     {
       "id": "competitor-analysis",
@@ -58,7 +59,8 @@
       "deprecated_by": null,
       "sunset_date": null,
       "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/plugins/accilium-skills/skills/competitor-analysis/SKILL.md",
-      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/plugins/accilium-skills/skills/competitor-analysis/metadata.json"
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/plugins/accilium-skills/skills/competitor-analysis/metadata.json",
+      "download_zip_url": "https://acc-sebastian.github.io/skill-marketplace/downloads/competitor-analysis.zip"
     },
     {
       "id": "kpi-anomaly-check",
@@ -86,7 +88,8 @@
       "deprecated_by": null,
       "sunset_date": null,
       "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/plugins/accilium-skills/skills/kpi-anomaly-check/SKILL.md",
-      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/plugins/accilium-skills/skills/kpi-anomaly-check/metadata.json"
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/plugins/accilium-skills/skills/kpi-anomaly-check/metadata.json",
+      "download_zip_url": "https://acc-sebastian.github.io/skill-marketplace/downloads/kpi-anomaly-check.zip"
     },
     {
       "id": "mom-generator",
@@ -113,7 +116,8 @@
       "deprecated_by": null,
       "sunset_date": null,
       "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/plugins/accilium-skills/skills/mom-generator/SKILL.md",
-      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/plugins/accilium-skills/skills/mom-generator/metadata.json"
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/plugins/accilium-skills/skills/mom-generator/metadata.json",
+      "download_zip_url": "https://acc-sebastian.github.io/skill-marketplace/downloads/mom-generator.zip"
     },
     {
       "id": "vendor-proposal-comparison",
@@ -141,7 +145,8 @@
       "deprecated_by": null,
       "sunset_date": null,
       "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/plugins/accilium-skills/skills/vendor-proposal-comparison/SKILL.md",
-      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/plugins/accilium-skills/skills/vendor-proposal-comparison/metadata.json"
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/plugins/accilium-skills/skills/vendor-proposal-comparison/metadata.json",
+      "download_zip_url": "https://acc-sebastian.github.io/skill-marketplace/downloads/vendor-proposal-comparison.zip"
     }
   ]
 }
