@@ -56,7 +56,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
-          git add "skills/${SLUG}"
+          git add "plugins/sbo-skills/skills/${SLUG}"
           git commit -m "feat(skill): scaffold ${SLUG} from issue #${ISSUE_NUMBER}"
           git push -u origin "$BRANCH"
           PR_BODY="Auto-scaffolded from #${ISSUE_NUMBER} (proposed by @${ISSUE_AUTHOR}).

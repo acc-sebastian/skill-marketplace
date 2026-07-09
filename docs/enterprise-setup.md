@@ -70,12 +70,12 @@ That's it. New skills arrive automatically on later updates. To force a refresh:
 
 ## What gets distributed
 
-- Only skills that live in `skills/` on `main` are shipped.
+- Only skills that live in `plugins/sbo-skills/skills/` on `main` are shipped.
 - **Operating rule:** keep only `published` skills on `main`. Drafts live on PR
-  branches until published; `archived` skills are moved out of `skills/` (Roadmap
-  Phase 4 auto-archive), so they leave the plugin as well.
-- Every skill is a folder `skills/<id>/` containing `SKILL.md` (the instructions Claude
-  Code loads) and `metadata.json`.
+  branches until published; `archived` skills are moved out of the skills folder
+  (Roadmap Phase 4 auto-archive), so they leave the plugin as well.
+- Every skill is a folder `plugins/sbo-skills/skills/<id>/` containing `SKILL.md`
+  (the instructions Claude Code loads) and `metadata.json`.
 
 ## How a new skill reaches everyone
 

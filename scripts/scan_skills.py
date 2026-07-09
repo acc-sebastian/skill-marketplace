@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
-SKILLS_DIR = ROOT / "skills"
+SKILLS_DIR = ROOT / "plugins" / "sbo-skills" / "skills"
 PROMPTS_DIR = ROOT / "prompts"
 
 # High-confidence secrets -> hard fail
@@ -53,7 +53,7 @@ def scan_text(text):
 def main():
     n_secret = 0
     n_warn = 0
-    targets = [(SKILLS_DIR, "skills", ("SKILL.md", "metadata.json")),
+    targets = [(SKILLS_DIR, "plugins/sbo-skills/skills", ("SKILL.md", "metadata.json")),
                (PROMPTS_DIR, "prompts", ("PROMPT.md", "metadata.json"))]
     for base_dir, rel, fnames in targets:
         if not base_dir.exists():

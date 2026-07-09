@@ -21,7 +21,7 @@ import urllib.error
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
-SKILLS_DIR = ROOT / "skills"
+SKILLS_DIR = ROOT / "plugins" / "sbo-skills" / "skills"
 REPO = "acc-sebastian/skill-marketplace"
 TITLE_RE = re.compile(r"\[(?:Feedback|Bug)\]\s+([a-z0-9-]+)", re.I)
 

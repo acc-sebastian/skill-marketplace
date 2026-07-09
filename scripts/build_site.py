@@ -2,7 +2,7 @@
 """
 Build the Skill Marketplace static site + machine-readable catalogs.
 
-Reads:  skills/*/metadata.json  + skills/*/SKILL.md
+Reads:  plugins/sbo-skills/skills/*/metadata.json + SKILL.md
         prompts/*/metadata.json + prompts/*/PROMPT.md
 Writes: docs/index.html          (website: Skill Marketplace + Prompt Library)
         docs/catalog.json        (machine-readable skill manifest)
@@ -18,12 +18,12 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
-SKILLS_DIR = ROOT / "skills"
+SKILLS_DIR = ROOT / "plugins" / "sbo-skills" / "skills"
 PROMPTS_DIR = ROOT / "prompts"
 DOCS_DIR = ROOT / "docs"
 
 REPO = "acc-sebastian/skill-marketplace"
-RAW_BASE = f"https://raw.githubusercontent.com/{REPO}/main/skills"
+RAW_BASE = f"https://raw.githubusercontent.com/{REPO}/main/plugins/sbo-skills/skills"
 RAW_PROMPTS_BASE = f"https://raw.githubusercontent.com/{REPO}/main/prompts"
 SITE_URL = "https://acc-sebastian.github.io/skill-marketplace"
 PROPOSE_URL = f"https://github.com/{REPO}/issues/new?template=new-skill.yml"
@@ -895,7 +895,7 @@ def build_html(skills, prompts):
     <p>Once merged to main it appears here within minutes.</p>
     <ol class="contribute-steps">
       <li class="c-step">Fork the GitHub repo</li>
-      <li class="c-step">Add <code>metadata.json</code> + <code>SKILL.md</code> under <code>skills/</code> — or <code>metadata.json</code> + <code>PROMPT.md</code> under <code>prompts/</code></li>
+      <li class="c-step">Add <code>metadata.json</code> + <code>SKILL.md</code> under <code>plugins/sbo-skills/skills/</code> — or <code>metadata.json</code> + <code>PROMPT.md</code> under <code>prompts/</code></li>
       <li class="c-step">Open a pull request</li>
     </ol>
     <p class="contribute-note">No Git? Use the form instead — it opens a pre-filled issue and scaffolds the skill for you.</p>

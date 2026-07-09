@@ -17,11 +17,11 @@ A skill is a structured prompt file that turns your AI assistant into a speciali
 
 | Skill | Category | Description |
 |-------|----------|-------------|
-| [MOM Generator](skills/mom-generator/) | Productivity | Transform meeting notes into structured minutes |
-| [Action Item Tracker](skills/action-item-tracker/) | Productivity | Manage, track, and send reminders for action items |
-| [KPI Anomaly Check](skills/kpi-anomaly-check/) | Analytics | Validate KPI data and flag threshold breaches |
-| [Vendor Proposal Comparison](skills/vendor-proposal-comparison/) | Procurement | Score and rank vendor proposals systematically |
-| [Competitor Analysis](skills/competitor-analysis/) | Strategy | Structured competitive intelligence reports |
+| [MOM Generator](plugins/sbo-skills/skills/mom-generator/) | Productivity | Transform meeting notes into structured minutes |
+| [Action Item Tracker](plugins/sbo-skills/skills/action-item-tracker/) | Productivity | Manage, track, and send reminders for action items |
+| [KPI Anomaly Check](plugins/sbo-skills/skills/kpi-anomaly-check/) | Analytics | Validate KPI data and flag threshold breaches |
+| [Vendor Proposal Comparison](plugins/sbo-skills/skills/vendor-proposal-comparison/) | Procurement | Score and rank vendor proposals systematically |
+| [Competitor Analysis](plugins/sbo-skills/skills/competitor-analysis/) | Strategy | Structured competitive intelligence reports |
 
 ## How to Install a Skill
 
@@ -48,9 +48,9 @@ python scripts/skill_cli.py install mom-generator --harness generic --dest ./ski
 ### Claude Code (manual)
 Copy the `SKILL.md` file into your `.claude/skills/` directory:
 ```bash
-cp skills/mom-generator/SKILL.md ~/.claude/skills/
+cp plugins/sbo-skills/skills/mom-generator/SKILL.md ~/.claude/skills/
 # or into your project
-cp skills/mom-generator/SKILL.md .claude/skills/
+cp plugins/sbo-skills/skills/mom-generator/SKILL.md .claude/skills/
 ```
 
 You can also download a versioned package (`SKILL.md` + `metadata.json`) from the
@@ -91,7 +91,7 @@ fill in the variables in the form, and copy the finished prompt. Machine consume
 ## How to Add a Skill
 
 1. Fork this repository
-2. Create a new directory under `skills/` with your skill's kebab-case name
+2. Create a new directory under `plugins/sbo-skills/skills/` with your skill's kebab-case name
 3. Add `metadata.json` and `SKILL.md` (copy an existing skill as template)
 4. Submit a pull request
 5. Once merged, the skill automatically appears on the marketplace website within minutes
@@ -102,12 +102,22 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide and file format spec.
 
 ```
 skill_marketplace/
-├── skills/                  # Skill source files
-│   └── <skill-name>/
-│       ├── metadata.json    # Name, description, tags, category
-│       └── SKILL.md         # The actual skill instructions
+├── .claude-plugin/
+│   └── marketplace.json     # Claude Code plugin marketplace manifest
+├── plugins/
+│   └── sbo-skills/          # The Claude Code plugin (all skills)
+│       ├── .claude-plugin/
+│       │   └── plugin.json
+│       └── skills/          # Skill source files
+│           └── <skill-name>/
+│               ├── metadata.json    # Name, description, tags, category
+│               └── SKILL.md         # The actual skill instructions
+├── prompts/                 # Prompt Library source files
+│   └── <prompt-name>/
+│       ├── metadata.json
+│       └── PROMPT.md
 ├── scripts/
-│   └── build_site.py        # Generates docs/ from skills/
+│   └── build_site.py        # Generates docs/ from skills + prompts
 ├── docs/                    # GitHub Pages output (auto-generated)
 │   └── index.html
 ├── .github/

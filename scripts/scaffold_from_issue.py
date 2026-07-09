@@ -19,7 +19,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
-SKILLS_DIR = ROOT / "skills"
+SKILLS_DIR = ROOT / "plugins" / "sbo-skills" / "skills"
 
 VALID_HARNESSES = {"claude-code", "copilot-studio", "generic"}
 VALID_CATEGORIES = {"Productivity", "Analytics", "Strategy", "Procurement",
@@ -157,7 +157,7 @@ Activate when the user asks for this. Example phrases:
 """
     (target / "SKILL.md").write_text(skill_md, encoding="utf-8")
 
-    print(f"scaffolded skills/{slug}/ (name={name!r}, owner={owner}, status=draft)")
+    print(f"scaffolded plugins/sbo-skills/skills/{slug}/ (name={name!r}, owner={owner}, status=draft)")
     out = os.environ.get("GITHUB_OUTPUT")
     if out:
         with open(out, "a", encoding="utf-8") as f:
