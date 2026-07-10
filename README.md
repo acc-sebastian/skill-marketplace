@@ -55,8 +55,10 @@ cp plugins/accilium-skills/skills/mom-generator/SKILL.md ~/.claude/skills/
 cp plugins/accilium-skills/skills/mom-generator/SKILL.md .claude/skills/
 ```
 
-You can also download a versioned package (`SKILL.md` + `metadata.json`) from the
-[Releases](https://github.com/acc-sebastian/skill-marketplace/releases) page (tag `id@version`).
+You can also download a versioned package (`SKILL.md` + `metadata.json` + a zip of
+the full skill folder) from the
+[Releases](https://github.com/acc-sebastian/skill-marketplace/releases) page (tag
+`id@version`) — this is what the site's "Download skill (.zip)" button links to.
 
 ### Copilot Studio
 1. Open the `SKILL.md` file for the skill you want
