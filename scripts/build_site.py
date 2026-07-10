@@ -962,7 +962,7 @@ def build_html(skills, prompts):
       </div>
       <div class="btn-row">
         <a class="download-btn" id="btn-download-claude" download>Download skill (.zip)</a>
-        <button class="download-btn download-btn-ghost" onclick="copySkillContent()">Copy to clipboard</button>
+        <button class="download-btn download-btn-ghost" onclick="copySkillContent(this)">Copy to clipboard</button>
       </div>
 
       <details>
@@ -1223,9 +1223,13 @@ function closeModalOnOverlay(e) {{
 }}
 document.addEventListener('keydown', e => {{ if (e.key === 'Escape') {{ closeModal(); closePromptModal(); closeInsights(); }} }});
 
-function copySkillContent() {{
+function copySkillContent(btn) {{
   if (!currentSkill) return;
-  navigator.clipboard.writeText(currentSkill.skill_content || '');
+  navigator.clipboard.writeText(currentSkill.skill_content || '').then(() => {{
+    const orig = btn.textContent;
+    btn.textContent = 'Copied';
+    setTimeout(() => {{ btn.textContent = orig; }}, 2000);
+  }});
 }}
 
 function copyCode(btn, text) {{
