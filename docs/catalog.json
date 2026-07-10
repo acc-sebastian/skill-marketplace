@@ -4,7 +4,7 @@
   "site": "https://acc-sebastian.github.io/skill-marketplace",
   "repository": "https://github.com/acc-sebastian/skill-marketplace",
   "skill_schema": "https://acc-sebastian.github.io/skill-marketplace/schema/skill.schema.json",
-  "count": 5,
+  "count": 6,
   "skills": [
     {
       "id": "action-item-tracker",
@@ -118,6 +118,33 @@
       "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/plugins/accilium-skills/skills/mom-generator/SKILL.md",
       "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/plugins/accilium-skills/skills/mom-generator/metadata.json",
       "download_zip_url": "https://acc-sebastian.github.io/skill-marketplace/downloads/mom-generator.zip"
+    },
+    {
+      "id": "nda-red-flag-review",
+      "name": "NDA Red Flag Review",
+      "description": "Screen NDAs and confidentiality agreements against a deterministic 14-category red-flag catalog and produce a clause-referenced review report with severity ratings, missing-clause findings, and negotiation recommendations. Customize the bundled house-position template for your organization before real use.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Compliance",
+      "tags": [
+        "legal",
+        "nda",
+        "contract-review",
+        "compliance",
+        "risk"
+      ],
+      "harnesses": [
+        "claude-code"
+      ],
+      "complexity": "advanced",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-10",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/plugins/accilium-skills/skills/nda-red-flag-review/SKILL.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/plugins/accilium-skills/skills/nda-red-flag-review/metadata.json",
+      "download_zip_url": "https://acc-sebastian.github.io/skill-marketplace/downloads/nda-red-flag-review.zip"
     },
     {
       "id": "vendor-proposal-comparison",

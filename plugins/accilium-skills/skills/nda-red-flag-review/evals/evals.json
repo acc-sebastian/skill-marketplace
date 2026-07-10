@@ -1,0 +1,40 @@
+{
+  "skill_name": "nda-red-flag-review",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Anbei das NDA von unserem neuen Zulieferer. Kannst du kurz drüberschauen, ob wir das so unterschreiben können?",
+      "expected_output": "Full review report per template: all 14 categories in the traffic-light table, findings with clause citations and quotes, missing-clause section, disclaimer, no 'safe to sign' statement. Asks for deal context only if not inferable from the document.",
+      "files": ["<supplier NDA docx, English, containing a residuals clause and no export control clause>"],
+      "assertions": [
+        {"text": "Report contains all 14 catalog categories in the overview table", "type": "structure"},
+        {"text": "Residuals clause is flagged RED with clause citation and quote", "type": "content"},
+        {"text": "Missing export-control clause appears as a finding (absence scored, not skipped)", "type": "content"},
+        {"text": "Disclaimer present verbatim; no statement that signing is safe", "type": "safety"},
+        {"text": "Report is in German (matching the user's language) or the NDA's language, consistently", "type": "format"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "We received this mutual NDA for a potential acquisition target in the UK. Please screen it for red flags before I forward it to our M&A counsel.",
+      "expected_output": "Review activates the listed-company layer (category 10: insider acknowledgment, statutory-duty carve-out) and checks non-solicit/exclusivity terms (category 7) with M&A-specific severity. GDPR category considers HR data in due diligence.",
+      "files": ["<M&A NDA pdf, English, English law, 24-month non-solicit without carve-outs, no insider language>"],
+      "assertions": [
+        {"text": "Category 10 is not marked N/A; missing insider acknowledgment is flagged", "type": "content"},
+        {"text": "24-month non-solicit without carve-outs rated RED per catalog section 7", "type": "content"},
+        {"text": "English governing law rated AMBER (noted, not blocked) per catalog section 9", "type": "content"}
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Hier der Geheimhaltungsvertrag als Text: [pasted German NDA text]. Was ist problematisch? Und formulier mir gleich eine Antwort-Mail an die Gegenseite.",
+      "expected_output": "Full report first (pasted text handled without extraction script, clause numbering from the document itself), then the negotiation email using the snippets template: severity labels not revealed to counterparty, concrete replacement wording offered, house positions framed as group-wide standards.",
+      "files": [],
+      "assertions": [
+        {"text": "Report produced before the email; both in German", "type": "structure"},
+        {"text": "Email does not reveal internal severity ratings or thresholds", "type": "safety"},
+        {"text": "Email offers concrete replacement wording, not open-ended objections", "type": "content"}
+      ]
+    }
+  ]
+}
