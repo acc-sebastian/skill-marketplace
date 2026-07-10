@@ -22,6 +22,7 @@ A skill is a structured prompt file that turns your AI assistant into a speciali
 | [KPI Anomaly Check](plugins/accilium-skills/skills/kpi-anomaly-check/) | Analytics | Validate KPI data and flag threshold breaches |
 | [Vendor Proposal Comparison](plugins/accilium-skills/skills/vendor-proposal-comparison/) | Procurement | Score and rank vendor proposals systematically |
 | [Competitor Analysis](plugins/accilium-skills/skills/competitor-analysis/) | Strategy | Structured competitive intelligence reports |
+| [NDA Red Flag Review](plugins/accilium-skills/skills/nda-red-flag-review/) | Compliance | Deterministic 14-category NDA screening with clause-referenced findings |
 
 ## How to Install a Skill
 

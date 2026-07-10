@@ -1,0 +1,40 @@
+{
+  "id": "nda-red-flag-review",
+  "name": "NDA Red Flag Review",
+  "description": "Screen NDAs and confidentiality agreements against a deterministic 14-category red-flag catalog and produce a clause-referenced review report with severity ratings, missing-clause findings, and negotiation recommendations. Customize the bundled house-position template for your organization before real use.",
+  "author": "accilium",
+  "owner": "acc-sebastian",
+  "version": "1.0.0",
+  "created": "2026-07-10",
+  "last_reviewed": "2026-07-10",
+  "status": "published",
+  "category": "Compliance",
+  "tags": [
+    "legal",
+    "nda",
+    "contract-review",
+    "compliance",
+    "risk"
+  ],
+  "harnesses": [
+    "claude-code"
+  ],
+  "complexity": "advanced",
+  "trigger_phrases": [
+    "review this NDA",
+    "check this confidentiality agreement",
+    "is this NDA okay to sign",
+    "red-flag this NDA",
+    "was ist problematisch an diesem NDA",
+    "prepare NDA feedback for the counterparty"
+  ],
+  "emoji": "🚩",
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-07-10",
+      "change": "Initial release"
+    }
+  ],
+  "example_input": "Pasted English NDA text with a broad residuals clause, no export-control reservation, and a 24-month non-solicit without carve-outs; user asks whether it's safe to sign."
+}
