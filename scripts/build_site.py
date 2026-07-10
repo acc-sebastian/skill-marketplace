@@ -684,6 +684,11 @@ def build_html(skills, prompts):
   .details-body {{ padding: 0.85rem 1rem; font-size: 0.88rem; color: var(--text); }}
   .details-body p {{ margin-bottom: 0.6rem; }}
   .details-body p:last-child {{ margin-bottom: 0; }}
+  .install-steps {{
+    font-size: 0.88rem; color: var(--text); line-height: 1.6;
+    padding-left: 1.3rem; margin: 0.5rem 0 0;
+  }}
+  .install-steps li {{ margin-bottom: 0.3rem; }}
   .code-block {{
     background: var(--brand-dark); color: #e6e6f5;
     border-radius: 8px; padding: 1rem 1.25rem;
@@ -944,11 +949,16 @@ def build_html(skills, prompts):
       <div id="modal-deprecation"></div>
       <p class="modal-desc" id="modal-desc"></p>
 
-      <div class="var-section-label" style="margin-top:0">Install — Claude Code</div>
+      <div class="var-section-label" style="margin-top:0">Install — Claude</div>
+      <ol class="install-steps">
+        <li>In the Claude chat window, click <strong>+</strong> → <strong>Plugins</strong> → <strong>Manage Plugins</strong>.</li>
+        <li>Click <strong>Add</strong> → <strong>Add Marketplace</strong>.</li>
+        <li>Enter the repo below (or the full GitHub URL) and click <strong>Sync</strong>.</li>
+        <li>All published skills are now available directly in the chat window.</li>
+      </ol>
       <div class="code-block" style="position:relative;margin-top:0.5rem">
-        <span>/plugin marketplace add acc-sebastian/skill-marketplace</span><br>
-        <span>/plugin install accilium-skills@accilium-skill-marketplace</span>
-        <button class="copy-btn" onclick="copyCode(this, '/plugin marketplace add acc-sebastian/skill-marketplace\n/plugin install accilium-skills@accilium-skill-marketplace')">Copy</button>
+        <span>acc-sebastian/skill-marketplace</span>
+        <button class="copy-btn" onclick="copyCode(this, 'acc-sebastian/skill-marketplace')">Copy</button>
       </div>
       <div class="btn-row">
         <a class="download-btn" id="btn-download-claude" download>Download skill (.zip)</a>
@@ -958,7 +968,7 @@ def build_html(skills, prompts):
       <details>
         <summary>Manual install &amp; other harnesses</summary>
         <div class="details-body">
-          <p><strong>Claude Code (single skill):</strong> unzip into <code>.claude/skills/&lt;skill-id&gt;/</code> (project) or <code>~/.claude/skills/&lt;skill-id&gt;/</code> (global), then restart or run <code>/reload</code>.</p>
+          <p><strong>Claude Code CLI (single skill):</strong> unzip into <code>.claude/skills/&lt;skill-id&gt;/</code> (project) or <code>~/.claude/skills/&lt;skill-id&gt;/</code> (global), then restart or run <code>/reload</code>.</p>
           <p><strong>claude.ai (web):</strong> Settings → Capabilities → Skills → Upload skill, and pick the downloaded zip directly.</p>
           <p><strong>Copilot Studio:</strong> copy the content after the frontmatter (below the second <code>---</code>) into the System Prompt of a Topic, then publish.</p>
           <p><strong>Any LLM:</strong> paste the content after the frontmatter as a system prompt or first message.</p>
