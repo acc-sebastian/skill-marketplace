@@ -27,14 +27,15 @@ A skill is a structured prompt file that turns your AI assistant into a speciali
 ## How to Install a Skill
 
 ### Claude Code plugin (recommended — get *all* skills, auto-updated)
-Add the marketplace once and install the bundled `accilium-skills` plugin:
-```
-/plugin marketplace add acc-sebastian/skill-marketplace
-/plugin install accilium-skills@accilium-skill-marketplace
-```
-You now have every published skill, and new ones arrive automatically on update.
-**Organizations** can push this to all users automatically (zero user action) via
-managed settings — see the **[Distribution Setup Guide](docs/enterprise-setup.md)**.
+Add the marketplace once, directly from the Claude chat window:
+1. Click **+** → **Plugins** → **Manage Plugins**.
+2. Click **Add** → **Add Marketplace**.
+3. Enter `acc-sebastian/skill-marketplace` (or the full GitHub URL) and click **Sync**.
+4. All published skills are now available directly in the chat window.
+
+You now have every published skill, and new ones arrive automatically on the next
+sync. **Organizations** can push this to all users automatically (zero user action)
+via managed settings — see the **[Distribution Setup Guide](docs/enterprise-setup.md)**.
 
 ### CLI (single skills, any harness)
 The `skill` CLI reads the live [catalog](https://acc-sebastian.github.io/skill-marketplace/catalog.json),

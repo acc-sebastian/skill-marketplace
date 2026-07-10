@@ -52,19 +52,16 @@ Azure Foundry, or a custom `ANTHROPIC_BASE_URL`.
 
 ## Option B — Individual setup (Pro / single accounts)
 
-For users without managed settings — a one-time, two-command setup. Auto-update
-still applies afterward.
+For users without managed settings — a one-time setup directly in the Claude chat
+window. Auto-update still applies afterward.
 
-```
-/plugin marketplace add acc-sebastian/skill-marketplace
-/plugin install accilium-skills@accilium-skill-marketplace
-```
+1. Click **+** → **Plugins** → **Manage Plugins**.
+2. Click **Add** → **Add Marketplace**.
+3. Enter `acc-sebastian/skill-marketplace` (or the full GitHub URL) and click **Sync**.
+4. All published skills are now available directly in the chat window.
 
-That's it. New skills arrive automatically on later updates. To force a refresh:
-
-```
-/plugin marketplace update accilium-skill-marketplace
-```
+That's it. New skills arrive automatically on later updates. To force a refresh,
+open **Manage Plugins** and click **Sync** again on the marketplace entry.
 
 ---
 
