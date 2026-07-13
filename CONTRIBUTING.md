@@ -140,6 +140,41 @@ description: Trigger description — when should this skill activate? Write this
 
 ---
 
+## Evals (optional but encouraged)
+
+A skill can ship an `evals.json` — either at the skill root or in an `evals/`
+subfolder — declaring runnable test cases. The eval harness
+(`scripts/run_evals.py`, scheduled weekly) runs each case against the current
+model and has a judge model grade the response against your assertions. Passing
+skills get a **"✓ Evaluated"** badge on their card; a failing eval turns the
+scheduled run red (model-drift alarm).
+
+The authoritative shape is **[`schema/eval.schema.json`](schema/eval.schema.json)**;
+`python scripts/validate_evals.py` checks it in every PR. Minimal example:
+
+```json
+{
+  "skill_name": "your-skill-name",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "A realistic user message that should trigger the skill.",
+      "expected_output": "Prose describing what a good response contains.",
+      "assertions": [
+        { "text": "Output includes all required sections", "type": "structure" },
+        { "text": "No unsupported claims are made", "type": "content" }
+      ]
+    }
+  ]
+}
+```
+
+Evals whose `files` list contains placeholder descriptions (`<a sample PDF…>`)
+are marked *skipped: needs fixture* rather than run — provide real relative
+paths (resolved against the skill folder) to make them runnable.
+
+---
+
 ## Quality Standards
 
 A good skill:

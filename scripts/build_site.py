@@ -23,6 +23,7 @@ ROOT = Path(__file__).parent.parent
 SKILLS_DIR = ROOT / "plugins" / "accilium-skills" / "skills"
 PROMPTS_DIR = ROOT / "prompts"
 DOCS_DIR = ROOT / "docs"
+EVAL_RESULTS_FILE = ROOT / "eval-results.json"
 
 REPO = "acc-sebastian/skill-marketplace"
 RAW_BASE = f"https://raw.githubusercontent.com/{REPO}/main/plugins/accilium-skills/skills"
@@ -32,7 +33,21 @@ PROPOSE_URL = f"https://github.com/{REPO}/issues/new?template=new-skill.yml"
 PROPOSE_PROMPT_URL = f"https://github.com/{REPO}/issues/new?template=new-prompt.yml"
 
 
+def load_eval_results():
+    """Read eval-results.json (produced by run_evals.py) if present. Absence is
+    normal — skills simply won't get an 'evaluated' badge until evals have run."""
+    if not EVAL_RESULTS_FILE.exists():
+        return {}
+    try:
+        return json.loads(EVAL_RESULTS_FILE.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        print("  WARN eval-results.json is not valid JSON — ignoring")
+        return {}
+
+
 def load_skills():
+    evals = load_eval_results()
+    eval_skills = evals.get("skills", {})
     skills = []
     for skill_dir in sorted(SKILLS_DIR.iterdir()):
         if not skill_dir.is_dir():
@@ -50,6 +65,20 @@ def load_skills():
                 skill_content = f.read()
         meta["skill_content"] = skill_content
         meta["folder"] = skill_dir.name
+
+        # Attach eval status only when results exist for THIS version and
+        # something was actually proven (exclude "unverified" = all skipped).
+        er = eval_skills.get(meta.get("id"))
+        if er and er.get("version") == meta.get("version") and er.get("status") in ("pass", "partial", "fail"):
+            meta["eval"] = {
+                "status": er["status"],
+                "passed": er.get("passed"), "failed": er.get("failed"),
+                "skipped": er.get("skipped"), "total": er.get("total"),
+                "model": evals.get("eval_model"), "date": evals.get("generated"),
+            }
+        else:
+            meta["eval"] = None
+
         skills.append(meta)
         print(f"  OK  {meta.get('name', skill_dir.name)}")
     return skills
@@ -135,6 +164,7 @@ def build_catalog(skills):
             "download_url": f"{RAW_BASE}/{s['folder']}/SKILL.md",
             "metadata_url": f"{RAW_BASE}/{s['folder']}/metadata.json",
             "download_zip_url": f"{SITE_URL}/downloads/{s['id']}.zip",
+            "eval": s.get("eval"),
         })
     return {
         "$schema_note": "Catalog manifest of the Skill Marketplace. One entry per non-archived skill.",
@@ -550,9 +580,15 @@ def build_html(skills, prompts):
   }}
   .badge-cat {{ background: var(--brand-light); color: var(--brand-dark); }}
   .badge-harness {{ background: #eef1f0; color: var(--petrol); border: 1px solid #d8e0de; }}
+  .badge-eval-pass {{ background: #ecf3ec; color: #2e7d32; border: 1px solid #cfe4d0; }}
+  .badge-eval-partial {{ background: #f5efdd; color: #8a6d1f; border: 1px solid #e6d9b5; }}
+  .badge-eval-fail {{ background: #fbeae8; color: var(--danger); border: 1px solid #f2cdc8; }}
   /* dark-theme badge variants */
   [data-theme="dark"] .badge-cat {{ background: rgba(255,255,255,0.09); color: #dfe0f2; }}
   [data-theme="dark"] .badge-harness {{ background: rgba(255,255,255,0.06); color: #a7bcbc; border-color: rgba(255,255,255,0.12); }}
+  [data-theme="dark"] .badge-eval-pass {{ background: rgba(53,208,127,0.16); color: #6fd39e; border-color: rgba(53,208,127,0.3); }}
+  [data-theme="dark"] .badge-eval-partial {{ background: rgba(221,184,0,0.16); color: #e8c85a; border-color: rgba(221,184,0,0.3); }}
+  [data-theme="dark"] .badge-eval-fail {{ background: rgba(218,48,37,0.20); color: #ff8f85; border-color: rgba(218,48,37,0.35); }}
   [data-theme="dark"] .deprecation-banner {{ background: rgba(218,48,37,0.14); border-color: rgba(218,48,37,0.35); color: #ffb3ab; }}
   .skill-card.is-deprecated {{ opacity: 0.72; }}
   .skill-card.is-deprecated:hover {{ opacity: 1; }}
@@ -947,6 +983,7 @@ def build_html(skills, prompts):
     </div>
     <div class="modal-body">
       <div id="modal-deprecation"></div>
+      <div class="modal-tags" id="modal-eval" style="margin-bottom:1rem"></div>
       <p class="modal-desc" id="modal-desc"></p>
 
       <div class="var-section-label" style="margin-top:0">Install — Claude</div>
@@ -1075,6 +1112,20 @@ let searchQuery = '';
 let promptFilter = 'all';
 let promptQuery = '';
 
+// Eval badge — only shown when results exist for the current version.
+function evalBadgeHtml(skill) {{
+  const e = skill.eval;
+  if (!e || !e.status) return '';
+  const label = {{pass: '✓ Evaluated', partial: '✓ Evaluated', fail: '✗ Eval failing'}}[e.status] || '';
+  if (!label) return '';
+  const cls = `badge-eval-${{e.status}}`;
+  const suffix = e.status === 'partial' ? ' (partial)' : '';
+  const tip = `${{e.passed}}/${{e.total}} eval(s) passed`
+    + (e.skipped ? `, ${{e.skipped}} skipped` : '')
+    + ` · ${{e.model || 'model'}} · ${{e.date || ''}}`;
+  return `<span class="badge ${{cls}}" title="${{tip}}">${{label}}${{suffix}}</span>`;
+}}
+
 function renderCards() {{
   const grid = document.getElementById('skills-grid');
   const noRes = document.getElementById('no-results');
@@ -1117,6 +1168,7 @@ function renderCards() {{
       <p class="card-desc">${{(skill.description || '').substring(0, 130)}}${{(skill.description||'').length > 130 ? '…' : ''}}</p>
       <div class="card-footer">
         <span class="badge badge-cat">${{skill.category || 'Other'}}</span>
+        ${{evalBadgeHtml(skill)}}
       </div>
       <div class="card-install-hint">View &amp; install</div>
     `;
@@ -1177,6 +1229,7 @@ function openModal(skill) {{
   currentSkill = skill;
   document.getElementById('modal-title').textContent = skill.name || skill.id;
   document.getElementById('modal-subtitle').textContent = `${{skill.category}} · v${{skill.version}}`;
+  document.getElementById('modal-eval').innerHTML = evalBadgeHtml(skill);
   document.getElementById('modal-desc').textContent = skill.description || '';
   document.getElementById('modal-skill-content').textContent = skill.skill_content || '(No SKILL.md content found)';
   const _dlBtn = document.getElementById('btn-download-claude');
@@ -1584,7 +1637,7 @@ def main():
 
     # Publish the schemas alongside the site so catalog consumers can validate
     schema_dir = DOCS_DIR / "schema"
-    for schema_name in ("skill.schema.json", "prompt.schema.json"):
+    for schema_name in ("skill.schema.json", "prompt.schema.json", "eval.schema.json"):
         schema_src = ROOT / "schema" / schema_name
         if schema_src.exists():
             schema_dir.mkdir(exist_ok=True)
@@ -1592,6 +1645,15 @@ def main():
                 schema_src.read_text(encoding="utf-8"), encoding="utf-8"
             )
             print(f"Schema  -> {schema_dir / schema_name}")
+
+    # Mirror eval results to the site for transparency (public JSON). Remove a
+    # stale copy if the source is gone, so results never outlive their source.
+    docs_eval = DOCS_DIR / "eval-results.json"
+    if EVAL_RESULTS_FILE.exists():
+        docs_eval.write_text(EVAL_RESULTS_FILE.read_text(encoding="utf-8"), encoding="utf-8")
+        print(f"Evals   -> {docs_eval}")
+    elif docs_eval.exists():
+        docs_eval.unlink()
 
 
 if __name__ == "__main__":

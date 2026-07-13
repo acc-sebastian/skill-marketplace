@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://acc-sebastian.github.io/skill-marketplace/schema/eval.schema.json",
+  "title": "Skill Evals",
+  "description": "Schema for the optional evals.json in a skill folder. Declares runnable test cases used by the eval harness (scripts/run_evals.py) to verify — via an LLM judge — that the skill still produces the expected behavior against the current model.",
+  "type": "object",
+  "required": ["skill_name", "evals"],
+  "additionalProperties": false,
+  "properties": {
+    "skill_name": {
+      "type": "string",
+      "description": "Must equal the skill's id (and its folder name).",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "evals": {
+      "type": "array",
+      "description": "One entry per test case.",
+      "minItems": 1,
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "required": ["id", "prompt", "assertions"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": ["integer", "string"],
+            "description": "Unique identifier within this file (number or short slug)."
+          },
+          "prompt": {
+            "type": "string",
+            "description": "The user message sent to the skill (SKILL.md body as system prompt). Must be self-contained enough to run without external fixture files unless `files` is set.",
+            "minLength": 5
+          },
+          "expected_output": {
+            "type": "string",
+            "description": "Prose description of what a good response looks like. Given to the judge as grading context.",
+            "minLength": 5
+          },
+          "files": {
+            "type": "array",
+            "description": "Attachments the eval needs. Entries wrapped in <angle brackets> are placeholder descriptions (no real file provided) — the harness marks such evals 'skipped: needs fixture' rather than running them. Real relative paths (resolved against the skill folder) are attached when present.",
+            "items": { "type": "string" }
+          },
+          "assertions": {
+            "type": "array",
+            "description": "What must be true of the response. Each is graded pass/fail by the judge model.",
+            "minItems": 1,
+            "maxItems": 12,
+            "items": {
+              "type": "object",
+              "required": ["text"],
+              "additionalProperties": false,
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "description": "A single, checkable claim about the response.",
+                  "minLength": 5
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Assertion dimension (advisory grouping only).",
+                  "enum": ["structure", "content", "safety", "format"]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
