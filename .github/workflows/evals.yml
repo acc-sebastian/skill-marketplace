@@ -42,15 +42,22 @@ jobs:
           set -e
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          if [ -f eval-results.json ] && ! git diff --quiet eval-results.json; then
-            git add eval-results.json
+          if [ ! -f eval-results.json ]; then
+            echo "No eval-results.json produced (skipped, or no evals) — nothing to commit."
+            exit 0
+          fi
+          # `git add` first so this correctly detects a diff whether the file is
+          # brand new (untracked — plain `git diff` sees nothing to compare
+          # against and would silently no-op) or already tracked and changed.
+          git add eval-results.json
+          if git diff --cached --quiet -- eval-results.json; then
+            echo "No eval-results change to commit."
+          else
             git commit -m "chore(evals): refresh eval results"
             # Direct push to main so build-site.yml redeploys the badge. If branch
             # protection blocks the Actions bot here, allow it to bypass for this
             # path, or switch this to a PR (see auto-archive.yml for that pattern).
             git push
-          else
-            echo "No eval-results change to commit."
           fi
 
       - name: Surface drift as a failed run
