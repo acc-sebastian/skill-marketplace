@@ -1,0 +1,60 @@
+name: Run Skill Evals
+
+# Eval harness / model-drift guard. Runs each published skill's evals.json
+# against the current Claude model (LLM-as-judge), writes eval-results.json,
+# and commits it so build_site.py can render the "evaluated" badge. Scheduled
+# = weekly drift detection; on-demand via dispatch. Requires the
+# ANTHROPIC_API_KEY repo secret — run_evals.py skips cleanly if it's absent.
+on:
+  schedule:
+    - cron: "0 7 * * 1"    # Mondays, 07:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+# Never let two eval runs race on committing results to main.
+concurrency:
+  group: evals
+  cancel-in-progress: false
+
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install anthropic
+
+      - name: Run evals
+        id: eval
+        continue-on-error: true       # a failing eval still gets recorded + badged
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          EVAL_MODEL: claude-opus-4-8
+        run: python scripts/run_evals.py
+
+      - name: Commit updated results
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -f eval-results.json ] && ! git diff --quiet eval-results.json; then
+            git add eval-results.json
+            git commit -m "chore(evals): refresh eval results"
+            # Direct push to main so build-site.yml redeploys the badge. If branch
+            # protection blocks the Actions bot here, allow it to bypass for this
+            # path, or switch this to a PR (see auto-archive.yml for that pattern).
+            git push
+          else
+            echo "No eval-results change to commit."
+          fi
+
+      - name: Surface drift as a failed run
+        if: steps.eval.outcome == 'failure'
+        run: |
+          echo "::error::One or more runnable evals failed — see the Run evals step."
+          exit 1
