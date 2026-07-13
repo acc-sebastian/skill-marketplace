@@ -54,16 +54,27 @@ def find_evals_file(skill_dir):
     return None
 
 
+# Matches an inline placeholder embedded directly in a prompt string, e.g.
+# "...as text: [pasted German NDA text]." — the *file*-based placeholder
+# convention (<angle brackets> in `files`) is a separate, already-handled case.
+INLINE_PLACEHOLDER_RE = re.compile(r"\[[a-zA-Z][^\[\]]{2,80}\]")
+
+
 def is_runnable(ev, skill_dir):
-    """An eval is runnable if it needs no fixture files, or all listed files
-    are real paths inside the skill folder. Placeholder descriptions (wrapped
-    in <angle brackets>) mean 'no real file provided' -> not runnable yet."""
+    """An eval is runnable if it needs no fixture files/inline content, or all
+    listed files are real paths inside the skill folder. Placeholder file
+    descriptions (wrapped in <angle brackets>) or a bracketed placeholder
+    phrase inline in the prompt (e.g. "[pasted NDA text]") both mean 'no real
+    input provided' -> not runnable yet, not a real failure."""
     files = ev.get("files") or []
     for f in files:
         if f.strip().startswith("<"):
             return False, "needs fixture file (placeholder only)"
         if not (skill_dir / f).exists():
             return False, f"fixture file not found: {f}"
+    m = INLINE_PLACEHOLDER_RE.search(ev.get("prompt", ""))
+    if m:
+        return False, f"prompt has an unfilled placeholder: {m.group(0)}"
     return True, None
 
 
