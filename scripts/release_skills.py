@@ -5,12 +5,18 @@ SKILL.md + metadata.json + a full skill zip attached as assets. Idempotent:
 skips creating a release for a skill whose tag already exists, so it only
 ever publishes *new* versions.
 
-The zip asset is what the marketplace site's "Download skill (.zip)" button
-links to — GitHub tracks download_count on release assets (unlike plain
-files served from GitHub Pages, which have no download analytics at all),
-and Insights reads that count. The zip is only uploaded once per release
-(never re-uploaded once present) so re-running this script never resets an
-already-accumulated download count.
+The site's own "Download skill (.zip)" button links to a separate, always-
+present copy served from GitHub Pages (docs/downloads/<id>.zip, built by
+build_site.py) rather than to this release asset — Pages requests aren't
+released until a release for that exact version exists, and this workflow
+only runs on pushes that touch a skill folder, so relying on it for the
+button would make downloads intermittently 404. The release zip is a
+secondary, versioned artifact for people who browse the Releases page
+directly; GitHub tracks its download_count (unlike Pages files, which have
+no download analytics at all), and Insights reads that count for whatever
+traffic goes through the Releases page. The zip is only uploaded once per
+release (never re-uploaded once present) so re-running this script never
+resets an already-accumulated download count.
 
 Runs in CI (release.yml) with the `gh` CLI authenticated via GH_TOKEN.
 """

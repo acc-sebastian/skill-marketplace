@@ -134,7 +134,7 @@ def build_catalog(skills):
             "sunset_date": s.get("sunset_date"),
             "download_url": f"{RAW_BASE}/{s['folder']}/SKILL.md",
             "metadata_url": f"{RAW_BASE}/{s['folder']}/metadata.json",
-            "download_zip_url": f"https://github.com/{REPO}/releases/download/{s['id']}@{s['version']}/{s['id']}.zip",
+            "download_zip_url": f"{SITE_URL}/downloads/{s['id']}.zip",
         })
     return {
         "$schema_note": "Catalog manifest of the Skill Marketplace. One entry per non-archived skill.",
@@ -1180,7 +1180,7 @@ function openModal(skill) {{
   document.getElementById('modal-desc').textContent = skill.description || '';
   document.getElementById('modal-skill-content').textContent = skill.skill_content || '(No SKILL.md content found)';
   const _dlBtn = document.getElementById('btn-download-claude');
-  _dlBtn.href = `https://github.com/{REPO}/releases/download/${{skill.id}}@${{skill.version}}/${{skill.id}}.zip`;
+  _dlBtn.href = `downloads/${{skill.id}}.zip`;
   _dlBtn.setAttribute('download', `${{skill.id}}.zip`);
 
   // Feedback links -> pre-filled GitHub issues (no backend needed)
