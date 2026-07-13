@@ -1492,7 +1492,7 @@ function openModal(skill) {
   document.getElementById('modal-desc').textContent = skill.description || '';
   document.getElementById('modal-skill-content').textContent = skill.skill_content || '(No SKILL.md content found)';
   const _dlBtn = document.getElementById('btn-download-claude');
-  _dlBtn.href = `https://github.com/acc-sebastian/skill-marketplace/releases/download/${skill.id}@${skill.version}/${skill.id}.zip`;
+  _dlBtn.href = `downloads/${skill.id}.zip`;
   _dlBtn.setAttribute('download', `${skill.id}.zip`);
 
   // Feedback links -> pre-filled GitHub issues (no backend needed)
