@@ -4,7 +4,7 @@
   "site": "https://acc-sebastian.github.io/skill-marketplace",
   "repository": "https://github.com/acc-sebastian/skill-marketplace",
   "prompt_schema": "https://acc-sebastian.github.io/skill-marketplace/schema/prompt.schema.json",
-  "count": 10,
+  "count": 15,
   "prompts": [
     {
       "id": "budget-variance-explainer",
@@ -83,6 +83,84 @@
       ],
       "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/executive-summary-generator/PROMPT.md",
       "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/executive-summary-generator/metadata.json"
+    },
+    {
+      "id": "gl-subledger-reconciliation",
+      "name": "GL / Subledger Reconciliation",
+      "description": "Match general ledger balances against subledger detail (AP, AR, fixed assets, or similar) for the same accounts, classify every difference as timing, booking gap, error, or unexplained, and flag what needs resolution before period close.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Finance",
+      "tags": [
+        "reconciliation",
+        "general-ledger",
+        "subledger",
+        "finance",
+        "month-end-close"
+      ],
+      "complexity": "intermediate",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-14",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "variables": [
+        {
+          "name": "GL_DATA",
+          "required": true
+        },
+        {
+          "name": "SUBLEDGER_DATA",
+          "required": true
+        },
+        {
+          "name": "PERIOD",
+          "required": true
+        },
+        {
+          "name": "CONTEXT",
+          "required": false
+        }
+      ],
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/gl-subledger-reconciliation/PROMPT.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/gl-subledger-reconciliation/metadata.json"
+    },
+    {
+      "id": "incoming-invoice-data-extractor",
+      "name": "Incoming Invoice Data Extractor",
+      "description": "Extract structured, ERP-ready data (vendor, amounts, VAT, PO reference, line items) from a raw incoming invoice or OCR dump, flag missing mandatory fields, and match it against the purchase order before booking.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Finance",
+      "tags": [
+        "invoice",
+        "accounts-payable",
+        "data-extraction",
+        "procurement",
+        "finance"
+      ],
+      "complexity": "beginner",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-14",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "variables": [
+        {
+          "name": "INVOICE_TEXT",
+          "required": true
+        },
+        {
+          "name": "PO_DATA",
+          "required": false
+        },
+        {
+          "name": "CONTEXT",
+          "required": false
+        }
+      ],
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/incoming-invoice-data-extractor/PROMPT.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/incoming-invoice-data-extractor/metadata.json"
     },
     {
       "id": "kpi-management-commentary",
@@ -233,6 +311,43 @@
       "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/policy-compliance-cross-check/metadata.json"
     },
     {
+      "id": "quarterly-revenue-ir-narrative",
+      "name": "Quarterly Revenue IR Narrative",
+      "description": "Turn a quarterly revenue file into an investor-relations-ready narrative — segment breakdown, driver explanations, guidance reconciliation, and anticipated analyst questions — written for scrutiny, not promotion.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Communication",
+      "tags": [
+        "investor-relations",
+        "quarterly-report",
+        "revenue",
+        "ir",
+        "finance-communication"
+      ],
+      "complexity": "intermediate",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-14",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "variables": [
+        {
+          "name": "REVENUE_DATA",
+          "required": true
+        },
+        {
+          "name": "PERIOD",
+          "required": true
+        },
+        {
+          "name": "BUSINESS_CONTEXT",
+          "required": false
+        }
+      ],
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/quarterly-revenue-ir-narrative/PROMPT.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/quarterly-revenue-ir-narrative/metadata.json"
+    },
+    {
       "id": "rfp-requirements-extractor",
       "name": "RFP Requirements Extractor",
       "description": "Extract every requirement from an RFP or tender document into a structured, numbered requirements table with type classification, MoSCoW priority, and flagged ambiguities — the foundation for a compliant bid response.",
@@ -264,6 +379,42 @@
       ],
       "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/rfp-requirements-extractor/PROMPT.md",
       "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/rfp-requirements-extractor/metadata.json"
+    },
+    {
+      "id": "rfq-generator",
+      "name": "RFQ Generator",
+      "description": "Turn sourcing requirements into a structured, ready-to-send Request for Quotation — scope, specification table, evaluation criteria, submission rules, and a non-binding disclaimer — plus a list of open items procurement must still fill in.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Procurement",
+      "tags": [
+        "rfq",
+        "sourcing",
+        "procurement",
+        "vendor-management"
+      ],
+      "complexity": "beginner",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-14",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "variables": [
+        {
+          "name": "REQUIREMENTS",
+          "required": true
+        },
+        {
+          "name": "EVALUATION_CRITERIA",
+          "required": false
+        },
+        {
+          "name": "SUBMISSION_RULES",
+          "required": false
+        }
+      ],
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/rfq-generator/PROMPT.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/rfq-generator/metadata.json"
     },
     {
       "id": "risk-register-builder",
@@ -379,6 +530,43 @@
       ],
       "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/stakeholder-update-drafter/PROMPT.md",
       "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/stakeholder-update-drafter/metadata.json"
+    },
+    {
+      "id": "tam-sam-som-market-sizing",
+      "name": "TAM-SAM-SOM Market Sizing Calculator",
+      "description": "Turn raw market data and assumptions into a transparent TAM/SAM/SOM market-sizing breakdown for a business case — every narrowing step shown as an auditable calculation chain, plus a sensitivity range on the final number.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Strategy",
+      "tags": [
+        "market-sizing",
+        "tam-sam-som",
+        "strategy",
+        "business-case",
+        "analytics"
+      ],
+      "complexity": "intermediate",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-14",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "variables": [
+        {
+          "name": "TARGET_OFFERING",
+          "required": true
+        },
+        {
+          "name": "MARKET_DATA",
+          "required": true
+        },
+        {
+          "name": "ASSUMPTIONS",
+          "required": false
+        }
+      ],
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/tam-sam-som-market-sizing/PROMPT.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/tam-sam-som-market-sizing/metadata.json"
     }
   ]
 }

@@ -1,0 +1,48 @@
+{
+  "id": "quarterly-revenue-ir-narrative",
+  "name": "Quarterly Revenue IR Narrative",
+  "description": "Turn a quarterly revenue file into an investor-relations-ready narrative — segment breakdown, driver explanations, guidance reconciliation, and anticipated analyst questions — written for scrutiny, not promotion.",
+  "author": "accilium",
+  "owner": "acc-sebastian",
+  "version": "1.0.0",
+  "created": "2026-07-14",
+  "last_reviewed": "2026-07-14",
+  "status": "published",
+  "category": "Communication",
+  "tags": [
+    "investor-relations",
+    "quarterly-report",
+    "revenue",
+    "ir",
+    "finance-communication"
+  ],
+  "complexity": "intermediate",
+  "variables": [
+    {
+      "name": "REVENUE_DATA",
+      "description": "Quarterly revenue figures, by segment/region if available, vs. prior period and guidance.",
+      "example": "Total revenue EUR 128m (prior Q EUR 119m, guidance EUR 125-130m); Segment A EUR 80m (+6%); Segment B EUR 48m (+11%)...",
+      "required": true
+    },
+    {
+      "name": "PERIOD",
+      "description": "The quarter being reported.",
+      "example": "Q2 2026",
+      "required": true
+    },
+    {
+      "name": "BUSINESS_CONTEXT",
+      "description": "Known drivers behind the numbers — new contracts, FX effects, one-offs, macro events.",
+      "example": "Segment B growth driven by a new EUR 6m annual contract signed in April; FX tailwind of ~1.5% from USD exposure",
+      "required": false
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-07-14",
+      "change": "Initial release"
+    }
+  ],
+  "example_input": "REVENUE_DATA: total EUR 128m vs guidance EUR 125-130m; PERIOD: Q2 2026; BUSINESS_CONTEXT: new contract signed in April"
+}
