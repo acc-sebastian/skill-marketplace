@@ -1,0 +1,48 @@
+{
+  "id": "policy-compliance-cross-check",
+  "name": "Policy Compliance Cross-Check",
+  "description": "Compare a document, decision, or transaction against internal policy or an authority/approval matrix and produce a structured finding list of violations, gaps, and ambiguous cases — including a check that the approver's authority matched what the decision required.",
+  "author": "accilium",
+  "owner": "acc-sebastian",
+  "version": "1.0.0",
+  "created": "2026-07-14",
+  "last_reviewed": "2026-07-14",
+  "status": "published",
+  "category": "Compliance",
+  "tags": [
+    "policy",
+    "compliance",
+    "cross-check",
+    "authority-matrix",
+    "audit"
+  ],
+  "complexity": "intermediate",
+  "variables": [
+    {
+      "name": "POLICY_TEXT",
+      "description": "The internal policy, SBO guideline, or delegation-of-authority matrix text the subject must comply with.",
+      "example": "Purchases above EUR 50,000 require dual approval by Department Head and CFO; contracts over 3 years require Legal review...",
+      "required": true
+    },
+    {
+      "name": "SUBJECT",
+      "description": "The document, decision, transaction, or contract being checked against the policy.",
+      "example": "Purchase order for EUR 75,000 approved by Department Head only, no CFO signature on file",
+      "required": true
+    },
+    {
+      "name": "CONTEXT",
+      "description": "Extra context that may affect interpretation (exceptions granted, related approvals, prior precedent).",
+      "example": "An emergency-procurement exception process exists but was not invoked here",
+      "required": false
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-07-14",
+      "change": "Initial release"
+    }
+  ],
+  "example_input": "POLICY_TEXT: dual approval required above EUR 50k; SUBJECT: EUR 75k PO with single approval; CONTEXT: no exception invoked"
+}

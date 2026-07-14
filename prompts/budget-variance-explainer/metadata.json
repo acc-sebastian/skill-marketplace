@@ -1,0 +1,54 @@
+{
+  "id": "budget-variance-explainer",
+  "name": "Budget Variance Explainer",
+  "description": "Turn a budget-vs-actual data dump into a decision-ready variance explanation — every deviation quantified, causally explained, classified as timing vs. run-rate, and routed to an owner for corrective action.",
+  "author": "accilium",
+  "owner": "acc-sebastian",
+  "version": "1.0.0",
+  "created": "2026-07-14",
+  "last_reviewed": "2026-07-14",
+  "status": "published",
+  "category": "Finance",
+  "tags": [
+    "budget",
+    "variance",
+    "finance",
+    "reconciliation",
+    "actuals"
+  ],
+  "complexity": "intermediate",
+  "variables": [
+    {
+      "name": "BUDGET_ACTUAL_DATA",
+      "description": "The budget vs. actual data (paste as text, CSV, or markdown table) — one line per budget item.",
+      "example": "Personnel: budget 1.2m, actual 1.35m; Travel: budget 80k, actual 52k; Marketing: budget 300k, actual 410k...",
+      "required": true
+    },
+    {
+      "name": "PERIOD",
+      "description": "Reporting period and comparison basis.",
+      "example": "Q2 2026 YTD vs. approved FY2026 budget",
+      "required": true
+    },
+    {
+      "name": "CONTEXT",
+      "description": "Known events that may explain deviations (hiring freezes, price changes, delayed projects, one-offs).",
+      "example": "Two open roles unfilled since March; marketing ran an unplanned campaign in May for the product launch",
+      "required": false
+    },
+    {
+      "name": "THRESHOLD",
+      "description": "Materiality threshold for what counts as a variance worth individual commentary.",
+      "example": "Anything beyond ±5% or ±25k, whichever is lower",
+      "required": false
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-07-14",
+      "change": "Initial release"
+    }
+  ],
+  "example_input": "BUDGET_ACTUAL_DATA: marketing 300k budget vs 410k actual; PERIOD: Q2 2026 vs budget; CONTEXT: unplanned launch campaign; THRESHOLD: ±5%"
+}

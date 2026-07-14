@@ -1,0 +1,48 @@
+{
+  "id": "scenario-comparison-matrix",
+  "name": "Scenario & Location Comparison Matrix",
+  "description": "Score and rank multiple scenarios, locations, or strategic options against weighted criteria — with knock-out constraints, an auditable weighted-scoring table, and a sensitivity check on the ranking.",
+  "author": "accilium",
+  "owner": "acc-sebastian",
+  "version": "1.0.0",
+  "created": "2026-07-14",
+  "last_reviewed": "2026-07-14",
+  "status": "published",
+  "category": "Strategy",
+  "tags": [
+    "scenario-analysis",
+    "location-screening",
+    "decision-matrix",
+    "strategy",
+    "weighted-scoring"
+  ],
+  "complexity": "intermediate",
+  "variables": [
+    {
+      "name": "OPTIONS",
+      "description": "The scenarios, locations, or strategic options being compared, with whatever descriptive data is available for each.",
+      "example": "Site A: Graz, industrial zone, 40min from HQ, land cost 1.2m; Site B: Linz, near rail hub, land cost 1.8m; Site C: Wels, greenfield, land cost 0.9m...",
+      "required": true
+    },
+    {
+      "name": "CRITERIA",
+      "description": "The evaluation criteria, with weights if already defined.",
+      "example": "Logistics access (30%), total cost (25%), permitting risk (20%), workforce availability (15%), expansion room (10%)",
+      "required": true
+    },
+    {
+      "name": "CONSTRAINTS",
+      "description": "Hard requirements that disqualify an option regardless of score.",
+      "example": "Must have rail or highway access within 10km; must allow heavy-industry zoning",
+      "required": false
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-07-14",
+      "change": "Initial release"
+    }
+  ],
+  "example_input": "OPTIONS: three candidate sites; CRITERIA: logistics 30%, cost 25%, permitting 20%, workforce 15%, expansion 10%; CONSTRAINTS: rail access required"
+}

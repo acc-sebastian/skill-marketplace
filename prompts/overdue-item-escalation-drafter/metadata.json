@@ -1,0 +1,48 @@
+{
+  "id": "overdue-item-escalation-drafter",
+  "name": "Overdue Item Escalation Drafter",
+  "description": "Turn a list of overdue action items, audit findings, or unanswered requests into staged reminder-and-escalation messages — a friendly nudge, a formal reminder, or a management escalation, calibrated to how overdue each item is.",
+  "author": "accilium",
+  "owner": "acc-sebastian",
+  "version": "1.0.0",
+  "created": "2026-07-14",
+  "last_reviewed": "2026-07-14",
+  "status": "published",
+  "category": "Communication",
+  "tags": [
+    "escalation",
+    "reminders",
+    "follow-up",
+    "overdue",
+    "communication"
+  ],
+  "complexity": "beginner",
+  "variables": [
+    {
+      "name": "OVERDUE_ITEMS",
+      "description": "List of open items with due date, owner, and days overdue (or enough detail to derive it).",
+      "example": "1) Sign vendor NDA — owner Legal, due 2026-06-20; 2) Submit audit evidence pack — owner Finance Ops, due 2026-06-15, 2nd reminder...",
+      "required": true
+    },
+    {
+      "name": "ESCALATION_LADDER",
+      "description": "Who receives escalations at each stage, if a defined process exists.",
+      "example": "Tier 2 copies the team lead; Tier 3 goes to the PMO director",
+      "required": false
+    },
+    {
+      "name": "TONE",
+      "description": "Desired tone of voice for the reminders.",
+      "example": "Professional and firm, no sarcasm, assume good faith at tier 1",
+      "required": false
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-07-14",
+      "change": "Initial release"
+    }
+  ],
+  "example_input": "OVERDUE_ITEMS: audit evidence pack overdue 12 days, owner Finance Ops; ESCALATION_LADDER: tier 3 to PMO director; TONE: firm but professional"
+}
