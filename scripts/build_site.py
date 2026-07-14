@@ -884,9 +884,7 @@ def build_html(skills, prompts):
       <a class="view-btn" data-view="prompts" href="#prompts">Prompt Library</a>
     </div>
     <nav>
-      <a class="navlink" id="nav-browse" href="#skills" onclick="navBrowse(event)">Browse</a>
       <a class="navlink" href="#" onclick="event.preventDefault(); openInsights()">Insights</a>
-      <a class="navlink" href="#contribute">Contribute</a>
       <a class="navlink" id="nav-suggest" href="{PROPOSE_URL}" target="_blank">Suggest a skill</a>
       <a class="navlink" href="https://github.com/acc-sebastian/skill-marketplace" target="_blank">GitHub</a>
       <button class="theme-toggle" id="theme-toggle" title="Toggle light / dark mode" aria-label="Toggle light / dark mode"><span id="theme-label">Dark</span></button>
@@ -1535,18 +1533,11 @@ function applyView(view) {{
   document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
 
   // Nav adapts to the active view
-  document.getElementById('nav-browse').href = view === 'prompts' ? '#prompts' : '#skills';
   const suggest = document.getElementById('nav-suggest');
   suggest.textContent = view === 'prompts' ? 'Suggest a prompt' : 'Suggest a skill';
   suggest.href = PROPOSE_URLS[view];
 }}
 
-function navBrowse(e) {{
-  e.preventDefault();
-  const target = activeView === 'prompts' ? '#prompts' : '#skills';
-  if (location.hash !== target) location.hash = target; // triggers applyView + scroll
-  else window.scrollTo({{ top: 0, behavior: 'smooth' }});
-}}
 window.addEventListener('hashchange', () => {{
   const h = location.hash.replace('#', '');
   if (h === 'skills' || h === 'prompts') {{
