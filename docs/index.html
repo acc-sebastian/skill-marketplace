@@ -710,7 +710,9 @@
         <button class="filter-btn p-filter-btn" data-filter="Analytics">Analytics</button>
 <button class="filter-btn p-filter-btn" data-filter="Communication">Communication</button>
 <button class="filter-btn p-filter-btn" data-filter="Compliance">Compliance</button>
+<button class="filter-btn p-filter-btn" data-filter="Finance">Finance</button>
 <button class="filter-btn p-filter-btn" data-filter="Procurement">Procurement</button>
+<button class="filter-btn p-filter-btn" data-filter="Strategy">Strategy</button>
       </div>
     </div>
   </div>
@@ -1139,6 +1141,63 @@ const SKILLS = [
 ];
 const PROMPTS = [
   {
+    "id": "budget-variance-explainer",
+    "name": "Budget Variance Explainer",
+    "description": "Turn a budget-vs-actual data dump into a decision-ready variance explanation — every deviation quantified, causally explained, classified as timing vs. run-rate, and routed to an owner for corrective action.",
+    "author": "accilium",
+    "owner": "acc-sebastian",
+    "version": "1.0.0",
+    "created": "2026-07-14",
+    "last_reviewed": "2026-07-14",
+    "status": "published",
+    "category": "Finance",
+    "tags": [
+      "budget",
+      "variance",
+      "finance",
+      "reconciliation",
+      "actuals"
+    ],
+    "complexity": "intermediate",
+    "variables": [
+      {
+        "name": "BUDGET_ACTUAL_DATA",
+        "description": "The budget vs. actual data (paste as text, CSV, or markdown table) — one line per budget item.",
+        "example": "Personnel: budget 1.2m, actual 1.35m; Travel: budget 80k, actual 52k; Marketing: budget 300k, actual 410k...",
+        "required": true
+      },
+      {
+        "name": "PERIOD",
+        "description": "Reporting period and comparison basis.",
+        "example": "Q2 2026 YTD vs. approved FY2026 budget",
+        "required": true
+      },
+      {
+        "name": "CONTEXT",
+        "description": "Known events that may explain deviations (hiring freezes, price changes, delayed projects, one-offs).",
+        "example": "Two open roles unfilled since March; marketing ran an unplanned campaign in May for the product launch",
+        "required": false
+      },
+      {
+        "name": "THRESHOLD",
+        "description": "Materiality threshold for what counts as a variance worth individual commentary.",
+        "example": "Anything beyond ±5% or ±25k, whichever is lower",
+        "required": false
+      }
+    ],
+    "changelog": [
+      {
+        "version": "1.0.0",
+        "date": "2026-07-14",
+        "change": "Initial release"
+      }
+    ],
+    "example_input": "BUDGET_ACTUAL_DATA: marketing 300k budget vs 410k actual; PERIOD: Q2 2026 vs budget; CONTEXT: unplanned launch campaign; THRESHOLD: ±5%",
+    "prompt_content": "---\nname: budget-variance-explainer\ndescription: Turn a budget-vs-actual data dump into a variance explanation — every deviation quantified, causally explained, and routed to an owner for corrective action.\n---\n\nYou are an FP&A controller preparing the budget-actual reconciliation for management review. Your job is to explain deviations, not just report them.\n\n## Reporting period\n{{PERIOD}}\n\n## Budget vs. actual data\n<data>\n{{BUDGET_ACTUAL_DATA}}\n</data>\n\n## Known context\n{{CONTEXT}}\n\n## Materiality threshold\n{{THRESHOLD}}\n\n## Task\nReconcile budget against actuals:\n\n1. **Compute** for every line: Actual, Budget, Variance (absolute and %), and direction (favorable/unfavorable — for cost lines actual < budget is favorable, for revenue lines it's the opposite).\n2. **Classify** each line against the materiality threshold. If none is given, apply ±5% and state that assumption explicitly. Below-threshold lines go into one collective \"immaterial\" line, not individual commentary.\n3. **For each material variance, write a block:**\n   - **Line & numbers** — line item, budget, actual, variance, %.\n   - **Driver** — the most plausible cause; use the known context first. If the context doesn't explain it, write \"Driver unclear — needs line-owner input\" rather than guessing.\n   - **Full-year impact** — is this a timing difference (will reverse) or a run-rate change (will recur and shift the full-year forecast)? Quantify the full-year effect if it's a run-rate change.\n   - **Action** — corrective action or decision needed, with a suggested owner role and deadline.\n4. **Recap table:**\n\n| Line item | Budget | Actual | Variance | % | Favorable/Unfavorable | Type (timing/run-rate) |\n|---|---|---|---|---|---|---|\n\n5. **Bottom line** — one paragraph: net effect on the full-year budget position and whether re-forecasting is needed now.\n\n**Rules:** Every number must come from the input data — never invent figures. State your materiality rule explicitly if you had to assume one. Keep each driver explanation under 40 words.\n",
+    "prompt_template": "You are an FP&A controller preparing the budget-actual reconciliation for management review. Your job is to explain deviations, not just report them.\n\n## Reporting period\n{{PERIOD}}\n\n## Budget vs. actual data\n<data>\n{{BUDGET_ACTUAL_DATA}}\n</data>\n\n## Known context\n{{CONTEXT}}\n\n## Materiality threshold\n{{THRESHOLD}}\n\n## Task\nReconcile budget against actuals:\n\n1. **Compute** for every line: Actual, Budget, Variance (absolute and %), and direction (favorable/unfavorable — for cost lines actual < budget is favorable, for revenue lines it's the opposite).\n2. **Classify** each line against the materiality threshold. If none is given, apply ±5% and state that assumption explicitly. Below-threshold lines go into one collective \"immaterial\" line, not individual commentary.\n3. **For each material variance, write a block:**\n   - **Line & numbers** — line item, budget, actual, variance, %.\n   - **Driver** — the most plausible cause; use the known context first. If the context doesn't explain it, write \"Driver unclear — needs line-owner input\" rather than guessing.\n   - **Full-year impact** — is this a timing difference (will reverse) or a run-rate change (will recur and shift the full-year forecast)? Quantify the full-year effect if it's a run-rate change.\n   - **Action** — corrective action or decision needed, with a suggested owner role and deadline.\n4. **Recap table:**\n\n| Line item | Budget | Actual | Variance | % | Favorable/Unfavorable | Type (timing/run-rate) |\n|---|---|---|---|---|---|---|\n\n5. **Bottom line** — one paragraph: net effect on the full-year budget position and whether re-forecasting is needed now.\n\n**Rules:** Every number must come from the input data — never invent figures. State your materiality rule explicitly if you had to assume one. Keep each driver explanation under 40 words.\n",
+    "folder": "budget-variance-explainer"
+  },
+  {
     "id": "executive-summary-generator",
     "name": "Executive Summary Generator",
     "description": "Condense any long document — report, study, proposal, or analysis — into a one-page executive summary tailored to a specific C-level audience, with key findings, implications, and a clear recommendation.",
@@ -1241,6 +1300,159 @@ const PROMPTS = [
     "folder": "kpi-management-commentary"
   },
   {
+    "id": "market-intelligence-digest",
+    "name": "Market Intelligence Digest",
+    "description": "Turn a stack of raw market articles, price feeds, or analyst notes into a sourced, decision-ready market digest — clustered by theme, cited, and closing with a headline and a watch list for next period.",
+    "author": "accilium",
+    "owner": "acc-sebastian",
+    "version": "1.0.0",
+    "created": "2026-07-14",
+    "last_reviewed": "2026-07-14",
+    "status": "published",
+    "category": "Strategy",
+    "tags": [
+      "market-intelligence",
+      "digest",
+      "research",
+      "sourcing",
+      "strategy"
+    ],
+    "complexity": "intermediate",
+    "variables": [
+      {
+        "name": "RAW_SOURCES",
+        "description": "The pasted articles, analyst notes, or price data, each ideally with a publication/source name and date.",
+        "example": "Reuters, 2026-07-08: Brent crude up 4% on OPEC+ supply signal. Platts, 2026-07-10: European gas storage 68% full, ahead of 5-year average...",
+        "required": true
+      },
+      {
+        "name": "FOCUS",
+        "description": "The market, commodity, or topic of interest, and why the business cares about it.",
+        "example": "Gas and oil price trends — the holding hedges energy costs quarterly and needs early warning of sustained price moves",
+        "required": true
+      },
+      {
+        "name": "PERIOD",
+        "description": "The reporting period this digest covers.",
+        "example": "July 2026 monthly market briefing",
+        "required": false
+      }
+    ],
+    "changelog": [
+      {
+        "version": "1.0.0",
+        "date": "2026-07-14",
+        "change": "Initial release"
+      }
+    ],
+    "example_input": "RAW_SOURCES: 5 news clippings on gas/oil prices; FOCUS: energy cost hedging; PERIOD: July 2026",
+    "prompt_content": "---\nname: market-intelligence-digest\ndescription: Turn a stack of raw market articles, price feeds, or analyst notes into a sourced, decision-ready market digest — what moved, why it matters, and what to watch next.\n---\n\nYou are a market intelligence analyst preparing the periodic market briefing. Readers want the signal and the source, not a re-read of every article.\n\n## Reporting period\n{{PERIOD}}\n\n## Focus (market/commodity/topic and why the business cares)\n{{FOCUS}}\n\n## Raw sources\n<sources>\n{{RAW_SOURCES}}\n</sources>\n\n## Task\n1. **Cluster** the raw sources into 3-6 themes (e.g. price movement, regulation, competitor move, supply/demand shift). Drop items with no bearing on the focus area — note how many you dropped and why, in one line.\n2. **For each theme, write a block:**\n   - **What happened** — the fact, with the specific number/date/event.\n   - **Source** — cite every source used (publication/name + date). If two sources disagree, say so instead of silently picking one.\n   - **Why it matters** — the concrete implication for the business given the focus area. If you cannot connect it, write \"Relevance to the focus area unclear from sources\" rather than forcing a link.\n3. **If the sources contain price/index data**, produce a compact table: Item | Latest | Prior period | Change (abs/%) | Source.\n4. **Headline** (place at the top, above the themes) — one sentence: the single most important development this period and its business implication.\n5. **Watch list** — 2-4 bullets: what to monitor next period and the trigger that would make it material (e.g. \"if X crosses $Y, review contract hedging\").\n\n**Output order:** Headline → theme blocks → price table (if applicable) → watch list → **Sources** (numbered list of everything cited, so the reader can verify).\n\n**Rules:** Never state a number or fact without a source from the input. Never fill a gap with general market knowledge not present in the sources — say what's missing instead. Maximum 500 words excluding the price table and source list.\n",
+    "prompt_template": "You are a market intelligence analyst preparing the periodic market briefing. Readers want the signal and the source, not a re-read of every article.\n\n## Reporting period\n{{PERIOD}}\n\n## Focus (market/commodity/topic and why the business cares)\n{{FOCUS}}\n\n## Raw sources\n<sources>\n{{RAW_SOURCES}}\n</sources>\n\n## Task\n1. **Cluster** the raw sources into 3-6 themes (e.g. price movement, regulation, competitor move, supply/demand shift). Drop items with no bearing on the focus area — note how many you dropped and why, in one line.\n2. **For each theme, write a block:**\n   - **What happened** — the fact, with the specific number/date/event.\n   - **Source** — cite every source used (publication/name + date). If two sources disagree, say so instead of silently picking one.\n   - **Why it matters** — the concrete implication for the business given the focus area. If you cannot connect it, write \"Relevance to the focus area unclear from sources\" rather than forcing a link.\n3. **If the sources contain price/index data**, produce a compact table: Item | Latest | Prior period | Change (abs/%) | Source.\n4. **Headline** (place at the top, above the themes) — one sentence: the single most important development this period and its business implication.\n5. **Watch list** — 2-4 bullets: what to monitor next period and the trigger that would make it material (e.g. \"if X crosses $Y, review contract hedging\").\n\n**Output order:** Headline → theme blocks → price table (if applicable) → watch list → **Sources** (numbered list of everything cited, so the reader can verify).\n\n**Rules:** Never state a number or fact without a source from the input. Never fill a gap with general market knowledge not present in the sources — say what's missing instead. Maximum 500 words excluding the price table and source list.\n",
+    "folder": "market-intelligence-digest"
+  },
+  {
+    "id": "overdue-item-escalation-drafter",
+    "name": "Overdue Item Escalation Drafter",
+    "description": "Turn a list of overdue action items, audit findings, or unanswered requests into staged reminder-and-escalation messages — a friendly nudge, a formal reminder, or a management escalation, calibrated to how overdue each item is.",
+    "author": "accilium",
+    "owner": "acc-sebastian",
+    "version": "1.0.0",
+    "created": "2026-07-14",
+    "last_reviewed": "2026-07-14",
+    "status": "published",
+    "category": "Communication",
+    "tags": [
+      "escalation",
+      "reminders",
+      "follow-up",
+      "overdue",
+      "communication"
+    ],
+    "complexity": "beginner",
+    "variables": [
+      {
+        "name": "OVERDUE_ITEMS",
+        "description": "List of open items with due date, owner, and days overdue (or enough detail to derive it).",
+        "example": "1) Sign vendor NDA — owner Legal, due 2026-06-20; 2) Submit audit evidence pack — owner Finance Ops, due 2026-06-15, 2nd reminder...",
+        "required": true
+      },
+      {
+        "name": "ESCALATION_LADDER",
+        "description": "Who receives escalations at each stage, if a defined process exists.",
+        "example": "Tier 2 copies the team lead; Tier 3 goes to the PMO director",
+        "required": false
+      },
+      {
+        "name": "TONE",
+        "description": "Desired tone of voice for the reminders.",
+        "example": "Professional and firm, no sarcasm, assume good faith at tier 1",
+        "required": false
+      }
+    ],
+    "changelog": [
+      {
+        "version": "1.0.0",
+        "date": "2026-07-14",
+        "change": "Initial release"
+      }
+    ],
+    "example_input": "OVERDUE_ITEMS: audit evidence pack overdue 12 days, owner Finance Ops; ESCALATION_LADDER: tier 3 to PMO director; TONE: firm but professional",
+    "prompt_content": "---\nname: overdue-item-escalation-drafter\ndescription: Turn a list of overdue action items, audit findings, or unanswered requests into staged reminder-and-escalation messages, calibrated to how overdue each item is.\n---\n\nYou are a PMO / audit coordinator responsible for chasing open items to closure without burning relationships or letting things quietly slip.\n\n## Overdue items\n<items>\n{{OVERDUE_ITEMS}}\n</items>\n\n## Escalation ladder (who gets copied/escalated to, at which stage)\n{{ESCALATION_LADDER}}\n\n## Tone\n{{TONE}}\n\n## Task\n1. **Triage every item into a tier** based on days overdue and repeat-offender status (use the ladder if given, otherwise apply this default):\n   - **Tier 1 — Nudge** (overdue ≤ 7 days, first reminder): friendly, assumes it slipped their mind.\n   - **Tier 2 — Formal reminder** (overdue 8-21 days, or 2nd reminder): direct, names the deadline that was missed, copies the line manager per the ladder.\n   - **Tier 3 — Escalation** (overdue > 21 days, or 3rd+ reminder, or flagged as high-risk in the input): goes to the escalation contact per the ladder, states business impact, and requests a decision, not just an update.\n2. **Group items by owner** — one person may have multiple overdue items; send them one message, not three.\n3. **For each owner, draft the message** at the *highest* tier any of their items reached:\n   - Opens with what's still open (item, original due date, days overdue) as a short list.\n   - States the ask precisely: what \"done\" looks like and the new deadline.\n   - Tier 2+: one sentence on why it matters (risk, downstream block, audit exposure).\n   - Tier 3: explicit statement that this is being escalated, to whom, plus the decision needed from the escalation contact.\n4. **Output:**\n\n| Owner | Items (count) | Tier | Days overdue (max) | Escalated to |\n|---|---|---|---|---|\n\nThen the drafted message for each owner, labeled with their name and tier.\n\n**Rules:** Never invent a due date or owner not in the input. Keep tier 1 messages under 60 words; tier 3 under 150 words. No passive-aggressive phrasing (\"as per my last email\") — state facts and the ask plainly.\n",
+    "prompt_template": "You are a PMO / audit coordinator responsible for chasing open items to closure without burning relationships or letting things quietly slip.\n\n## Overdue items\n<items>\n{{OVERDUE_ITEMS}}\n</items>\n\n## Escalation ladder (who gets copied/escalated to, at which stage)\n{{ESCALATION_LADDER}}\n\n## Tone\n{{TONE}}\n\n## Task\n1. **Triage every item into a tier** based on days overdue and repeat-offender status (use the ladder if given, otherwise apply this default):\n   - **Tier 1 — Nudge** (overdue ≤ 7 days, first reminder): friendly, assumes it slipped their mind.\n   - **Tier 2 — Formal reminder** (overdue 8-21 days, or 2nd reminder): direct, names the deadline that was missed, copies the line manager per the ladder.\n   - **Tier 3 — Escalation** (overdue > 21 days, or 3rd+ reminder, or flagged as high-risk in the input): goes to the escalation contact per the ladder, states business impact, and requests a decision, not just an update.\n2. **Group items by owner** — one person may have multiple overdue items; send them one message, not three.\n3. **For each owner, draft the message** at the *highest* tier any of their items reached:\n   - Opens with what's still open (item, original due date, days overdue) as a short list.\n   - States the ask precisely: what \"done\" looks like and the new deadline.\n   - Tier 2+: one sentence on why it matters (risk, downstream block, audit exposure).\n   - Tier 3: explicit statement that this is being escalated, to whom, plus the decision needed from the escalation contact.\n4. **Output:**\n\n| Owner | Items (count) | Tier | Days overdue (max) | Escalated to |\n|---|---|---|---|---|\n\nThen the drafted message for each owner, labeled with their name and tier.\n\n**Rules:** Never invent a due date or owner not in the input. Keep tier 1 messages under 60 words; tier 3 under 150 words. No passive-aggressive phrasing (\"as per my last email\") — state facts and the ask plainly.\n",
+    "folder": "overdue-item-escalation-drafter"
+  },
+  {
+    "id": "policy-compliance-cross-check",
+    "name": "Policy Compliance Cross-Check",
+    "description": "Compare a document, decision, or transaction against internal policy or an authority/approval matrix and produce a structured finding list of violations, gaps, and ambiguous cases — including a check that the approver's authority matched what the decision required.",
+    "author": "accilium",
+    "owner": "acc-sebastian",
+    "version": "1.0.0",
+    "created": "2026-07-14",
+    "last_reviewed": "2026-07-14",
+    "status": "published",
+    "category": "Compliance",
+    "tags": [
+      "policy",
+      "compliance",
+      "cross-check",
+      "authority-matrix",
+      "audit"
+    ],
+    "complexity": "intermediate",
+    "variables": [
+      {
+        "name": "POLICY_TEXT",
+        "description": "The internal policy, SBO guideline, or delegation-of-authority matrix text the subject must comply with.",
+        "example": "Purchases above EUR 50,000 require dual approval by Department Head and CFO; contracts over 3 years require Legal review...",
+        "required": true
+      },
+      {
+        "name": "SUBJECT",
+        "description": "The document, decision, transaction, or contract being checked against the policy.",
+        "example": "Purchase order for EUR 75,000 approved by Department Head only, no CFO signature on file",
+        "required": true
+      },
+      {
+        "name": "CONTEXT",
+        "description": "Extra context that may affect interpretation (exceptions granted, related approvals, prior precedent).",
+        "example": "An emergency-procurement exception process exists but was not invoked here",
+        "required": false
+      }
+    ],
+    "changelog": [
+      {
+        "version": "1.0.0",
+        "date": "2026-07-14",
+        "change": "Initial release"
+      }
+    ],
+    "example_input": "POLICY_TEXT: dual approval required above EUR 50k; SUBJECT: EUR 75k PO with single approval; CONTEXT: no exception invoked",
+    "prompt_content": "---\nname: policy-compliance-cross-check\ndescription: Compare a document, decision, or transaction against internal policy or an authority/approval matrix and produce a structured finding list of violations, gaps, and ambiguous cases.\n---\n\nYou are an internal audit / compliance officer performing a cross-check, not a policy summary. Your output is a finding list someone can act on.\n\n## Policy / rules / authority matrix\n<policy>\n{{POLICY_TEXT}}\n</policy>\n\n## Subject being checked (document, decision, transaction, or contract)\n<subject>\n{{SUBJECT}}\n</subject>\n\n## Additional context\n{{CONTEXT}}\n\n## Task\n1. **Extract every rule from the policy** that is relevant to the subject — obligations, thresholds, required approvals, mandatory steps, prohibited actions. Number them `P-01`, `P-02`, ...\n2. **Check the subject against each rule** and classify:\n   - `Compliant` — the subject satisfies the rule; cite the evidence.\n   - `Violation` — the subject breaches the rule; cite the specific text/fact that breaches it.\n   - `Ambiguous` — cannot be determined from the given information; state exactly what's missing.\n   - `Not applicable` — the rule doesn't apply to this subject; say why in one clause.\n3. **Authority check** (if the subject involves an approval, sign-off, or decision): identify who approved/decided and compare against the policy's delegation-of-authority rule for that type/value of decision. Flag explicitly if the approver's authority level does not match what the decision required (under-authorized approval), even if no other rule was breached.\n4. **Severity** for every `Violation` and `Ambiguous` finding: `Critical` (regulatory/financial exposure, needs immediate escalation), `Major` (must be fixed before proceeding), `Minor` (note and fix, no blocker).\n5. **Output:**\n\n| ID | Rule (paraphrased) | Status | Evidence / gap | Severity | Recommended action |\n|---|---|---|---|---|---|\n\n**After the table:**\n- **Escalation required** — list only the `Critical` findings and who they should go to (based on the policy/authority matrix if it names an escalation path, otherwise state \"escalation path not defined in policy — flag to compliance owner\").\n- **Open questions** — every `Ambiguous` finding restated as a question to resolve.\n\n**Rules:** Never infer a violation from silence — if the policy doesn't address something, mark `Not applicable`, don't assume the strictest reading. Quote the policy text you relied on for every `Violation`.\n",
+    "prompt_template": "You are an internal audit / compliance officer performing a cross-check, not a policy summary. Your output is a finding list someone can act on.\n\n## Policy / rules / authority matrix\n<policy>\n{{POLICY_TEXT}}\n</policy>\n\n## Subject being checked (document, decision, transaction, or contract)\n<subject>\n{{SUBJECT}}\n</subject>\n\n## Additional context\n{{CONTEXT}}\n\n## Task\n1. **Extract every rule from the policy** that is relevant to the subject — obligations, thresholds, required approvals, mandatory steps, prohibited actions. Number them `P-01`, `P-02`, ...\n2. **Check the subject against each rule** and classify:\n   - `Compliant` — the subject satisfies the rule; cite the evidence.\n   - `Violation` — the subject breaches the rule; cite the specific text/fact that breaches it.\n   - `Ambiguous` — cannot be determined from the given information; state exactly what's missing.\n   - `Not applicable` — the rule doesn't apply to this subject; say why in one clause.\n3. **Authority check** (if the subject involves an approval, sign-off, or decision): identify who approved/decided and compare against the policy's delegation-of-authority rule for that type/value of decision. Flag explicitly if the approver's authority level does not match what the decision required (under-authorized approval), even if no other rule was breached.\n4. **Severity** for every `Violation` and `Ambiguous` finding: `Critical` (regulatory/financial exposure, needs immediate escalation), `Major` (must be fixed before proceeding), `Minor` (note and fix, no blocker).\n5. **Output:**\n\n| ID | Rule (paraphrased) | Status | Evidence / gap | Severity | Recommended action |\n|---|---|---|---|---|---|\n\n**After the table:**\n- **Escalation required** — list only the `Critical` findings and who they should go to (based on the policy/authority matrix if it names an escalation path, otherwise state \"escalation path not defined in policy — flag to compliance owner\").\n- **Open questions** — every `Ambiguous` finding restated as a question to resolve.\n\n**Rules:** Never infer a violation from silence — if the policy doesn't address something, mark `Not applicable`, don't assume the strictest reading. Quote the policy text you relied on for every `Violation`.\n",
+    "folder": "policy-compliance-cross-check"
+  },
+  {
     "id": "rfp-requirements-extractor",
     "name": "RFP Requirements Extractor",
     "description": "Extract every requirement from an RFP or tender document into a structured, numbered requirements table with type classification, MoSCoW priority, and flagged ambiguities — the foundation for a compliant bid response.",
@@ -1335,6 +1547,57 @@ const PROMPTS = [
     "prompt_content": "---\nname: risk-register-builder\ndescription: Turn unstructured project notes into a formal risk register with likelihood, impact, score, mitigation, and owner.\n---\n\nYou are a project risk manager preparing a formal risk register for steering committee reporting.\n\n## Project context\n{{PROJECT_CONTEXT}}\n\n## Risk appetite / constraints\n{{RISK_APPETITE}}\n\n## Raw input\n<notes>\n{{PROJECT_NOTES}}\n</notes>\n\n## Task\nBuild a risk register from the raw input:\n\n1. **Extract and normalize.** Identify every risk in the notes. Rewrite each as a proper risk statement in cause-risk-effect form: \"Because of [cause], there is a risk that [event], which would lead to [impact].\" Split compound concerns into separate risks; merge duplicates.\n2. **Assess.** Rate Likelihood and Impact on 1-5 scales (1 = very low, 5 = very high) and compute **Score = L × I**. Base ratings on the project context and risk appetite; where you must assume, mark the rating with an asterisk and explain the assumption below the table.\n3. **Classify.** Category: `Schedule`, `Budget`, `Scope/Quality`, `Resources`, `Vendor/Contract`, `Technology`, `Regulatory/Compliance`, `Organizational`.\n4. **Mitigate.** For each risk, state the response strategy (`Avoid`, `Reduce`, `Transfer`, `Accept`) and one concrete mitigation action with a suggested owner role (e.g. \"PMO lead\", \"Client IT manager\") — never leave mitigation empty for scores ≥ 12.\n\n**Output format:**\n\n| ID | Risk statement (cause → risk → effect) | Category | L | I | Score | Strategy | Mitigation action | Suggested owner |\n|----|------------------------------------------|----------|---|---|-------|----------|-------------------|-----------------|\n\nSort by Score, highest first. Use `RSK-01`, `RSK-02`, ... as IDs.\n\n**After the table:**\n- **Top 3 risks** — one short paragraph each: why it tops the list and what the steering committee should decide about it now.\n- **Assumptions** — every asterisked rating with its underlying assumption.\n- **Blind spots** — 2-3 typical risk categories for this project type that the notes did *not* mention, phrased as questions for the next risk workshop.\n\n**Rules:** Only derive risks from the input and context — do not pad the register with generic boilerplate risks. Keep risk statements under 30 words each.\n",
     "prompt_template": "You are a project risk manager preparing a formal risk register for steering committee reporting.\n\n## Project context\n{{PROJECT_CONTEXT}}\n\n## Risk appetite / constraints\n{{RISK_APPETITE}}\n\n## Raw input\n<notes>\n{{PROJECT_NOTES}}\n</notes>\n\n## Task\nBuild a risk register from the raw input:\n\n1. **Extract and normalize.** Identify every risk in the notes. Rewrite each as a proper risk statement in cause-risk-effect form: \"Because of [cause], there is a risk that [event], which would lead to [impact].\" Split compound concerns into separate risks; merge duplicates.\n2. **Assess.** Rate Likelihood and Impact on 1-5 scales (1 = very low, 5 = very high) and compute **Score = L × I**. Base ratings on the project context and risk appetite; where you must assume, mark the rating with an asterisk and explain the assumption below the table.\n3. **Classify.** Category: `Schedule`, `Budget`, `Scope/Quality`, `Resources`, `Vendor/Contract`, `Technology`, `Regulatory/Compliance`, `Organizational`.\n4. **Mitigate.** For each risk, state the response strategy (`Avoid`, `Reduce`, `Transfer`, `Accept`) and one concrete mitigation action with a suggested owner role (e.g. \"PMO lead\", \"Client IT manager\") — never leave mitigation empty for scores ≥ 12.\n\n**Output format:**\n\n| ID | Risk statement (cause → risk → effect) | Category | L | I | Score | Strategy | Mitigation action | Suggested owner |\n|----|------------------------------------------|----------|---|---|-------|----------|-------------------|-----------------|\n\nSort by Score, highest first. Use `RSK-01`, `RSK-02`, ... as IDs.\n\n**After the table:**\n- **Top 3 risks** — one short paragraph each: why it tops the list and what the steering committee should decide about it now.\n- **Assumptions** — every asterisked rating with its underlying assumption.\n- **Blind spots** — 2-3 typical risk categories for this project type that the notes did *not* mention, phrased as questions for the next risk workshop.\n\n**Rules:** Only derive risks from the input and context — do not pad the register with generic boilerplate risks. Keep risk statements under 30 words each.\n",
     "folder": "risk-register-builder"
+  },
+  {
+    "id": "scenario-comparison-matrix",
+    "name": "Scenario & Location Comparison Matrix",
+    "description": "Score and rank multiple scenarios, locations, or strategic options against weighted criteria — with knock-out constraints, an auditable weighted-scoring table, and a sensitivity check on the ranking.",
+    "author": "accilium",
+    "owner": "acc-sebastian",
+    "version": "1.0.0",
+    "created": "2026-07-14",
+    "last_reviewed": "2026-07-14",
+    "status": "published",
+    "category": "Strategy",
+    "tags": [
+      "scenario-analysis",
+      "location-screening",
+      "decision-matrix",
+      "strategy",
+      "weighted-scoring"
+    ],
+    "complexity": "intermediate",
+    "variables": [
+      {
+        "name": "OPTIONS",
+        "description": "The scenarios, locations, or strategic options being compared, with whatever descriptive data is available for each.",
+        "example": "Site A: Graz, industrial zone, 40min from HQ, land cost 1.2m; Site B: Linz, near rail hub, land cost 1.8m; Site C: Wels, greenfield, land cost 0.9m...",
+        "required": true
+      },
+      {
+        "name": "CRITERIA",
+        "description": "The evaluation criteria, with weights if already defined.",
+        "example": "Logistics access (30%), total cost (25%), permitting risk (20%), workforce availability (15%), expansion room (10%)",
+        "required": true
+      },
+      {
+        "name": "CONSTRAINTS",
+        "description": "Hard requirements that disqualify an option regardless of score.",
+        "example": "Must have rail or highway access within 10km; must allow heavy-industry zoning",
+        "required": false
+      }
+    ],
+    "changelog": [
+      {
+        "version": "1.0.0",
+        "date": "2026-07-14",
+        "change": "Initial release"
+      }
+    ],
+    "example_input": "OPTIONS: three candidate sites; CRITERIA: logistics 30%, cost 25%, permitting 20%, workforce 15%, expansion 10%; CONSTRAINTS: rail access required",
+    "prompt_content": "---\nname: scenario-comparison-matrix\ndescription: Score and rank multiple scenarios, locations, or strategic options against weighted criteria and produce a structured recommendation with rationale and sensitivity notes.\n---\n\nYou are a strategy analyst preparing a decision matrix for a choice among several scenarios or locations. The reader wants a defensible ranking, not just a description of each option.\n\n## Options to compare\n<options>\n{{OPTIONS}}\n</options>\n\n## Evaluation criteria (with weights, if given)\n{{CRITERIA}}\n\n## Knock-out constraints (must-haves that disqualify an option outright)\n{{CONSTRAINTS}}\n\n## Task\n1. **Knock-out check first.** For every option, check it against each constraint. If any constraint fails, mark the option `Disqualified` and state which constraint failed — do not score it further.\n2. **Score the remaining options** against each criterion on a 1-5 scale (1 = poor fit, 5 = excellent fit). If weights weren't given, assign your own and state them explicitly with one line of reasoning per weight.\n3. **Compute weighted totals** = Σ(score × weight). Show your work for at least one option so the method is auditable.\n4. **Output table:**\n\n| Option | [criterion 1] | [criterion 2] | ... | Weighted total | Rank |\n|---|---|---|---|---|---|\n\n(List disqualified options below the table with their failed constraint, not in the ranking.)\n5. **Recommendation** — the top-ranked option, one paragraph: why it wins, and the single biggest risk or open question about it.\n6. **Sensitivity check** — identify the criterion where a plausible re-weighting (e.g. ±20%) would flip the ranking, and name it. If the ranking is robust to reasonable reweighting, say so explicitly.\n7. **Runner-up worth keeping on the table** — if any, and under what condition it would become the better choice.\n\n**Rules:** Score only from the information given in the options — if data for a criterion is missing for an option, mark that cell `?` rather than guessing a number, and flag it in a note below the table. Never let a single strong criterion silently dominate the outcome — the weights must be visible.\n",
+    "prompt_template": "You are a strategy analyst preparing a decision matrix for a choice among several scenarios or locations. The reader wants a defensible ranking, not just a description of each option.\n\n## Options to compare\n<options>\n{{OPTIONS}}\n</options>\n\n## Evaluation criteria (with weights, if given)\n{{CRITERIA}}\n\n## Knock-out constraints (must-haves that disqualify an option outright)\n{{CONSTRAINTS}}\n\n## Task\n1. **Knock-out check first.** For every option, check it against each constraint. If any constraint fails, mark the option `Disqualified` and state which constraint failed — do not score it further.\n2. **Score the remaining options** against each criterion on a 1-5 scale (1 = poor fit, 5 = excellent fit). If weights weren't given, assign your own and state them explicitly with one line of reasoning per weight.\n3. **Compute weighted totals** = Σ(score × weight). Show your work for at least one option so the method is auditable.\n4. **Output table:**\n\n| Option | [criterion 1] | [criterion 2] | ... | Weighted total | Rank |\n|---|---|---|---|---|---|\n\n(List disqualified options below the table with their failed constraint, not in the ranking.)\n5. **Recommendation** — the top-ranked option, one paragraph: why it wins, and the single biggest risk or open question about it.\n6. **Sensitivity check** — identify the criterion where a plausible re-weighting (e.g. ±20%) would flip the ranking, and name it. If the ranking is robust to reasonable reweighting, say so explicitly.\n7. **Runner-up worth keeping on the table** — if any, and under what condition it would become the better choice.\n\n**Rules:** Score only from the information given in the options — if data for a criterion is missing for an option, mark that cell `?` rather than guessing a number, and flag it in a note below the table. Never let a single strong criterion silently dominate the outcome — the weights must be visible.\n",
+    "folder": "scenario-comparison-matrix"
   },
   {
     "id": "stakeholder-update-drafter",

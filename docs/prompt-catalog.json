@@ -4,8 +4,49 @@
   "site": "https://acc-sebastian.github.io/skill-marketplace",
   "repository": "https://github.com/acc-sebastian/skill-marketplace",
   "prompt_schema": "https://acc-sebastian.github.io/skill-marketplace/schema/prompt.schema.json",
-  "count": 5,
+  "count": 10,
   "prompts": [
+    {
+      "id": "budget-variance-explainer",
+      "name": "Budget Variance Explainer",
+      "description": "Turn a budget-vs-actual data dump into a decision-ready variance explanation — every deviation quantified, causally explained, classified as timing vs. run-rate, and routed to an owner for corrective action.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Finance",
+      "tags": [
+        "budget",
+        "variance",
+        "finance",
+        "reconciliation",
+        "actuals"
+      ],
+      "complexity": "intermediate",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-14",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "variables": [
+        {
+          "name": "BUDGET_ACTUAL_DATA",
+          "required": true
+        },
+        {
+          "name": "PERIOD",
+          "required": true
+        },
+        {
+          "name": "CONTEXT",
+          "required": false
+        },
+        {
+          "name": "THRESHOLD",
+          "required": false
+        }
+      ],
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/budget-variance-explainer/PROMPT.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/budget-variance-explainer/metadata.json"
+    },
     {
       "id": "executive-summary-generator",
       "name": "Executive Summary Generator",
@@ -81,6 +122,117 @@
       "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/kpi-management-commentary/metadata.json"
     },
     {
+      "id": "market-intelligence-digest",
+      "name": "Market Intelligence Digest",
+      "description": "Turn a stack of raw market articles, price feeds, or analyst notes into a sourced, decision-ready market digest — clustered by theme, cited, and closing with a headline and a watch list for next period.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Strategy",
+      "tags": [
+        "market-intelligence",
+        "digest",
+        "research",
+        "sourcing",
+        "strategy"
+      ],
+      "complexity": "intermediate",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-14",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "variables": [
+        {
+          "name": "RAW_SOURCES",
+          "required": true
+        },
+        {
+          "name": "FOCUS",
+          "required": true
+        },
+        {
+          "name": "PERIOD",
+          "required": false
+        }
+      ],
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/market-intelligence-digest/PROMPT.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/market-intelligence-digest/metadata.json"
+    },
+    {
+      "id": "overdue-item-escalation-drafter",
+      "name": "Overdue Item Escalation Drafter",
+      "description": "Turn a list of overdue action items, audit findings, or unanswered requests into staged reminder-and-escalation messages — a friendly nudge, a formal reminder, or a management escalation, calibrated to how overdue each item is.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Communication",
+      "tags": [
+        "escalation",
+        "reminders",
+        "follow-up",
+        "overdue",
+        "communication"
+      ],
+      "complexity": "beginner",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-14",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "variables": [
+        {
+          "name": "OVERDUE_ITEMS",
+          "required": true
+        },
+        {
+          "name": "ESCALATION_LADDER",
+          "required": false
+        },
+        {
+          "name": "TONE",
+          "required": false
+        }
+      ],
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/overdue-item-escalation-drafter/PROMPT.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/overdue-item-escalation-drafter/metadata.json"
+    },
+    {
+      "id": "policy-compliance-cross-check",
+      "name": "Policy Compliance Cross-Check",
+      "description": "Compare a document, decision, or transaction against internal policy or an authority/approval matrix and produce a structured finding list of violations, gaps, and ambiguous cases — including a check that the approver's authority matched what the decision required.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Compliance",
+      "tags": [
+        "policy",
+        "compliance",
+        "cross-check",
+        "authority-matrix",
+        "audit"
+      ],
+      "complexity": "intermediate",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-14",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "variables": [
+        {
+          "name": "POLICY_TEXT",
+          "required": true
+        },
+        {
+          "name": "SUBJECT",
+          "required": true
+        },
+        {
+          "name": "CONTEXT",
+          "required": false
+        }
+      ],
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/policy-compliance-cross-check/PROMPT.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/policy-compliance-cross-check/metadata.json"
+    },
+    {
       "id": "rfp-requirements-extractor",
       "name": "RFP Requirements Extractor",
       "description": "Extract every requirement from an RFP or tender document into a structured, numbered requirements table with type classification, MoSCoW priority, and flagged ambiguities — the foundation for a compliant bid response.",
@@ -149,6 +301,43 @@
       ],
       "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/risk-register-builder/PROMPT.md",
       "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/risk-register-builder/metadata.json"
+    },
+    {
+      "id": "scenario-comparison-matrix",
+      "name": "Scenario & Location Comparison Matrix",
+      "description": "Score and rank multiple scenarios, locations, or strategic options against weighted criteria — with knock-out constraints, an auditable weighted-scoring table, and a sensitivity check on the ranking.",
+      "version": "1.0.0",
+      "status": "published",
+      "category": "Strategy",
+      "tags": [
+        "scenario-analysis",
+        "location-screening",
+        "decision-matrix",
+        "strategy",
+        "weighted-scoring"
+      ],
+      "complexity": "intermediate",
+      "owner": "acc-sebastian",
+      "author": "accilium",
+      "last_reviewed": "2026-07-14",
+      "deprecated_by": null,
+      "sunset_date": null,
+      "variables": [
+        {
+          "name": "OPTIONS",
+          "required": true
+        },
+        {
+          "name": "CRITERIA",
+          "required": true
+        },
+        {
+          "name": "CONSTRAINTS",
+          "required": false
+        }
+      ],
+      "download_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/scenario-comparison-matrix/PROMPT.md",
+      "metadata_url": "https://raw.githubusercontent.com/acc-sebastian/skill-marketplace/main/prompts/scenario-comparison-matrix/metadata.json"
     },
     {
       "id": "stakeholder-update-drafter",

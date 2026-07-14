@@ -1,0 +1,48 @@
+{
+  "id": "market-intelligence-digest",
+  "name": "Market Intelligence Digest",
+  "description": "Turn a stack of raw market articles, price feeds, or analyst notes into a sourced, decision-ready market digest — clustered by theme, cited, and closing with a headline and a watch list for next period.",
+  "author": "accilium",
+  "owner": "acc-sebastian",
+  "version": "1.0.0",
+  "created": "2026-07-14",
+  "last_reviewed": "2026-07-14",
+  "status": "published",
+  "category": "Strategy",
+  "tags": [
+    "market-intelligence",
+    "digest",
+    "research",
+    "sourcing",
+    "strategy"
+  ],
+  "complexity": "intermediate",
+  "variables": [
+    {
+      "name": "RAW_SOURCES",
+      "description": "The pasted articles, analyst notes, or price data, each ideally with a publication/source name and date.",
+      "example": "Reuters, 2026-07-08: Brent crude up 4% on OPEC+ supply signal. Platts, 2026-07-10: European gas storage 68% full, ahead of 5-year average...",
+      "required": true
+    },
+    {
+      "name": "FOCUS",
+      "description": "The market, commodity, or topic of interest, and why the business cares about it.",
+      "example": "Gas and oil price trends — the holding hedges energy costs quarterly and needs early warning of sustained price moves",
+      "required": true
+    },
+    {
+      "name": "PERIOD",
+      "description": "The reporting period this digest covers.",
+      "example": "July 2026 monthly market briefing",
+      "required": false
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-07-14",
+      "change": "Initial release"
+    }
+  ],
+  "example_input": "RAW_SOURCES: 5 news clippings on gas/oil prices; FOCUS: energy cost hedging; PERIOD: July 2026"
+}
