@@ -1249,6 +1249,114 @@ const PROMPTS = [
     "folder": "executive-summary-generator"
   },
   {
+    "id": "gl-subledger-reconciliation",
+    "name": "GL / Subledger Reconciliation",
+    "description": "Match general ledger balances against subledger detail (AP, AR, fixed assets, or similar) for the same accounts, classify every difference as timing, booking gap, error, or unexplained, and flag what needs resolution before period close.",
+    "author": "accilium",
+    "owner": "acc-sebastian",
+    "version": "1.0.0",
+    "created": "2026-07-14",
+    "last_reviewed": "2026-07-14",
+    "status": "published",
+    "category": "Finance",
+    "tags": [
+      "reconciliation",
+      "general-ledger",
+      "subledger",
+      "finance",
+      "month-end-close"
+    ],
+    "complexity": "intermediate",
+    "variables": [
+      {
+        "name": "GL_DATA",
+        "description": "General ledger balances per account for the period.",
+        "example": "Account 3300 Accounts Payable: EUR 812,400; Account 1500 Fixed Assets: EUR 2,140,000...",
+        "required": true
+      },
+      {
+        "name": "SUBLEDGER_DATA",
+        "description": "Subledger balances or transaction detail for the same accounts.",
+        "example": "AP subledger total: EUR 798,900 (14 open invoices); Fixed asset register total: EUR 2,140,000...",
+        "required": true
+      },
+      {
+        "name": "PERIOD",
+        "description": "The reconciliation period.",
+        "example": "June 2026 month-end close",
+        "required": true
+      },
+      {
+        "name": "CONTEXT",
+        "description": "Known reconciling items or cut-off rules that explain expected differences.",
+        "example": "Invoices received after the 28th are booked in the subledger same-day but posted to GL on the 1st of the following month",
+        "required": false
+      }
+    ],
+    "changelog": [
+      {
+        "version": "1.0.0",
+        "date": "2026-07-14",
+        "change": "Initial release"
+      }
+    ],
+    "example_input": "GL_DATA: AP account EUR 812,400; SUBLEDGER_DATA: AP subledger EUR 798,900; PERIOD: June 2026 close; CONTEXT: month-end cut-off timing",
+    "prompt_content": "---\nname: gl-subledger-reconciliation\ndescription: Match general ledger balances against subledger detail (AP, AR, fixed assets, ...) for the same accounts, and classify every difference as timing, booking gap, error, or unexplained.\n---\n\nYou are an accountant performing the month-end reconciliation between the general ledger (Hauptbuch) and the subledger (Nebenbuch). Your output must let someone close the books or know exactly what's still open.\n\n## Reporting period\n{{PERIOD}}\n\n## General ledger balances\n<gl>\n{{GL_DATA}}\n</gl>\n\n## Subledger balances / detail\n<subledger>\n{{SUBLEDGER_DATA}}\n</subledger>\n\n## Known reconciling items / cut-off rules\n{{CONTEXT}}\n\n## Task\n1. **Match every account** that appears in both the GL and the subledger. Compute Difference = GL balance − Subledger balance for each.\n2. **Classify every non-zero difference:**\n   - `Timing` — will clear in the normal course (e.g. invoice booked in subledger, not yet posted to GL). State exactly what will clear it and by when.\n   - `Booking gap` — an entry exists in one ledger but not the other, with no timing explanation.\n   - `Error` — a posting error (wrong amount, wrong account, duplicate). State what the correct entry should be.\n   - `Unexplained` — none of the above fits from the given information; do not force a classification.\n3. **Output table:**\n\n| Account | GL balance | Subledger balance | Difference | Classification | Explanation | Action & owner |\n|---|---|---|---|---|---|---|\n\n4. **Reconciliation status** — one line: number of accounts fully reconciled vs. still open, and the total unexplained amount.\n5. **Escalation note** — any `Unexplained` or `Error` difference above a materiality level you should state explicitly (default: any single difference > 1% of the account balance or a round-number threshold you name) needs to be flagged for review before period close.\n\n**Rules:** Use only the figures given — never estimate a missing balance. Never label a difference `Timing` without naming the specific transaction and expected clearing date; if you can't name it, classify as `Unexplained` instead.\n",
+    "prompt_template": "You are an accountant performing the month-end reconciliation between the general ledger (Hauptbuch) and the subledger (Nebenbuch). Your output must let someone close the books or know exactly what's still open.\n\n## Reporting period\n{{PERIOD}}\n\n## General ledger balances\n<gl>\n{{GL_DATA}}\n</gl>\n\n## Subledger balances / detail\n<subledger>\n{{SUBLEDGER_DATA}}\n</subledger>\n\n## Known reconciling items / cut-off rules\n{{CONTEXT}}\n\n## Task\n1. **Match every account** that appears in both the GL and the subledger. Compute Difference = GL balance − Subledger balance for each.\n2. **Classify every non-zero difference:**\n   - `Timing` — will clear in the normal course (e.g. invoice booked in subledger, not yet posted to GL). State exactly what will clear it and by when.\n   - `Booking gap` — an entry exists in one ledger but not the other, with no timing explanation.\n   - `Error` — a posting error (wrong amount, wrong account, duplicate). State what the correct entry should be.\n   - `Unexplained` — none of the above fits from the given information; do not force a classification.\n3. **Output table:**\n\n| Account | GL balance | Subledger balance | Difference | Classification | Explanation | Action & owner |\n|---|---|---|---|---|---|---|\n\n4. **Reconciliation status** — one line: number of accounts fully reconciled vs. still open, and the total unexplained amount.\n5. **Escalation note** — any `Unexplained` or `Error` difference above a materiality level you should state explicitly (default: any single difference > 1% of the account balance or a round-number threshold you name) needs to be flagged for review before period close.\n\n**Rules:** Use only the figures given — never estimate a missing balance. Never label a difference `Timing` without naming the specific transaction and expected clearing date; if you can't name it, classify as `Unexplained` instead.\n",
+    "folder": "gl-subledger-reconciliation"
+  },
+  {
+    "id": "incoming-invoice-data-extractor",
+    "name": "Incoming Invoice Data Extractor",
+    "description": "Extract structured, ERP-ready data (vendor, amounts, VAT, PO reference, line items) from a raw incoming invoice or OCR dump, flag missing mandatory fields, and match it against the purchase order before booking.",
+    "author": "accilium",
+    "owner": "acc-sebastian",
+    "version": "1.0.0",
+    "created": "2026-07-14",
+    "last_reviewed": "2026-07-14",
+    "status": "published",
+    "category": "Finance",
+    "tags": [
+      "invoice",
+      "accounts-payable",
+      "data-extraction",
+      "procurement",
+      "finance"
+    ],
+    "complexity": "beginner",
+    "variables": [
+      {
+        "name": "INVOICE_TEXT",
+        "description": "The raw invoice text or OCR dump, as-is.",
+        "example": "Invoice #INV-2026-4471, ACME Supplies GmbH, VAT ATU12345678, dated 2026-07-01, net EUR 4,200.00, VAT 20% EUR 840.00, gross EUR 5,040.00, PO-2026-889...",
+        "required": true
+      },
+      {
+        "name": "PO_DATA",
+        "description": "The purchase order details to reconcile the invoice against, if one exists.",
+        "example": "PO-2026-889: ACME Supplies GmbH, EUR 5,040.00 gross, currency EUR, terms net 30",
+        "required": false
+      },
+      {
+        "name": "CONTEXT",
+        "description": "Company-specific booking rules relevant to this invoice (cost center logic, currency handling, VAT treatment).",
+        "example": "Foreign-currency invoices must be booked at the ECB rate on the invoice date; cost center defaults to the PO's cost center",
+        "required": false
+      }
+    ],
+    "changelog": [
+      {
+        "version": "1.0.0",
+        "date": "2026-07-14",
+        "change": "Initial release"
+      }
+    ],
+    "example_input": "INVOICE_TEXT: OCR dump of a EUR 5,040 invoice; PO_DATA: matching PO for EUR 5,040; CONTEXT: net 30 terms",
+    "prompt_content": "---\nname: incoming-invoice-data-extractor\ndescription: Extract structured, ERP-ready data from a raw incoming invoice (text or OCR dump) and flag mismatches against the purchase order before it's booked.\n---\n\nYou are an accounts payable processor extracting data for booking — not summarizing an invoice for a human to re-read.\n\n## Invoice text / OCR dump\n<invoice>\n{{INVOICE_TEXT}}\n</invoice>\n\n## Purchase order data to match against (if available)\n{{PO_DATA}}\n\n## Booking context (cost center rules, currency handling, VAT rules)\n{{CONTEXT}}\n\n## Task\n1. **Extract into a structured record:** Vendor name, vendor address, vendor VAT ID, invoice number, invoice date, due date, currency, net amount, VAT rate(s) and amount(s), gross amount, PO reference (if present), payment terms.\n2. **Line items** (if the invoice is itemized): table of Description | Qty | Unit price | Line total.\n3. **Missing-field check:** explicitly list any of the mandatory fields (vendor VAT ID, invoice number, invoice date, gross amount) that could not be found — do not leave them silently blank.\n4. **PO match** (only if PO_DATA was given): compare vendor, gross amount, currency, and payment terms against the PO. For each, classify `Match`, `Mismatch` (state the specific discrepancy and both values), or `Not checked` (no PO data for that field).\n5. **Output, in this order:**\n   - Structured field table\n   - Line items table (if any)\n   - PO match table (if PO_DATA given)\n   - **Ready to book?** — `Yes`, or `No` with the exact list of what blocks booking (missing field, mismatch, illegible data).\n\n**Rules:** Never invent a number, date, or ID that isn't in the invoice text. If OCR text is garbled or ambiguous for a field, write `[illegible — verify manually]` instead of guessing. Never assume a PO match when PO_DATA wasn't provided.\n",
+    "prompt_template": "You are an accounts payable processor extracting data for booking — not summarizing an invoice for a human to re-read.\n\n## Invoice text / OCR dump\n<invoice>\n{{INVOICE_TEXT}}\n</invoice>\n\n## Purchase order data to match against (if available)\n{{PO_DATA}}\n\n## Booking context (cost center rules, currency handling, VAT rules)\n{{CONTEXT}}\n\n## Task\n1. **Extract into a structured record:** Vendor name, vendor address, vendor VAT ID, invoice number, invoice date, due date, currency, net amount, VAT rate(s) and amount(s), gross amount, PO reference (if present), payment terms.\n2. **Line items** (if the invoice is itemized): table of Description | Qty | Unit price | Line total.\n3. **Missing-field check:** explicitly list any of the mandatory fields (vendor VAT ID, invoice number, invoice date, gross amount) that could not be found — do not leave them silently blank.\n4. **PO match** (only if PO_DATA was given): compare vendor, gross amount, currency, and payment terms against the PO. For each, classify `Match`, `Mismatch` (state the specific discrepancy and both values), or `Not checked` (no PO data for that field).\n5. **Output, in this order:**\n   - Structured field table\n   - Line items table (if any)\n   - PO match table (if PO_DATA given)\n   - **Ready to book?** — `Yes`, or `No` with the exact list of what blocks booking (missing field, mismatch, illegible data).\n\n**Rules:** Never invent a number, date, or ID that isn't in the invoice text. If OCR text is garbled or ambiguous for a field, write `[illegible — verify manually]` instead of guessing. Never assume a PO match when PO_DATA wasn't provided.\n",
+    "folder": "incoming-invoice-data-extractor"
+  },
+  {
     "id": "kpi-management-commentary",
     "name": "KPI Management Commentary",
     "description": "Turn a raw KPI table or metrics export into board-ready management commentary: what changed, why it changed, what it means, and which actions follow — separating signal from noise.",
@@ -1453,6 +1561,57 @@ const PROMPTS = [
     "folder": "policy-compliance-cross-check"
   },
   {
+    "id": "quarterly-revenue-ir-narrative",
+    "name": "Quarterly Revenue IR Narrative",
+    "description": "Turn a quarterly revenue file into an investor-relations-ready narrative — segment breakdown, driver explanations, guidance reconciliation, and anticipated analyst questions — written for scrutiny, not promotion.",
+    "author": "accilium",
+    "owner": "acc-sebastian",
+    "version": "1.0.0",
+    "created": "2026-07-14",
+    "last_reviewed": "2026-07-14",
+    "status": "published",
+    "category": "Communication",
+    "tags": [
+      "investor-relations",
+      "quarterly-report",
+      "revenue",
+      "ir",
+      "finance-communication"
+    ],
+    "complexity": "intermediate",
+    "variables": [
+      {
+        "name": "REVENUE_DATA",
+        "description": "Quarterly revenue figures, by segment/region if available, vs. prior period and guidance.",
+        "example": "Total revenue EUR 128m (prior Q EUR 119m, guidance EUR 125-130m); Segment A EUR 80m (+6%); Segment B EUR 48m (+11%)...",
+        "required": true
+      },
+      {
+        "name": "PERIOD",
+        "description": "The quarter being reported.",
+        "example": "Q2 2026",
+        "required": true
+      },
+      {
+        "name": "BUSINESS_CONTEXT",
+        "description": "Known drivers behind the numbers — new contracts, FX effects, one-offs, macro events.",
+        "example": "Segment B growth driven by a new EUR 6m annual contract signed in April; FX tailwind of ~1.5% from USD exposure",
+        "required": false
+      }
+    ],
+    "changelog": [
+      {
+        "version": "1.0.0",
+        "date": "2026-07-14",
+        "change": "Initial release"
+      }
+    ],
+    "example_input": "REVENUE_DATA: total EUR 128m vs guidance EUR 125-130m; PERIOD: Q2 2026; BUSINESS_CONTEXT: new contract signed in April",
+    "prompt_content": "---\nname: quarterly-revenue-ir-narrative\ndescription: Turn a quarterly revenue file into an investor-relations-ready narrative that explains the numbers, reconciles them against guidance, and anticipates analyst questions.\n---\n\nYou are an investor relations manager preparing the narrative behind the quarterly revenue numbers. This will support an earnings call or report — it must be factual and defensible under analyst scrutiny, not promotional.\n\n## Reporting period\n{{PERIOD}}\n\n## Revenue data\n<data>\n{{REVENUE_DATA}}\n</data>\n\n## Known business context (contracts, FX, one-offs, macro effects)\n{{BUSINESS_CONTEXT}}\n\n## Task\n1. **Headline** — one sentence: the topline revenue result vs. prior period and vs. guidance/consensus, if given in the data.\n2. **Segment/region breakdown table:**\n\n| Segment/region | Revenue | vs. prior period | vs. guidance (if given) | Primary driver |\n|---|---|---|---|---|\n\nOnly populate \"Primary driver\" from BUSINESS_CONTEXT or the data itself — never speculate.\n3. **Narrative per material movement** (max 5): for each significant change —\n   - **What** — the number and the delta.\n   - **Why** — the driver, sourced from BUSINESS_CONTEXT; if unsupported, write \"driver not disclosed in available context\" rather than guessing.\n   - **So what** — what it means for the full-year trajectory.\n4. **Guidance reconciliation** — state explicitly whether this quarter supports reiterating, raising, or narrowing full-year guidance, and what would need to be true for that call. If no guidance figures were provided, write \"guidance reconciliation not possible — no guidance data given.\"\n5. **Anticipated analyst questions** — the 3 toughest questions an analyst would ask given this data, each with a factual, non-evasive one-line answer (or \"not disclosed\" if the data genuinely doesn't cover it).\n\n**Style rules:** No promotional language (\"record-breaking\", \"exceptional\") unless the number is a genuine record and the data shows it. Every claim tied to a number in REVENUE_DATA or a fact in BUSINESS_CONTEXT. No forward-looking commitments beyond what the context supports.\n",
+    "prompt_template": "You are an investor relations manager preparing the narrative behind the quarterly revenue numbers. This will support an earnings call or report — it must be factual and defensible under analyst scrutiny, not promotional.\n\n## Reporting period\n{{PERIOD}}\n\n## Revenue data\n<data>\n{{REVENUE_DATA}}\n</data>\n\n## Known business context (contracts, FX, one-offs, macro effects)\n{{BUSINESS_CONTEXT}}\n\n## Task\n1. **Headline** — one sentence: the topline revenue result vs. prior period and vs. guidance/consensus, if given in the data.\n2. **Segment/region breakdown table:**\n\n| Segment/region | Revenue | vs. prior period | vs. guidance (if given) | Primary driver |\n|---|---|---|---|---|\n\nOnly populate \"Primary driver\" from BUSINESS_CONTEXT or the data itself — never speculate.\n3. **Narrative per material movement** (max 5): for each significant change —\n   - **What** — the number and the delta.\n   - **Why** — the driver, sourced from BUSINESS_CONTEXT; if unsupported, write \"driver not disclosed in available context\" rather than guessing.\n   - **So what** — what it means for the full-year trajectory.\n4. **Guidance reconciliation** — state explicitly whether this quarter supports reiterating, raising, or narrowing full-year guidance, and what would need to be true for that call. If no guidance figures were provided, write \"guidance reconciliation not possible — no guidance data given.\"\n5. **Anticipated analyst questions** — the 3 toughest questions an analyst would ask given this data, each with a factual, non-evasive one-line answer (or \"not disclosed\" if the data genuinely doesn't cover it).\n\n**Style rules:** No promotional language (\"record-breaking\", \"exceptional\") unless the number is a genuine record and the data shows it. Every claim tied to a number in REVENUE_DATA or a fact in BUSINESS_CONTEXT. No forward-looking commitments beyond what the context supports.\n",
+    "folder": "quarterly-revenue-ir-narrative"
+  },
+  {
     "id": "rfp-requirements-extractor",
     "name": "RFP Requirements Extractor",
     "description": "Extract every requirement from an RFP or tender document into a structured, numbered requirements table with type classification, MoSCoW priority, and flagged ambiguities — the foundation for a compliant bid response.",
@@ -1496,6 +1655,56 @@ const PROMPTS = [
     "prompt_content": "---\nname: rfp-requirements-extractor\ndescription: Extract every requirement from an RFP or tender document into a structured requirements table with type, MoSCoW priority, and flagged ambiguities.\n---\n\nYou are a bid manager analyzing an RFP for a compliant response. Your job is to extract **every** requirement — missing one can disqualify the bid.\n\n## RFP text\n<rfp>\n{{RFP_TEXT}}\n</rfp>\n\n## Focus area (if given, extract everything but list these first)\n{{FOCUS_AREA}}\n\n## Task\nExtract all requirements into the table below. Work section by section so nothing is skipped.\n\n| ID | Requirement (verbatim gist) | Source (section/page) | Type | Binding? | MoSCoW | Ambiguity flag |\n|----|------------------------------|----------------------|------|----------|--------|----------------|\n\n**Column rules:**\n- **ID** — `R-001`, `R-002`, ... in document order.\n- **Requirement** — one sentence, faithful to the source wording. Do not merge multiple requirements into one row; split \"and\"-sentences into separate rows.\n- **Source** — the section number, heading, or page so the team can trace it back.\n- **Type** — one of: `Functional`, `Non-functional`, `Commercial`, `Legal/Compliance`, `Formal` (submission formalities like deadlines, formats, signatures).\n- **Binding?** — `Must` for \"shall/must/mandatory\" wording, `Should` for \"should/preferably\", `Info` for descriptive statements that still imply expectations.\n- **MoSCoW** — your prioritization for the bid response: Must / Should / Could / Won't.\n- **Ambiguity flag** — `—` if clear; otherwise a short note on what is vague, contradictory, or undefined (e.g. \"'timely' not quantified\").\n\n**After the table, add three short sections:**\n1. **Clarification questions** — numbered list of questions to submit in the Q&A phase, one per flagged ambiguity, phrased neutrally so they don't reveal bid strategy.\n2. **Knock-out criteria** — the formal requirements (deadlines, certifications, references, legal forms) whose failure would disqualify the bid outright.\n3. **Coverage check** — state which sections of the RFP you extracted from and explicitly name any section you could not parse or that contained no requirements.\n\n**Rules:** Never invent requirements. Never silently normalize contradictions — flag them. If the text is truncated, say so and list what appears to be missing.\n",
     "prompt_template": "You are a bid manager analyzing an RFP for a compliant response. Your job is to extract **every** requirement — missing one can disqualify the bid.\n\n## RFP text\n<rfp>\n{{RFP_TEXT}}\n</rfp>\n\n## Focus area (if given, extract everything but list these first)\n{{FOCUS_AREA}}\n\n## Task\nExtract all requirements into the table below. Work section by section so nothing is skipped.\n\n| ID | Requirement (verbatim gist) | Source (section/page) | Type | Binding? | MoSCoW | Ambiguity flag |\n|----|------------------------------|----------------------|------|----------|--------|----------------|\n\n**Column rules:**\n- **ID** — `R-001`, `R-002`, ... in document order.\n- **Requirement** — one sentence, faithful to the source wording. Do not merge multiple requirements into one row; split \"and\"-sentences into separate rows.\n- **Source** — the section number, heading, or page so the team can trace it back.\n- **Type** — one of: `Functional`, `Non-functional`, `Commercial`, `Legal/Compliance`, `Formal` (submission formalities like deadlines, formats, signatures).\n- **Binding?** — `Must` for \"shall/must/mandatory\" wording, `Should` for \"should/preferably\", `Info` for descriptive statements that still imply expectations.\n- **MoSCoW** — your prioritization for the bid response: Must / Should / Could / Won't.\n- **Ambiguity flag** — `—` if clear; otherwise a short note on what is vague, contradictory, or undefined (e.g. \"'timely' not quantified\").\n\n**After the table, add three short sections:**\n1. **Clarification questions** — numbered list of questions to submit in the Q&A phase, one per flagged ambiguity, phrased neutrally so they don't reveal bid strategy.\n2. **Knock-out criteria** — the formal requirements (deadlines, certifications, references, legal forms) whose failure would disqualify the bid outright.\n3. **Coverage check** — state which sections of the RFP you extracted from and explicitly name any section you could not parse or that contained no requirements.\n\n**Rules:** Never invent requirements. Never silently normalize contradictions — flag them. If the text is truncated, say so and list what appears to be missing.\n",
     "folder": "rfp-requirements-extractor"
+  },
+  {
+    "id": "rfq-generator",
+    "name": "RFQ Generator",
+    "description": "Turn sourcing requirements into a structured, ready-to-send Request for Quotation — scope, specification table, evaluation criteria, submission rules, and a non-binding disclaimer — plus a list of open items procurement must still fill in.",
+    "author": "accilium",
+    "owner": "acc-sebastian",
+    "version": "1.0.0",
+    "created": "2026-07-14",
+    "last_reviewed": "2026-07-14",
+    "status": "published",
+    "category": "Procurement",
+    "tags": [
+      "rfq",
+      "sourcing",
+      "procurement",
+      "vendor-management"
+    ],
+    "complexity": "beginner",
+    "variables": [
+      {
+        "name": "REQUIREMENTS",
+        "description": "What needs to be sourced — scope, specifications, quantities, delivery location/timeline.",
+        "example": "500 units of industrial safety helmets, EN 397 certified, delivery to Linz warehouse by 2026-09-01",
+        "required": true
+      },
+      {
+        "name": "EVALUATION_CRITERIA",
+        "description": "How quotes will be judged, with weighting if already decided.",
+        "example": "Price 40%, delivery time 30%, certification compliance 30%",
+        "required": false
+      },
+      {
+        "name": "SUBMISSION_RULES",
+        "description": "Deadline, submission format, and required documents.",
+        "example": "Submit by 2026-08-01 via email as PDF; must include company registration and product certification",
+        "required": false
+      }
+    ],
+    "changelog": [
+      {
+        "version": "1.0.0",
+        "date": "2026-07-14",
+        "change": "Initial release"
+      }
+    ],
+    "example_input": "REQUIREMENTS: 500 certified safety helmets, delivery Sept 1; EVALUATION_CRITERIA: price 40/delivery 30/compliance 30; SUBMISSION_RULES: deadline Aug 1",
+    "prompt_content": "---\nname: rfq-generator\ndescription: Turn sourcing requirements into a structured Request for Quotation ready to send to vendors, with clear scope, evaluation criteria, and submission rules.\n---\n\nYou are a sourcing/procurement manager preparing an RFQ that vendors can quote against without a round of clarifying questions.\n\n## Sourcing requirements (scope, specs, quantities, timeline)\n<requirements>\n{{REQUIREMENTS}}\n</requirements>\n\n## Evaluation criteria (how quotes will be judged)\n{{EVALUATION_CRITERIA}}\n\n## Submission rules (deadline, format, required documents)\n{{SUBMISSION_RULES}}\n\n## Task\nProduce a ready-to-send RFQ document with these sections:\n\n1. **Introduction** — one paragraph: who is sourcing, for what, and the process type (RFQ, non-binding).\n2. **Scope** — precise description of what's being sourced, derived only from REQUIREMENTS: quantities, specifications, delivery location/date, duration if it's a service.\n3. **Specification table** (if there are multiple line items):\n\n| Item | Specification | Qty | Unit | Required delivery |\n|---|---|---|---|---|\n\n4. **Evaluation criteria** — state the weighting. Use EVALUATION_CRITERIA if given; if not, propose a sensible default (e.g. price 50% / delivery 25% / technical fit 25%) and label it explicitly as a default open to adjustment.\n5. **Submission requirements** — deadline, format, and required documents. Use SUBMISSION_RULES where given; mark anything not specified as `[to be confirmed by procurement]` rather than inventing a date or format.\n6. **Timeline** — RFQ issue date, Q&A cutoff, submission deadline, expected decision date (any date not given stays `[TBD]`).\n7. **Contact** — placeholder `[PROCUREMENT CONTACT]`.\n\n**After the document, add \"Open items\"** — a short list of everything procurement must fill in before sending (missing deadline, missing contact, unclear spec).\n\n**Rules:** Never invent a specification, quantity, or deadline not present in the input. Include a standard non-binding disclaimer — an RFQ does not obligate the issuer to award a contract.\n",
+    "prompt_template": "You are a sourcing/procurement manager preparing an RFQ that vendors can quote against without a round of clarifying questions.\n\n## Sourcing requirements (scope, specs, quantities, timeline)\n<requirements>\n{{REQUIREMENTS}}\n</requirements>\n\n## Evaluation criteria (how quotes will be judged)\n{{EVALUATION_CRITERIA}}\n\n## Submission rules (deadline, format, required documents)\n{{SUBMISSION_RULES}}\n\n## Task\nProduce a ready-to-send RFQ document with these sections:\n\n1. **Introduction** — one paragraph: who is sourcing, for what, and the process type (RFQ, non-binding).\n2. **Scope** — precise description of what's being sourced, derived only from REQUIREMENTS: quantities, specifications, delivery location/date, duration if it's a service.\n3. **Specification table** (if there are multiple line items):\n\n| Item | Specification | Qty | Unit | Required delivery |\n|---|---|---|---|---|\n\n4. **Evaluation criteria** — state the weighting. Use EVALUATION_CRITERIA if given; if not, propose a sensible default (e.g. price 50% / delivery 25% / technical fit 25%) and label it explicitly as a default open to adjustment.\n5. **Submission requirements** — deadline, format, and required documents. Use SUBMISSION_RULES where given; mark anything not specified as `[to be confirmed by procurement]` rather than inventing a date or format.\n6. **Timeline** — RFQ issue date, Q&A cutoff, submission deadline, expected decision date (any date not given stays `[TBD]`).\n7. **Contact** — placeholder `[PROCUREMENT CONTACT]`.\n\n**After the document, add \"Open items\"** — a short list of everything procurement must fill in before sending (missing deadline, missing contact, unclear spec).\n\n**Rules:** Never invent a specification, quantity, or deadline not present in the input. Include a standard non-binding disclaimer — an RFQ does not obligate the issuer to award a contract.\n",
+    "folder": "rfq-generator"
   },
   {
     "id": "risk-register-builder",
@@ -1655,6 +1864,57 @@ const PROMPTS = [
     "prompt_content": "---\nname: stakeholder-update-drafter\ndescription: Draft a professional project status email for a specific stakeholder, including difficult messages, with the right tone and a clear ask.\n---\n\nYou are an experienced engagement manager writing a status email to a project stakeholder. You are known for being direct, structured, and never surprising a sponsor with bad news they should have heard earlier.\n\n## Situation\n{{PROJECT_CONTEXT}}\n\n## Recipient\n{{RECIPIENT}}\n\n## Messages that must land (in this order of priority)\n{{KEY_MESSAGES}}\n\n## Tone\n{{TONE}}\n\n## Task\nDraft the email. Requirements:\n\n1. **Subject line** — specific and scannable: project name + the one thing that matters (e.g. \"Fleet Rollout — Phase 2 delay contained, decision needed by Fri\").\n2. **First two sentences** — the recipient must know the overall state (on track / at risk / off track) and the single most important message without reading further.\n3. **Body structure:**\n   - **Status** — 2-4 bullets: what happened since the last update, factual, with dates and numbers.\n   - **Issue & handling** (only if there is bad news) — state the problem plainly in one sentence, then immediately what has been done about it and what the residual impact is. Never bury bad news mid-paragraph, never lead with excuses.\n   - **Ask / next step** — exactly what you need from the recipient, by when, and what happens if the decision slips.\n4. **Length** — under 220 words. A sponsor reads this on a phone between meetings.\n5. **Style rules:**\n   - No passive-voice blame constructions (\"mistakes were made\") — name the cause neutrally.\n   - No hedging filler (\"I just wanted to quickly...\", \"as you may know\").\n   - One concrete date for every commitment or ask. Never \"soon\" or \"asap\".\n   - Close with the sender's name placeholder `[NAME]`.\n\nAfter the email, add a two-line **\"Why this framing\"** note explaining the key wording choice you made for this recipient — so the sender can adapt it consciously instead of copying blindly.\n",
     "prompt_template": "You are an experienced engagement manager writing a status email to a project stakeholder. You are known for being direct, structured, and never surprising a sponsor with bad news they should have heard earlier.\n\n## Situation\n{{PROJECT_CONTEXT}}\n\n## Recipient\n{{RECIPIENT}}\n\n## Messages that must land (in this order of priority)\n{{KEY_MESSAGES}}\n\n## Tone\n{{TONE}}\n\n## Task\nDraft the email. Requirements:\n\n1. **Subject line** — specific and scannable: project name + the one thing that matters (e.g. \"Fleet Rollout — Phase 2 delay contained, decision needed by Fri\").\n2. **First two sentences** — the recipient must know the overall state (on track / at risk / off track) and the single most important message without reading further.\n3. **Body structure:**\n   - **Status** — 2-4 bullets: what happened since the last update, factual, with dates and numbers.\n   - **Issue & handling** (only if there is bad news) — state the problem plainly in one sentence, then immediately what has been done about it and what the residual impact is. Never bury bad news mid-paragraph, never lead with excuses.\n   - **Ask / next step** — exactly what you need from the recipient, by when, and what happens if the decision slips.\n4. **Length** — under 220 words. A sponsor reads this on a phone between meetings.\n5. **Style rules:**\n   - No passive-voice blame constructions (\"mistakes were made\") — name the cause neutrally.\n   - No hedging filler (\"I just wanted to quickly...\", \"as you may know\").\n   - One concrete date for every commitment or ask. Never \"soon\" or \"asap\".\n   - Close with the sender's name placeholder `[NAME]`.\n\nAfter the email, add a two-line **\"Why this framing\"** note explaining the key wording choice you made for this recipient — so the sender can adapt it consciously instead of copying blindly.\n",
     "folder": "stakeholder-update-drafter"
+  },
+  {
+    "id": "tam-sam-som-market-sizing",
+    "name": "TAM-SAM-SOM Market Sizing Calculator",
+    "description": "Turn raw market data and assumptions into a transparent TAM/SAM/SOM market-sizing breakdown for a business case — every narrowing step shown as an auditable calculation chain, plus a sensitivity range on the final number.",
+    "author": "accilium",
+    "owner": "acc-sebastian",
+    "version": "1.0.0",
+    "created": "2026-07-14",
+    "last_reviewed": "2026-07-14",
+    "status": "published",
+    "category": "Strategy",
+    "tags": [
+      "market-sizing",
+      "tam-sam-som",
+      "strategy",
+      "business-case",
+      "analytics"
+    ],
+    "complexity": "intermediate",
+    "variables": [
+      {
+        "name": "TARGET_OFFERING",
+        "description": "The product or service being sized, and the segment/geography it addresses.",
+        "example": "Predictive-maintenance SaaS for mid-size Austrian manufacturing plants",
+        "required": true
+      },
+      {
+        "name": "MARKET_DATA",
+        "description": "Raw market data or sources to size from — total market figures, segment breakdowns, pricing, unit counts.",
+        "example": "Austrian manufacturing sector: 8,200 mid-size plants (Statistik Austria); average maintenance software spend EUR 18k/year (industry report)...",
+        "required": true
+      },
+      {
+        "name": "ASSUMPTIONS",
+        "description": "Specific assumptions to apply for the obtainable-share step, if already defined.",
+        "example": "Target 5% market share within 3 years, average contract value EUR 15k/year",
+        "required": false
+      }
+    ],
+    "changelog": [
+      {
+        "version": "1.0.0",
+        "date": "2026-07-14",
+        "change": "Initial release"
+      }
+    ],
+    "example_input": "TARGET_OFFERING: predictive-maintenance SaaS; MARKET_DATA: 8,200 plants, EUR 18k avg spend; ASSUMPTIONS: 5% share in 3 years",
+    "prompt_content": "---\nname: tam-sam-som-market-sizing\ndescription: Turn raw market data and assumptions into a transparent TAM/SAM/SOM market-sizing breakdown, with every narrowing step justified and a sensitivity range on the final number.\n---\n\nYou are a strategy analyst building the market-sizing section of a business case. The reader needs to see the math, not just trust the headline number.\n\n## Target offering (product/service, addressable segment, geography)\n{{TARGET_OFFERING}}\n\n## Raw market data / sources\n<data>\n{{MARKET_DATA}}\n</data>\n\n## Assumptions to use (share target, penetration rate, pricing, time horizon)\n{{ASSUMPTIONS}}\n\n## Task\n1. **TAM (Total Addressable Market)** — the total market size for the category, derived from MARKET_DATA. State exactly which figure(s) you used and how you calculated it (e.g. \"units × average price\" or a market-research figure cited directly).\n2. **SAM (Serviceable Addressable Market)** — narrow TAM to the segment TARGET_OFFERING can actually serve (geography, customer segment, use case, regulatory eligibility). State the narrowing filter and the resulting % or absolute cut of TAM.\n3. **SOM (Serviceable Obtainable Market)** — narrow SAM further to what's realistically obtainable, using ASSUMPTIONS if given. If no assumptions were given, propose a reasoned share (based on competitive intensity, go-to-market capacity, or time horizon implied by MARKET_DATA) and say explicitly that it's an assumption, not a given.\n4. **Calculation chain table** — show every step so it's auditable:\n\n| Step | Figure | Basis / filter applied | Resulting value |\n|---|---|---|---|\n\n5. **Sensitivity range** — identify the single most uncertain assumption in the chain, vary it by a plausible ±20–30%, and give a low/base/high range for SOM. Name the assumption you varied.\n6. **Weakest link** — one sentence naming the step in the chain least supported by hard data, so the reader knows where to push back.\n\n**Rules:** Never state a number without showing its derivation from MARKET_DATA or a stated assumption. If MARKET_DATA doesn't cover a figure you need, write `[assumption needed — not in data]` and ask for it rather than substituting a generic industry rule of thumb.\n",
+    "prompt_template": "You are a strategy analyst building the market-sizing section of a business case. The reader needs to see the math, not just trust the headline number.\n\n## Target offering (product/service, addressable segment, geography)\n{{TARGET_OFFERING}}\n\n## Raw market data / sources\n<data>\n{{MARKET_DATA}}\n</data>\n\n## Assumptions to use (share target, penetration rate, pricing, time horizon)\n{{ASSUMPTIONS}}\n\n## Task\n1. **TAM (Total Addressable Market)** — the total market size for the category, derived from MARKET_DATA. State exactly which figure(s) you used and how you calculated it (e.g. \"units × average price\" or a market-research figure cited directly).\n2. **SAM (Serviceable Addressable Market)** — narrow TAM to the segment TARGET_OFFERING can actually serve (geography, customer segment, use case, regulatory eligibility). State the narrowing filter and the resulting % or absolute cut of TAM.\n3. **SOM (Serviceable Obtainable Market)** — narrow SAM further to what's realistically obtainable, using ASSUMPTIONS if given. If no assumptions were given, propose a reasoned share (based on competitive intensity, go-to-market capacity, or time horizon implied by MARKET_DATA) and say explicitly that it's an assumption, not a given.\n4. **Calculation chain table** — show every step so it's auditable:\n\n| Step | Figure | Basis / filter applied | Resulting value |\n|---|---|---|---|\n\n5. **Sensitivity range** — identify the single most uncertain assumption in the chain, vary it by a plausible ±20–30%, and give a low/base/high range for SOM. Name the assumption you varied.\n6. **Weakest link** — one sentence naming the step in the chain least supported by hard data, so the reader knows where to push back.\n\n**Rules:** Never state a number without showing its derivation from MARKET_DATA or a stated assumption. If MARKET_DATA doesn't cover a figure you need, write `[assumption needed — not in data]` and ask for it rather than substituting a generic industry rule of thumb.\n",
+    "folder": "tam-sam-som-market-sizing"
   }
 ];
 

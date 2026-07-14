@@ -1,0 +1,47 @@
+{
+  "id": "rfq-generator",
+  "name": "RFQ Generator",
+  "description": "Turn sourcing requirements into a structured, ready-to-send Request for Quotation — scope, specification table, evaluation criteria, submission rules, and a non-binding disclaimer — plus a list of open items procurement must still fill in.",
+  "author": "accilium",
+  "owner": "acc-sebastian",
+  "version": "1.0.0",
+  "created": "2026-07-14",
+  "last_reviewed": "2026-07-14",
+  "status": "published",
+  "category": "Procurement",
+  "tags": [
+    "rfq",
+    "sourcing",
+    "procurement",
+    "vendor-management"
+  ],
+  "complexity": "beginner",
+  "variables": [
+    {
+      "name": "REQUIREMENTS",
+      "description": "What needs to be sourced — scope, specifications, quantities, delivery location/timeline.",
+      "example": "500 units of industrial safety helmets, EN 397 certified, delivery to Linz warehouse by 2026-09-01",
+      "required": true
+    },
+    {
+      "name": "EVALUATION_CRITERIA",
+      "description": "How quotes will be judged, with weighting if already decided.",
+      "example": "Price 40%, delivery time 30%, certification compliance 30%",
+      "required": false
+    },
+    {
+      "name": "SUBMISSION_RULES",
+      "description": "Deadline, submission format, and required documents.",
+      "example": "Submit by 2026-08-01 via email as PDF; must include company registration and product certification",
+      "required": false
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-07-14",
+      "change": "Initial release"
+    }
+  ],
+  "example_input": "REQUIREMENTS: 500 certified safety helmets, delivery Sept 1; EVALUATION_CRITERIA: price 40/delivery 30/compliance 30; SUBMISSION_RULES: deadline Aug 1"
+}

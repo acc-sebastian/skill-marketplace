@@ -1,0 +1,48 @@
+{
+  "id": "tam-sam-som-market-sizing",
+  "name": "TAM-SAM-SOM Market Sizing Calculator",
+  "description": "Turn raw market data and assumptions into a transparent TAM/SAM/SOM market-sizing breakdown for a business case — every narrowing step shown as an auditable calculation chain, plus a sensitivity range on the final number.",
+  "author": "accilium",
+  "owner": "acc-sebastian",
+  "version": "1.0.0",
+  "created": "2026-07-14",
+  "last_reviewed": "2026-07-14",
+  "status": "published",
+  "category": "Strategy",
+  "tags": [
+    "market-sizing",
+    "tam-sam-som",
+    "strategy",
+    "business-case",
+    "analytics"
+  ],
+  "complexity": "intermediate",
+  "variables": [
+    {
+      "name": "TARGET_OFFERING",
+      "description": "The product or service being sized, and the segment/geography it addresses.",
+      "example": "Predictive-maintenance SaaS for mid-size Austrian manufacturing plants",
+      "required": true
+    },
+    {
+      "name": "MARKET_DATA",
+      "description": "Raw market data or sources to size from — total market figures, segment breakdowns, pricing, unit counts.",
+      "example": "Austrian manufacturing sector: 8,200 mid-size plants (Statistik Austria); average maintenance software spend EUR 18k/year (industry report)...",
+      "required": true
+    },
+    {
+      "name": "ASSUMPTIONS",
+      "description": "Specific assumptions to apply for the obtainable-share step, if already defined.",
+      "example": "Target 5% market share within 3 years, average contract value EUR 15k/year",
+      "required": false
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-07-14",
+      "change": "Initial release"
+    }
+  ],
+  "example_input": "TARGET_OFFERING: predictive-maintenance SaaS; MARKET_DATA: 8,200 plants, EUR 18k avg spend; ASSUMPTIONS: 5% share in 3 years"
+}

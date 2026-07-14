@@ -1,0 +1,54 @@
+{
+  "id": "gl-subledger-reconciliation",
+  "name": "GL / Subledger Reconciliation",
+  "description": "Match general ledger balances against subledger detail (AP, AR, fixed assets, or similar) for the same accounts, classify every difference as timing, booking gap, error, or unexplained, and flag what needs resolution before period close.",
+  "author": "accilium",
+  "owner": "acc-sebastian",
+  "version": "1.0.0",
+  "created": "2026-07-14",
+  "last_reviewed": "2026-07-14",
+  "status": "published",
+  "category": "Finance",
+  "tags": [
+    "reconciliation",
+    "general-ledger",
+    "subledger",
+    "finance",
+    "month-end-close"
+  ],
+  "complexity": "intermediate",
+  "variables": [
+    {
+      "name": "GL_DATA",
+      "description": "General ledger balances per account for the period.",
+      "example": "Account 3300 Accounts Payable: EUR 812,400; Account 1500 Fixed Assets: EUR 2,140,000...",
+      "required": true
+    },
+    {
+      "name": "SUBLEDGER_DATA",
+      "description": "Subledger balances or transaction detail for the same accounts.",
+      "example": "AP subledger total: EUR 798,900 (14 open invoices); Fixed asset register total: EUR 2,140,000...",
+      "required": true
+    },
+    {
+      "name": "PERIOD",
+      "description": "The reconciliation period.",
+      "example": "June 2026 month-end close",
+      "required": true
+    },
+    {
+      "name": "CONTEXT",
+      "description": "Known reconciling items or cut-off rules that explain expected differences.",
+      "example": "Invoices received after the 28th are booked in the subledger same-day but posted to GL on the 1st of the following month",
+      "required": false
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-07-14",
+      "change": "Initial release"
+    }
+  ],
+  "example_input": "GL_DATA: AP account EUR 812,400; SUBLEDGER_DATA: AP subledger EUR 798,900; PERIOD: June 2026 close; CONTEXT: month-end cut-off timing"
+}

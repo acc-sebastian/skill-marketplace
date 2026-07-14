@@ -1,0 +1,48 @@
+{
+  "id": "incoming-invoice-data-extractor",
+  "name": "Incoming Invoice Data Extractor",
+  "description": "Extract structured, ERP-ready data (vendor, amounts, VAT, PO reference, line items) from a raw incoming invoice or OCR dump, flag missing mandatory fields, and match it against the purchase order before booking.",
+  "author": "accilium",
+  "owner": "acc-sebastian",
+  "version": "1.0.0",
+  "created": "2026-07-14",
+  "last_reviewed": "2026-07-14",
+  "status": "published",
+  "category": "Finance",
+  "tags": [
+    "invoice",
+    "accounts-payable",
+    "data-extraction",
+    "procurement",
+    "finance"
+  ],
+  "complexity": "beginner",
+  "variables": [
+    {
+      "name": "INVOICE_TEXT",
+      "description": "The raw invoice text or OCR dump, as-is.",
+      "example": "Invoice #INV-2026-4471, ACME Supplies GmbH, VAT ATU12345678, dated 2026-07-01, net EUR 4,200.00, VAT 20% EUR 840.00, gross EUR 5,040.00, PO-2026-889...",
+      "required": true
+    },
+    {
+      "name": "PO_DATA",
+      "description": "The purchase order details to reconcile the invoice against, if one exists.",
+      "example": "PO-2026-889: ACME Supplies GmbH, EUR 5,040.00 gross, currency EUR, terms net 30",
+      "required": false
+    },
+    {
+      "name": "CONTEXT",
+      "description": "Company-specific booking rules relevant to this invoice (cost center logic, currency handling, VAT treatment).",
+      "example": "Foreign-currency invoices must be booked at the ECB rate on the invoice date; cost center defaults to the PO's cost center",
+      "required": false
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-07-14",
+      "change": "Initial release"
+    }
+  ],
+  "example_input": "INVOICE_TEXT: OCR dump of a EUR 5,040 invoice; PO_DATA: matching PO for EUR 5,040; CONTEXT: net 30 terms"
+}
